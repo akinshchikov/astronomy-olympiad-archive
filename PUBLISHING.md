@@ -6,6 +6,7 @@ This repository is prepared for a public GitHub release as a reproducible pipeli
 
 - Python pipeline code
 - `README.md`
+- `README.ru.md`
 - `data/manifests/source_candidates.csv`
 - `data/manifests/discovered_documents.jsonl`
 - `data/manifests/discovery_coverage.csv`
