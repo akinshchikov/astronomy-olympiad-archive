@@ -1,8 +1,32 @@
+[build-system]
+requires = ["setuptools>=69.0"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "astronomy-olympiad-archive"
 version = "0.1.0"
-description = "Astronomy Olympiad Archive: reproducible local archive for astronomy olympiad materials"
+description = "Reproducible local archive builder for astronomy olympiad materials"
+readme = "README.md"
 requires-python = ">=3.12"
+license = { file = "LICENSE" }
+authors = [{ name = "Astronomy Olympiad Archive contributors" }]
+keywords = ["astronomy", "olympiad", "archive", "crawler", "pipeline"]
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Education",
+    "Topic :: Internet :: WWW/HTTP",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/akinshchikov/astronomy-olympiad-archive"
+Repository = "https://github.com/akinshchikov/astronomy-olympiad-archive"
+Issues = "https://github.com/akinshchikov/astronomy-olympiad-archive/issues"
+
+[tool.setuptools]
+packages = ["utils"]
 
 [tool.pyright]
 typeCheckingMode = "basic"
