@@ -1,0 +1,12 @@
+source_id,label,olympiad_family,source_role,source_priority,seed_count,notes
+vsosh_edsoo_official,ВсОШ астрономия: официальный раздел vserosolimp.edsoo.ru,vsosh_astronomy,official,1,1,Официальные требования и архивы последних лет.
+vsosh_moscow_year_pages,ВсОШ астрономия: годовые страницы на vos.olimpiada.ru,vsosh_astronomy,mirror,2,17,"Глубокий архив по учебным годам, включая регион и заключительный этапы."
+mao_moscow_archive,МАО: архив на mos.olimpiada.ru,mao,official,1,1,Официальный архив задач и решений МАО.
+spbao_olimpiada_archive,СПбАО: архив на olimpiada.ru,spbao,archive,2,1,Архив с навигацией по годам и классам.
+spbao_year_class_pages,СПбАО: годовые страницы на olimpiada.ru,spbao,archive,2,98,Глубокие страницы архива по годам и классам.
+ioaa_problems,IOAA: problems from past IOAA,ioaa,official,1,1,"Официальная подборка задач, решений и marking schemes."
+ioaa_proceedings,IOAA: past proceedings,ioaa,official,2,1,Официальные proceedings с дополнительными материалами.
+ioaa_past_olympiads,IOAA: past olympiads index,ioaa,official,2,1,Официальный индекс прошлых олимпиад с годовыми страницами.
+iao_eaae_index,IAO: индекс EAAE со ссылками на годы,iao,archive,2,1,Исторический обзор со ссылками на официальные страницы IAO.
+iao_astroarena_mirror,IAO: mirror Astroarena,iao,mirror,2,1,Подробный mirror с PDF по годам и турам.
+iao_fizmat_mirror,IAO: mirror Fizmat,iao,mirror,3,1,Дополнительный mirror с отдельными PDF и ZIP.
