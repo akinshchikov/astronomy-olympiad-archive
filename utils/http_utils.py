@@ -12,7 +12,7 @@ from typing import Mapping
 from urllib.parse import urlparse
 
 
-USER_AGENT = "astro-problems-archive/0.1 (+public archival crawl; contact: local-run)"
+USER_AGENT = "astronomy-olympiad-archive/0.1 (+public archival crawl; contact: local-run)"
 
 
 @dataclass(slots=True)

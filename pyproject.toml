@@ -1,9 +1,8 @@
 [project]
-name = "astro-problems-archive"
+name = "astronomy-olympiad-archive"
 version = "0.1.0"
-description = "Reproducible local archive for astronomy olympiad materials"
+description = "Astronomy Olympiad Archive: reproducible local archive for astronomy olympiad materials"
 requires-python = ">=3.12"
 
 [tool.pyright]
 typeCheckingMode = "basic"
-
