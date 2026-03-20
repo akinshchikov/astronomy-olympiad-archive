@@ -27,6 +27,7 @@ from utils.source_configs import SOURCE_DEFINITIONS, iter_seed_requests
 
 
 ALLOWED_EXTENSIONS = {"pdf", "doc", "docx", "zip", "html", "htm"}
+STRUVE_SOURCE_ID = "struve_moscow_year_pages"
 
 
 def build_source_candidates_csv(root: Path, families: set[str] | None) -> list[dict]:
@@ -62,6 +63,24 @@ def should_record_link(url: str) -> bool:
     if any(decoded_path.endswith(f".{extension}") for extension in ALLOWED_EXTENSIONS):
         return True
     return False
+
+
+def is_struve_seed(seed: dict) -> bool:
+    return seed.get("source_id") == STRUVE_SOURCE_ID
+
+
+def should_record_seed_page(seed: dict) -> bool:
+    return not is_struve_seed(seed)
+
+
+def should_record_seed_link(seed: dict, link_text: str, href: str) -> bool:
+    if not should_record_link(href):
+        return False
+    if is_struve_seed(seed):
+        # The shared vos.olimpiada.ru year pages also contain broader VsOSH material,
+        # so the Struve source keeps only Struve links and does not record the generic seed page.
+        return "struve" in f"{link_text} {href}".lower()
+    return True
 
 
 def infer_family(default_family: str, *texts: str) -> str:
@@ -136,13 +155,14 @@ def discover_documents(root: Path, families: set[str] | None, dry_run: bool, lim
             continue
 
         title = extract_title(response.text)
-        seed_page_entry = record_seed_page(seed, title)
-        discovered[(seed["source_id"], seed["url"])] = seed_page_entry
+        if should_record_seed_page(seed):
+            seed_page_entry = record_seed_page(seed, title)
+            discovered[(seed["source_id"], seed["url"])] = seed_page_entry
 
         links = extract_links(response.text, response.final_url)
         for link in links:
             href = link["href"]
-            if not should_record_link(href):
+            if not should_record_seed_link(seed, link["text"], href):
                 continue
             title_bits = [link["text"], title, href]
             family = infer_family(seed["olympiad_family"], href, link["text"], title)

@@ -16,6 +16,7 @@ SOURCE_ROLE_RANK = {
 
 PRIORITY_FAMILIES = [
     "vsosh_astronomy",
+    "struve",
     "spbao",
     "mao",
     "iao",
@@ -505,7 +506,9 @@ def infer_detail_tag(
     )
     tags: list[str] = []
     _append_unique(tags, _extract_grade_tag(ascii_text))
-    _append_unique(tags, _extract_group_tag(ascii_text))
+    group_tag = _extract_group_tag(ascii_text)
+    if not (olympiad_family == "struve" and group_tag == "struve"):
+        _append_unique(tags, group_tag)
     _append_unique(tags, _extract_qualifier_tag(ascii_text))
     _append_unique(tags, _extract_round_number_tag(ascii_text))
     _append_unique(tags, _extract_track_tag(ascii_text, round_detail))

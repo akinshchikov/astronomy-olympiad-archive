@@ -28,6 +28,16 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
         extras={"year_start": 2010, "year_end": CURRENT_YEAR},
     ),
     SourceDefinition(
+        source_id="struve_moscow_year_pages",
+        label="Струве: годовые страницы на vos.olimpiada.ru",
+        olympiad_family="struve",
+        source_role="mirror",
+        source_priority=2,
+        strategy="vsosh_year_pages",
+        notes="Материалы олимпиады Струве на годовых страницах архива vos.olimpiada.ru.",
+        extras={"year_start": 2022, "year_end": CURRENT_YEAR},
+    ),
+    SourceDefinition(
         source_id="mao_moscow_archive",
         label="МАО: архив на mos.olimpiada.ru",
         olympiad_family="mao",
@@ -171,4 +181,3 @@ def iter_seed_requests(source: SourceDefinition) -> list[SeedRequest]:
         return seed_requests
 
     raise ValueError(f"Unsupported seed strategy: {source.strategy}")
-
