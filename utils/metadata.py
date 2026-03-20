@@ -30,7 +30,6 @@ TASK_TOKENS = ("task", "tasks", "problem", "problems", "question", "questions", 
 SOLUTION_TOKENS = (
     "solution",
     "solutions",
-    "sol",
     "ans",
     "answer",
     "answers",
@@ -42,6 +41,7 @@ SOLUTION_TOKENS = (
     "решен",
     "ответ",
 )
+SOLUTION_SHORT_TOKEN_PATTERN = re.compile(r"(?<![a-z0-9])sol(?![a-z0-9])")
 MARKING_TOKENS = ("marking", "scheme", "criteria", "criterion", "критер", "scheme")
 ANALYSIS_TOKENS = ("review", "разбор", "comment", "annotat")
 ANNOTATED_TOKENS = ("annotat", "коммент", "разбор")
@@ -123,9 +123,6 @@ def infer_language(*texts: str) -> str:
 def infer_document_type(*texts: str) -> tuple[str, list[str]]:
     text = normalize_whitespace(" ".join(texts).lower())
     contains_tasks = any(token in text for token in TASK_TOKENS)
-    contains_solutions = any(token in text for token in SOLUTION_TOKENS)
-    contains_marking = any(token in text for token in MARKING_TOKENS)
-    contains_analysis = any(token in text for token in ANALYSIS_TOKENS)
     combined_marker = any(
         marker in text
         for marker in (
@@ -136,6 +133,13 @@ def infer_document_type(*texts: str) -> tuple[str, list[str]]:
             "задачи и решения",
         )
     )
+    contains_solutions = (
+        any(token in text for token in SOLUTION_TOKENS)
+        or bool(SOLUTION_SHORT_TOKEN_PATTERN.search(text))
+        or combined_marker
+    )
+    contains_marking = any(token in text for token in MARKING_TOKENS)
+    contains_analysis = any(token in text for token in ANALYSIS_TOKENS)
 
     extra_types: list[str] = []
     if contains_tasks:
