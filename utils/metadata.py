@@ -18,6 +18,7 @@ PRIORITY_FAMILIES = [
     "vsosh_astronomy",
     "struve",
     "owao",
+    "serbia_astronomy",
     "spbao",
     "mao",
     "iao",

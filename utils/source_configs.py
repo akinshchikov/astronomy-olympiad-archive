@@ -48,6 +48,16 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
         notes="Официальная страница архива OWAO с материалами прошлых лет.",
     ),
     SourceDefinition(
+        source_id="serbia_astronomy_official",
+        label="Serbia astronomy: official NAOK archive page",
+        olympiad_family="serbia_astronomy",
+        source_role="official",
+        source_priority=1,
+        strategy="static",
+        seed_urls=["https://www.das.org.rs/naoc.html"],
+        notes="Официальная страница NAOK / DAS с архивом задач и решений по годам.",
+    ),
+    SourceDefinition(
         source_id="mao_moscow_archive",
         label="МАО: архив на mos.olimpiada.ru",
         olympiad_family="mao",

@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import csv
 import hashlib
+import re
 import sys
 from collections import defaultdict
+from datetime import datetime
 from pathlib import Path
 
 from utils.cli import build_common_parser
@@ -29,6 +31,13 @@ from utils.source_configs import SOURCE_DEFINITIONS, iter_seed_requests
 ALLOWED_EXTENSIONS = {"pdf", "doc", "docx", "zip", "html", "htm"}
 STRUVE_SOURCE_ID = "struve_moscow_year_pages"
 OWAO_SOURCE_ID = "owao_tasks_official"
+SERBIA_SOURCE_ID = "serbia_astronomy_official"
+CURRENT_YEAR = datetime.now().year
+SERBIA_ARCHIVE_PATTERNS = (
+    (re.compile(r"^OpstCont(?P<year>\d{4})\.pdf$", flags=re.IGNORECASE), "qualifying"),
+    (re.compile(r"^RegioCont(?P<year>\d{4})\.pdf$", flags=re.IGNORECASE), "regional"),
+    (re.compile(r"^RepubCont(?P<year>\d{4})\.pdf$", flags=re.IGNORECASE), "final"),
+)
 
 
 def build_source_candidates_csv(root: Path, families: set[str] | None) -> list[dict]:
@@ -74,6 +83,21 @@ def is_owao_seed(seed: dict) -> bool:
     return seed.get("source_id") == OWAO_SOURCE_ID
 
 
+def is_serbia_seed(seed: dict) -> bool:
+    return seed.get("source_id") == SERBIA_SOURCE_ID
+
+
+def serbia_stage_from_url(url: str) -> str | None:
+    filename = decoded_filename(url)
+    for pattern, stage in SERBIA_ARCHIVE_PATTERNS:
+        match = pattern.fullmatch(filename)
+        if match:
+            if int(match.group("year")) > CURRENT_YEAR:
+                return None
+            return stage
+    return None
+
+
 def should_record_seed_page(seed: dict) -> bool:
     return not is_struve_seed(seed)
 
@@ -85,6 +109,8 @@ def should_record_seed_link(seed: dict, link_text: str, href: str) -> bool:
         # The shared vos.olimpiada.ru year pages also contain broader VsOSH material,
         # so the Struve source keeps only Struve links and does not record the generic seed page.
         return "struve" in f"{link_text} {href}".lower()
+    if is_serbia_seed(seed):
+        return serbia_stage_from_url(href) is not None
     return True
 
 
@@ -128,6 +154,22 @@ def record_seed_page(seed: dict, title: str, extension: str = "html") -> dict:
         "notes": f"seed_page=true; source_kind=html; extra_types={','.join(extra_types)}",
         "confidence": confidence_score(year, stage_or_round, document_type, title),
     }
+
+
+def apply_source_specific_link_overrides(
+    seed: dict,
+    href: str,
+    document_type: str,
+    extra_types: list[str],
+    stage_or_round: str,
+    round_detail: str | None,
+    language: str,
+) -> tuple[str, list[str], str, str | None, str]:
+    if is_serbia_seed(seed):
+        serbia_stage = serbia_stage_from_url(href)
+        if serbia_stage is not None:
+            return "solutions", ["tasks", "solutions"], serbia_stage, None, "sr"
+    return document_type, extra_types, stage_or_round, round_detail, language
 
 
 def discover_documents(root: Path, families: set[str] | None, dry_run: bool, limit: int | None) -> int:
@@ -177,6 +219,15 @@ def discover_documents(root: Path, families: set[str] | None, dry_run: bool, lim
             document_type, extra_types = infer_document_type(*title_bits)
             stage_or_round, round_detail = infer_stage(family, *title_bits)
             language = infer_language(link["text"], href)
+            document_type, extra_types, stage_or_round, round_detail, language = apply_source_specific_link_overrides(
+                seed,
+                href,
+                document_type,
+                extra_types,
+                stage_or_round,
+                round_detail,
+                language,
+            )
             variant_tag = infer_variant_tag(seed["source_role"], link["text"] or title, href, extra_types)
             candidate_id = hashlib.sha1(f"{seed['source_id']}::{href}".encode("utf-8")).hexdigest()
             key = (seed["source_id"], href)
