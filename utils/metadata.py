@@ -17,6 +17,7 @@ SOURCE_ROLE_RANK = {
 PRIORITY_FAMILIES = [
     "vsosh_astronomy",
     "struve",
+    "owao",
     "spbao",
     "mao",
     "iao",

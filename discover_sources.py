@@ -28,6 +28,7 @@ from utils.source_configs import SOURCE_DEFINITIONS, iter_seed_requests
 
 ALLOWED_EXTENSIONS = {"pdf", "doc", "docx", "zip", "html", "htm"}
 STRUVE_SOURCE_ID = "struve_moscow_year_pages"
+OWAO_SOURCE_ID = "owao_tasks_official"
 
 
 def build_source_candidates_csv(root: Path, families: set[str] | None) -> list[dict]:
@@ -69,6 +70,10 @@ def is_struve_seed(seed: dict) -> bool:
     return seed.get("source_id") == STRUVE_SOURCE_ID
 
 
+def is_owao_seed(seed: dict) -> bool:
+    return seed.get("source_id") == OWAO_SOURCE_ID
+
+
 def should_record_seed_page(seed: dict) -> bool:
     return not is_struve_seed(seed)
 
@@ -96,6 +101,8 @@ def record_seed_page(seed: dict, title: str, extension: str = "html") -> dict:
     family = infer_family(seed["olympiad_family"], seed["url"], title)
     year = infer_year(f"{seed['url']} {title}")
     document_type, extra_types = infer_document_type(title, seed["url"], seed["source_id"])
+    if is_owao_seed(seed):
+        document_type, extra_types = "info", []
     stage_or_round, round_detail = infer_stage(family, title, seed["url"])
     language = infer_language(title)
     variant_tag = infer_variant_tag(seed["source_role"], title or seed["source_id"], seed["url"], extra_types)

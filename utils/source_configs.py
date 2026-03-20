@@ -38,6 +38,16 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
         extras={"year_start": 2022, "year_end": CURRENT_YEAR},
     ),
     SourceDefinition(
+        source_id="owao_tasks_official",
+        label="OWAO: official archive page with tasks and solutions",
+        olympiad_family="owao",
+        source_role="official",
+        source_priority=1,
+        strategy="static",
+        seed_urls=["https://owao.siriusolymp.ru/tasks"],
+        notes="Официальная страница архива OWAO с материалами прошлых лет.",
+    ),
+    SourceDefinition(
         source_id="mao_moscow_archive",
         label="МАО: архив на mos.olimpiada.ru",
         olympiad_family="mao",

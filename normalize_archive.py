@@ -24,6 +24,7 @@ OBJECTS_DIRNAME = "objects"
 EVENT_METADATA_FILENAME = "event-metadata.json"
 EVENT_SOURCE_URLS_FILENAME = "event-source-urls.txt"
 EVENT_RELATIONS_FILENAME = "event-relations.json"
+OWAO_SOURCE_ID = "owao_tasks_official"
 
 
 def sha256_of_file(path: Path) -> str:
@@ -126,6 +127,7 @@ def normalize(root: Path, families: set[str] | None, dry_run: bool, limit: int |
             extension = infer_extension(row["source_url"], row.get("content_type", ""))
         year = resolve_year(row, max_reasonable_year)
         document_type = row["document_type"]
+        is_owao_seed_page = row.get("source_id") == OWAO_SOURCE_ID and "seed_page=true" in str(row.get("notes", ""))
         inferred_document_type, _ = infer_document_type(
             str(row.get("filename_original", "")),
             str(row.get("source_title", "")),
@@ -133,7 +135,7 @@ def normalize(root: Path, families: set[str] | None, dry_run: bool, limit: int |
             str(row.get("parent_page_title", "")),
             str(row.get("parent_page_url", "")),
         )
-        if document_type == "info" and inferred_document_type != "info":
+        if not is_owao_seed_page and document_type == "info" and inferred_document_type != "info":
             document_type = inferred_document_type
         elif document_type == "tasks" and inferred_document_type in {"solutions", "marking", "analysis"}:
             document_type = inferred_document_type

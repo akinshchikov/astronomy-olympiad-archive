@@ -17,6 +17,10 @@ def target_raw_path(root: Path, source_id: str, url: str, extension: str) -> Pat
     return root / "data" / "raw" / source_id / filename
 
 
+def get_header_value(headers: dict[str, str], name: str) -> str:
+    return headers.get(name, "") or headers.get(name.lower(), "")
+
+
 def crawl_documents(root: Path, families: set[str] | None, dry_run: bool, limit: int | None) -> int:
     logger = configure_logger("crawl_source", root / "data" / "logs" / "download.log")
     errors_logger = configure_logger("crawl_source.errors", root / "data" / "logs" / "errors.log")
@@ -64,7 +68,8 @@ def crawl_documents(root: Path, families: set[str] | None, dry_run: bool, limit:
         logger.info("DOWNLOAD saved url=%s path=%s bytes=%s", url, raw_path, len(response.content))
 
         txt_saved = ""
-        if infer_extension(url, response.headers.get("Content-Type", "")) in {"html", "htm"}:
+        content_type = get_header_value(response.headers, "Content-Type")
+        if infer_extension(url, content_type) in {"html", "htm"}:
             txt_payload = html_to_text(response.text)
             txt_path.write_text(txt_payload, encoding="utf-8")
             txt_saved = str(txt_path)
@@ -75,7 +80,7 @@ def crawl_documents(root: Path, families: set[str] | None, dry_run: bool, limit:
                 "raw_path": str(raw_path),
                 "txt_path": txt_saved,
                 "status": "downloaded",
-                "content_type": response.headers.get("Content-Type", ""),
+                "content_type": content_type,
             }
         )
         downloads.append(download_record)
@@ -94,4 +99,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
