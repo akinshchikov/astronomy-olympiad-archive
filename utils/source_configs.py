@@ -58,6 +58,16 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
         notes="Официальная страница NAOK / DAS с архивом задач и решений по годам.",
     ),
     SourceDefinition(
+        source_id="russia_team_qual_archive",
+        label="Russia team qualification: archive of qualifying tests",
+        olympiad_family="russia_team_qual",
+        source_role="official",
+        source_priority=1,
+        strategy="static",
+        seed_urls=["https://astroedu.ru/hq/problems/"],
+        notes="Архив квалификационных тестов для кандидатов в сборную России по астрономии и астрофизике.",
+    ),
+    SourceDefinition(
         source_id="mao_moscow_archive",
         label="МАО: архив на mos.olimpiada.ru",
         olympiad_family="mao",

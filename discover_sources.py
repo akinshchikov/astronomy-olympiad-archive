@@ -32,6 +32,7 @@ ALLOWED_EXTENSIONS = {"pdf", "doc", "docx", "zip", "html", "htm"}
 STRUVE_SOURCE_ID = "struve_moscow_year_pages"
 OWAO_SOURCE_ID = "owao_tasks_official"
 SERBIA_SOURCE_ID = "serbia_astronomy_official"
+RUSSIA_TEAM_QUAL_SOURCE_ID = "russia_team_qual_archive"
 CURRENT_YEAR = datetime.now().year
 SERBIA_ARCHIVE_PATTERNS = (
     (re.compile(r"^OpstCont(?P<year>\d{4})\.pdf$", flags=re.IGNORECASE), "qualifying"),
@@ -87,6 +88,10 @@ def is_serbia_seed(seed: dict) -> bool:
     return seed.get("source_id") == SERBIA_SOURCE_ID
 
 
+def is_russia_team_qual_seed(seed: dict) -> bool:
+    return seed.get("source_id") == RUSSIA_TEAM_QUAL_SOURCE_ID
+
+
 def serbia_stage_from_url(url: str) -> str | None:
     filename = decoded_filename(url)
     for pattern, stage in SERBIA_ARCHIVE_PATTERNS:
@@ -102,6 +107,10 @@ def should_record_seed_page(seed: dict) -> bool:
     return not is_struve_seed(seed)
 
 
+def is_russia_team_qual_direct_archive_pdf(url: str) -> bool:
+    return url.lower().startswith("https://astroedu.ru/assets/problems/hq/") and decoded_filename(url).lower().endswith(".pdf")
+
+
 def should_record_seed_link(seed: dict, link_text: str, href: str) -> bool:
     if not should_record_link(href):
         return False
@@ -109,6 +118,8 @@ def should_record_seed_link(seed: dict, link_text: str, href: str) -> bool:
         # The shared vos.olimpiada.ru year pages also contain broader VsOSH material,
         # so the Struve source keeps only Struve links and does not record the generic seed page.
         return "struve" in f"{link_text} {href}".lower()
+    if is_russia_team_qual_seed(seed):
+        return is_russia_team_qual_direct_archive_pdf(href)
     if is_serbia_seed(seed):
         return serbia_stage_from_url(href) is not None
     return True
@@ -169,6 +180,8 @@ def apply_source_specific_link_overrides(
         serbia_stage = serbia_stage_from_url(href)
         if serbia_stage is not None:
             return "solutions", ["tasks", "solutions"], serbia_stage, None, "sr"
+    if is_russia_team_qual_seed(seed) and is_russia_team_qual_direct_archive_pdf(href):
+        return document_type, extra_types, "qualifying", round_detail, language
     return document_type, extra_types, stage_or_round, round_detail, language
 
 

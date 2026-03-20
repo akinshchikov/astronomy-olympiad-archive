@@ -19,6 +19,7 @@ PRIORITY_FAMILIES = [
     "struve",
     "owao",
     "serbia_astronomy",
+    "russia_team_qual",
     "spbao",
     "mao",
     "iao",
