@@ -135,7 +135,13 @@ def build(root: Path, families: set[str] | None) -> int:
         for entry in entries:
             entries_by_family[entry["olympiad_family"]].append(entry)
 
-        for family in PRIORITY_FAMILIES:
+        if families:
+            coverage_families = [family for family in PRIORITY_FAMILIES if family in families]
+            coverage_families.extend(sorted(families - set(PRIORITY_FAMILIES)))
+        else:
+            coverage_families = PRIORITY_FAMILIES
+
+        for family in coverage_families:
             family_rows = by_family.get(family, [])
             handle.write(f"## {family}\n\n")
             if not family_rows:
