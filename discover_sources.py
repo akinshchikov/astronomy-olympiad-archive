@@ -33,6 +33,7 @@ STRUVE_SOURCE_ID = "struve_moscow_year_pages"
 OWAO_SOURCE_ID = "owao_tasks_official"
 SERBIA_SOURCE_ID = "serbia_astronomy_official"
 RUSSIA_TEAM_QUAL_SOURCE_ID = "russia_team_qual_archive"
+SKIP_SEED_PAGE_SOURCE_IDS = {STRUVE_SOURCE_ID}
 CURRENT_YEAR = datetime.now().year
 SERBIA_ARCHIVE_PATTERNS = (
     (re.compile(r"^OpstCont(?P<year>\d{4})\.pdf$", flags=re.IGNORECASE), "qualifying"),
@@ -76,20 +77,12 @@ def should_record_link(url: str) -> bool:
     return False
 
 
-def is_struve_seed(seed: dict) -> bool:
-    return seed.get("source_id") == STRUVE_SOURCE_ID
+def source_id_of(seed: dict) -> str:
+    return str(seed.get("source_id", ""))
 
 
-def is_owao_seed(seed: dict) -> bool:
-    return seed.get("source_id") == OWAO_SOURCE_ID
-
-
-def is_serbia_seed(seed: dict) -> bool:
-    return seed.get("source_id") == SERBIA_SOURCE_ID
-
-
-def is_russia_team_qual_seed(seed: dict) -> bool:
-    return seed.get("source_id") == RUSSIA_TEAM_QUAL_SOURCE_ID
+def is_source_seed(seed: dict, source_id: str) -> bool:
+    return source_id_of(seed) == source_id
 
 
 def serbia_stage_from_url(url: str) -> str | None:
@@ -104,25 +97,30 @@ def serbia_stage_from_url(url: str) -> str | None:
 
 
 def should_record_seed_page(seed: dict) -> bool:
-    return not is_struve_seed(seed)
+    return source_id_of(seed) not in SKIP_SEED_PAGE_SOURCE_IDS
 
 
 def is_russia_team_qual_direct_archive_pdf(url: str) -> bool:
     return url.lower().startswith("https://astroedu.ru/assets/problems/hq/") and decoded_filename(url).lower().endswith(".pdf")
 
 
-def should_record_seed_link(seed: dict, link_text: str, href: str) -> bool:
-    if not should_record_link(href):
-        return False
-    if is_struve_seed(seed):
+def passes_source_specific_link_filter(seed: dict, link_text: str, href: str) -> bool:
+    source_id = source_id_of(seed)
+    if source_id == STRUVE_SOURCE_ID:
         # The shared vos.olimpiada.ru year pages also contain broader VsOSH material,
         # so the Struve source keeps only Struve links and does not record the generic seed page.
         return "struve" in f"{link_text} {href}".lower()
-    if is_russia_team_qual_seed(seed):
+    if source_id == RUSSIA_TEAM_QUAL_SOURCE_ID:
         return is_russia_team_qual_direct_archive_pdf(href)
-    if is_serbia_seed(seed):
+    if source_id == SERBIA_SOURCE_ID:
         return serbia_stage_from_url(href) is not None
     return True
+
+
+def should_record_seed_link(seed: dict, link_text: str, href: str) -> bool:
+    if not should_record_link(href):
+        return False
+    return passes_source_specific_link_filter(seed, link_text, href)
 
 
 def infer_family(default_family: str, *texts: str) -> str:
@@ -134,12 +132,17 @@ def infer_family(default_family: str, *texts: str) -> str:
     return default_family
 
 
+def apply_source_specific_seed_page_overrides(seed: dict, document_type: str, extra_types: list[str]) -> tuple[str, list[str]]:
+    if is_source_seed(seed, OWAO_SOURCE_ID):
+        return "info", []
+    return document_type, extra_types
+
+
 def record_seed_page(seed: dict, title: str, extension: str = "html") -> dict:
     family = infer_family(seed["olympiad_family"], seed["url"], title)
     year = infer_year(f"{seed['url']} {title}")
     document_type, extra_types = infer_document_type(title, seed["url"], seed["source_id"])
-    if is_owao_seed(seed):
-        document_type, extra_types = "info", []
+    document_type, extra_types = apply_source_specific_seed_page_overrides(seed, document_type, extra_types)
     stage_or_round, round_detail = infer_stage(family, title, seed["url"])
     language = infer_language(title)
     variant_tag = infer_variant_tag(seed["source_role"], title or seed["source_id"], seed["url"], extra_types)
@@ -176,11 +179,12 @@ def apply_source_specific_link_overrides(
     round_detail: str | None,
     language: str,
 ) -> tuple[str, list[str], str, str | None, str]:
-    if is_serbia_seed(seed):
+    source_id = source_id_of(seed)
+    if source_id == SERBIA_SOURCE_ID:
         serbia_stage = serbia_stage_from_url(href)
         if serbia_stage is not None:
             return "solutions", ["tasks", "solutions"], serbia_stage, None, "sr"
-    if is_russia_team_qual_seed(seed) and is_russia_team_qual_direct_archive_pdf(href):
+    if source_id == RUSSIA_TEAM_QUAL_SOURCE_ID and is_russia_team_qual_direct_archive_pdf(href):
         return document_type, extra_types, "qualifying", round_detail, language
     return document_type, extra_types, stage_or_round, round_detail, language
 
