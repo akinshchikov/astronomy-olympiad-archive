@@ -7,10 +7,14 @@
 Приоритет покрытия:
 
 1. `vsosh_astronomy`
-2. `spbao`
-3. `mao`
-4. `iao`
-5. `ioaa`
+2. `struve`
+3. `owao`
+4. `serbia_astronomy`
+5. `russia_team_qual`
+6. `spbao`
+7. `mao`
+8. `iao`
+9. `ioaa`
 
 ## Что лежит в публичной версии
 
@@ -20,7 +24,7 @@
 - итоговые индексы покрытия и relation groups
 - документация
 
-Локальные бинарные данные intentionally не коммитятся:
+Тяжёлые локальные бинарные данные намеренно не коммитятся:
 
 - `data/raw/`
 - `data/archive/`
@@ -81,7 +85,7 @@ data/
 
 - `grade-10`, `grade-10-11`
 - `theory`, `practical`, `test`, `blitz`
-- `school`, `municipal`, `invitational`, `struve`
+- `school`, `municipal`, `invitational`, `selection`
 - `reference-data`, `questions`, `exam`, `problem-sheet`, `tasks-page`
 
 Это сделано, чтобы по имени сразу было видно класс и тур, а запасной `-v2`, `-v3` использовался только там, где действительно есть несколько осмысленных вариантов одного и того же комплекта.
@@ -108,49 +112,46 @@ python3 run_pipeline.py --dry-run
 python3 run_pipeline.py
 ```
 
-Только приоритетные семейства:
+Только выбранные семейства:
 
 ```bash
-python3 run_pipeline.py --families vsosh_astronomy spbao mao iao ioaa
+python3 run_pipeline.py --families struve owao serbia_astronomy russia_team_qual
 ```
+
+Тот же фильтр `--families` теперь применяется и к `coverage_report.md`.
 
 ## Источники первой очереди
 
 - `vsosh_edsoo_official`: `https://vserosolimp.edsoo.ru/astronom`
-- `vsosh_moscow_year_pages`: `https://vos.olimpiada.ru/astr/<season>`
+- `owao_tasks_official`: `https://owao.siriusolymp.ru/tasks`
+- `serbia_astronomy_official`: `https://www.das.org.rs/naoc.html`
+- `russia_team_qual_archive`: `https://astroedu.ru/hq/problems/`
 - `mao_moscow_archive`: `https://mos.olimpiada.ru/tasks/astr`
-- `spbao_olimpiada_archive`: `https://olimpiada.ru/activity/287/tasks`
-- `spbao_year_class_pages`: `https://olimpiada.ru/activity/287/tasks/<year>?class=<grade>&year=<year>`
 - `ioaa_problems`: `https://www.ioaastrophysics.org/resources/problems-from-past-ioaa`
-- `ioaa_proceedings`: `https://www.ioaastrophysics.org/resources/past-proceedings`
-- `ioaa_past_olympiads`: `https://www.ioaastrophysics.org/past-olympiads`
-- `iao_eaae_index`: `https://eaae-astronomy.org/news/international-astronomy-olympiad`
-- `iao_astroarena_mirror`: `https://astroarena.github.io/astroarena/olympiads/iao.html`
-- `iao_fizmat_mirror`: `https://fizmat.space/international/`
 
-Полный список seed-источников сохранён в [data/manifests/source_candidates.csv](data/manifests/source_candidates.csv).
+Часть семейств сейчас стартует не с источника первого приоритета, а с archive/mirror-источников, прежде всего `struve`, `spbao` и `iao`.
+
+Полный актуальный список seed-источников сохранён в [data/manifests/source_candidates.csv](data/manifests/source_candidates.csv).
 
 ## Snapshot
 
-Текущий snapshot построен локально на `2026-03-07`:
+Текущий публичный snapshot по коммитимым артефактам обновлён на `2026-03-20`:
 
-- discovery candidates: `1828`
-- successful downloads: `1585`
-- normalized archive entries: `1562`
-- unique physical files by `sha256`: `1546`
-- relation groups: `245`
+- настроенные seed-источники: `15`
+- обнаруженные публичные документы: `1939`
+- строки в `olympiads_index.csv`: `297`
+- уникальные публичные файлы в `files_index.csv`: `1659`
+- relation groups: `298`
 
-По ролям источников:
+Приоритетные семейства в текущих публичных индексах:
 
-- `mirror=626`
-- `official=524`
-- `archive=412`
-
-Приоритетные семейства:
-
-- `vsosh_astronomy`: `2010..2026`, 17 лет
-- `spbao`: `2010..2023`, 14 лет
-- `mao`: `2011..2025`, 8 лет
+- `vsosh_astronomy`: `2009..2026`, 18 лет
+- `struve`: `2022..2025`, 4 года
+- `owao`: `2025`, 1 год
+- `serbia_astronomy`: `2012..2026`, 15 лет
+- `russia_team_qual`: `2016..2026`, 11 лет
+- `spbao`: `2010..2024`, 15 лет
+- `mao`: `2009..2025`, 10 лет
 - `iao`: `1996..2023`, 27 лет
 - `ioaa`: `2003..2025`, 20 лет
 
@@ -161,11 +162,13 @@ python3 run_pipeline.py --families vsosh_astronomy spbao mao iao ioaa
 - [data/indices/files_index.csv](data/indices/files_index.csv)
 - [data/indices/relation_groups.csv](data/indices/relation_groups.csv)
 
-## Ограничения и known gaps
+## Ограничения и известные пробелы
 
 - Для PDF пока нет полноценного OCR/извлечения текста; near-duplicate строится по метаданным, именам и размерам файлов.
 - Часть старых IAO-страниц на `issp.ac.ru` нестабильна, поэтому используются и официальные индексы, и зеркала.
 - `vso.edsoo.ru` блокирует часть официальных файлов через `robots.txt`, поэтому они остаются только в discovery.
+- Для OWAO сейчас обнаруживаются официальные PDF задач и решений за 2025 год, но хост с самими файлами ограничен через `robots.txt`, поэтому в публичных индексах они пока остаются discovery-only.
+- Для `russia_team_qual` сейчас покрыт только direct-PDF-поднабор с `astroedu.ru/assets/problems/hq/...pdf`; связанные quiz-страницы на `uts.astroedu.ru` намеренно оставлены вне первого патча.
 - В старых архивах СПбАО и ВсОШ есть битые ссылки (`404`), особенно в исторических зеркалах.
 - Если один файл содержит и задачи, и решения, файл не режется; это отражается в metadata.
 

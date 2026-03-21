@@ -7,10 +7,14 @@
 Priority coverage:
 
 1. `vsosh_astronomy`
-2. `spbao`
-3. `mao`
-4. `iao`
-5. `ioaa`
+2. `struve`
+3. `owao`
+4. `serbia_astronomy`
+5. `russia_team_qual`
+6. `spbao`
+7. `mao`
+8. `iao`
+9. `ioaa`
 
 ## What the public repository contains
 
@@ -81,7 +85,7 @@ Instead of one long `detail_tag`, the filename is now built from separate meanin
 
 - `grade-10`, `grade-10-11`
 - `theory`, `practical`, `test`, `blitz`
-- `school`, `municipal`, `invitational`, `struve`
+- `school`, `municipal`, `invitational`, `selection`
 - `reference-data`, `questions`, `exam`, `problem-sheet`, `tasks-page`
 
 This is meant to make the grade and round visible directly in the filename, while the fallback suffix `-v2`, `-v3`, and so on is used only when there are genuinely multiple meaningful variants of the same package.
@@ -108,49 +112,46 @@ Full run:
 python3 run_pipeline.py
 ```
 
-Priority families only:
+Selected families only:
 
 ```bash
-python3 run_pipeline.py --families vsosh_astronomy spbao mao iao ioaa
+python3 run_pipeline.py --families struve owao serbia_astronomy russia_team_qual
 ```
+
+The same `--families` filter now also applies to `coverage_report.md`.
 
 ## First-priority source seeds
 
 - `vsosh_edsoo_official`: `https://vserosolimp.edsoo.ru/astronom`
-- `vsosh_moscow_year_pages`: `https://vos.olimpiada.ru/astr/<season>`
+- `owao_tasks_official`: `https://owao.siriusolymp.ru/tasks`
+- `serbia_astronomy_official`: `https://www.das.org.rs/naoc.html`
+- `russia_team_qual_archive`: `https://astroedu.ru/hq/problems/`
 - `mao_moscow_archive`: `https://mos.olimpiada.ru/tasks/astr`
-- `spbao_olimpiada_archive`: `https://olimpiada.ru/activity/287/tasks`
-- `spbao_year_class_pages`: `https://olimpiada.ru/activity/287/tasks/<year>?class=<grade>&year=<year>`
 - `ioaa_problems`: `https://www.ioaastrophysics.org/resources/problems-from-past-ioaa`
-- `ioaa_proceedings`: `https://www.ioaastrophysics.org/resources/past-proceedings`
-- `ioaa_past_olympiads`: `https://www.ioaastrophysics.org/past-olympiads`
-- `iao_eaae_index`: `https://eaae-astronomy.org/news/international-astronomy-olympiad`
-- `iao_astroarena_mirror`: `https://astroarena.github.io/astroarena/olympiads/iao.html`
-- `iao_fizmat_mirror`: `https://fizmat.space/international/`
 
-The full seed-source list is stored in [data/manifests/source_candidates.csv](data/manifests/source_candidates.csv).
+Some families currently start from archive/mirror seeds rather than a priority-1 official source, notably `struve`, `spbao`, and `iao`.
+
+The full current seed-source list is stored in [data/manifests/source_candidates.csv](data/manifests/source_candidates.csv).
 
 ## Snapshot
 
-Current local snapshot built on `2026-03-07`:
+Current tracked public snapshot refreshed on `2026-03-20`:
 
-- discovery candidates: `1828`
-- successful downloads: `1585`
-- normalized archive entries: `1562`
-- unique physical files by `sha256`: `1546`
-- relation groups: `245`
+- configured seed sources: `15`
+- discovered public documents: `1939`
+- olympiad index rows: `297`
+- unique public files in `files_index.csv`: `1659`
+- relation groups: `298`
 
-By source role:
+Priority families in the current public indices:
 
-- `mirror=626`
-- `official=524`
-- `archive=412`
-
-Priority families:
-
-- `vsosh_astronomy`: `2010..2026`, 17 years
-- `spbao`: `2010..2023`, 14 years
-- `mao`: `2011..2025`, 8 years
+- `vsosh_astronomy`: `2009..2026`, 18 years
+- `struve`: `2022..2025`, 4 years
+- `owao`: `2025`, 1 year
+- `serbia_astronomy`: `2012..2026`, 15 years
+- `russia_team_qual`: `2016..2026`, 11 years
+- `spbao`: `2010..2024`, 15 years
+- `mao`: `2009..2025`, 10 years
 - `iao`: `1996..2023`, 27 years
 - `ioaa`: `2003..2025`, 20 years
 
@@ -166,6 +167,8 @@ Priority families:
 - PDF OCR and text extraction are still limited; near-duplicate detection currently relies on metadata, filenames, and file sizes.
 - Some older IAO pages on `issp.ac.ru` are unstable, so both official indexes and mirrors are used.
 - `vso.edsoo.ru` blocks part of the official material through `robots.txt`, so those files remain discovery-only.
+- OWAO currently discovers the official 2025 task/solution PDF links, but the downstream file host is `robots.txt`-limited, so the public indices still show those PDFs as discovery-only.
+- `russia_team_qual` currently covers the direct-PDF subset from `astroedu.ru/assets/problems/hq/...pdf`; linked `uts.astroedu.ru` quiz pages are intentionally out of scope for now.
 - Old SPbAO and VsOSh archives still contain broken historical links (`404`), especially in mirrors.
 - If a single file contains both tasks and solutions, the file is not split; this is reflected in metadata.
 
