@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from pathlib import PurePosixPath
-from urllib.parse import unquote, urlparse
+from urllib.parse import parse_qs, unquote, urlparse
 
 from .fs_utils import normalize_whitespace, safe_filename, slugify_ascii, transliterate_to_ascii
 
@@ -79,7 +79,18 @@ FINAL_TOKENS = ("final", "/final/", "-final-", "зе", "заключ")
 
 def decoded_url_path(url: str) -> str:
     parsed = urlparse(url)
-    return unquote(parsed.path)
+    path = unquote(parsed.path)
+    if parsed.query:
+        query = parse_qs(parsed.query, keep_blank_values=False)
+        for key in ("q", "file", "filepath", "path", "url"):
+            for value in query.get(key, []):
+                decoded_value = unquote(value).strip()
+                if not decoded_value:
+                    continue
+                if "/" in decoded_value or "." in PurePosixPath(decoded_value).name:
+                    if path in {"", "/"} or path.endswith("index.php"):
+                        return decoded_value
+    return path
 
 
 def decoded_filename(url: str) -> str:
@@ -94,15 +105,18 @@ def infer_year(raw_text: str) -> int | None:
     if season_match:
         return int(season_match.group(2))
 
-    season_short_match = re.search(r"(?<!\d)(\d{2})[-_/](\d{2})(?!\d)", text)
-    if season_short_match:
-        left = int(season_short_match.group(1))
-        right = int(season_short_match.group(2))
-        if left >= 20 and right >= 20:
-            century = 2000 if right < 90 else 1900
-            if right < left:
-                right += 100
-            return century + right
+    # Handle mixed format: 4-digit + 1-or-2-digit short year (e.g. "2018-19", "2018-9")
+    # Exclude "/" to avoid matching URL path components like "2010/5_..."
+    season_mixed_match = re.search(r"(20\d{2})[-_](\d{1,2})(?!\d)", text)
+    if season_mixed_match:
+        first = int(season_mixed_match.group(1))
+        short_str = season_mixed_match.group(2)
+        short = int(short_str)
+        divisor = 10 ** len(short_str)
+        second = (first // divisor) * divisor + short
+        if second <= first:
+            second += divisor
+        return second
 
     year_match = re.search(r"(?<!\d)((?:19|20)\d{2})(?!\d)", text)
     if year_match:
@@ -127,8 +141,14 @@ def infer_document_type(*texts: str) -> tuple[str, list[str]]:
         marker in text
         for marker in (
             "taskssol",
+            "task and solution",
+            "task and solutions",
             "tasks and solutions",
+            "problem and solution",
+            "problem and solutions",
             "problems and solutions",
+            "задача и решение",
+            "задача и решения",
             "задания и решения",
             "задачи и решения",
         )

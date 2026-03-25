@@ -21,6 +21,17 @@ def get_header_value(headers: dict[str, str], name: str) -> str:
     return headers.get(name, "") or headers.get(name.lower(), "")
 
 
+def guessed_content_type(extension: str) -> str:
+    return {
+        "doc": "application/msword",
+        "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "htm": "text/html; charset=utf-8",
+        "html": "text/html; charset=utf-8",
+        "pdf": "application/pdf",
+        "zip": "application/zip",
+    }.get(extension, "")
+
+
 def crawl_documents(root: Path, families: set[str] | None, dry_run: bool, limit: int | None) -> int:
     logger = configure_logger("crawl_source", root / "data" / "logs" / "download.log")
     errors_logger = configure_logger("crawl_source.errors", root / "data" / "logs" / "errors.log")
@@ -36,16 +47,24 @@ def crawl_documents(root: Path, families: set[str] | None, dry_run: bool, limit:
         url = row["source_url"]
         extension = infer_extension(url)
         raw_path = target_raw_path(root, row["source_id"], url, extension)
+        legacy_bin_path = target_raw_path(root, row["source_id"], url, "bin") if extension != "bin" else raw_path
         txt_path = raw_path.with_suffix(".txt")
+        existing_raw_path = raw_path if raw_path.exists() else legacy_bin_path if legacy_bin_path.exists() else None
+        existing_txt_path = existing_raw_path.with_suffix(".txt") if existing_raw_path is not None else txt_path
 
-        if raw_path.exists():
-            logger.info("DOWNLOAD skip_existing url=%s path=%s", url, raw_path)
+        if existing_raw_path is not None:
+            logger.info("DOWNLOAD skip_existing url=%s path=%s", url, existing_raw_path)
+            txt_saved = str(existing_txt_path) if existing_txt_path.exists() else ""
+            content_type = guessed_content_type(extension)
+            if txt_saved:
+                content_type = "text/html; charset=utf-8"
             download_record = dict(row)
             download_record.update(
                 {
-                    "raw_path": str(raw_path),
-                    "txt_path": str(txt_path) if txt_path.exists() else "",
+                    "raw_path": str(existing_raw_path),
+                    "txt_path": txt_saved,
                     "status": "existing",
+                    "content_type": content_type,
                 }
             )
             downloads.append(download_record)

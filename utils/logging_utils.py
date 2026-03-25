@@ -10,6 +10,8 @@ def configure_logger(name: str, log_path: Path) -> logging.Logger:
     ensure_dir(log_path.parent)
     logger = logging.getLogger(name)
     logger.setLevel(logging.INFO)
+    for handler in logger.handlers:
+        handler.close()
     logger.handlers.clear()
 
     formatter = logging.Formatter(
@@ -22,4 +24,3 @@ def configure_logger(name: str, log_path: Path) -> logging.Logger:
     logger.addHandler(file_handler)
     logger.propagate = False
     return logger
-

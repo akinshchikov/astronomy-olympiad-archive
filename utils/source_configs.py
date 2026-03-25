@@ -6,6 +6,113 @@ from .models import SeedRequest, SourceDefinition
 
 CURRENT_YEAR = datetime.now().year
 
+
+SPBAO_OFFICIAL_SEED_CONTEXTS = {
+    # XXVII (2020)
+    "http://school.astro.spbu.ru/?q=node/596": {
+        "year": 2020,
+        "stage_or_round": "final",
+        "round_detail": "practical",
+    },
+    # XXVIII (2021)
+    "http://school.astro.spbu.ru/?q=node/604": {
+        "year": 2021,
+        "stage_or_round": "regional",
+    },
+    "http://school.astro.spbu.ru/?q=node/620": {
+        "year": 2021,
+        "stage_or_round": "qualifying",
+    },
+    "http://school.astro.spbu.ru/?q=node/622": {
+        "year": 2021,
+        "stage_or_round": "final",
+        "round_detail": "theoretical",
+    },
+    "http://school.astro.spbu.ru/?q=node/624": {
+        "year": 2021,
+        "stage_or_round": "final",
+        "round_detail": "practical",
+    },
+    # XXIX (2022)
+    "http://school.astro.spbu.ru/?q=node/630": {
+        "year": 2022,
+        "stage_or_round": "regional",
+    },
+    "http://school.astro.spbu.ru/?q=node/640": {
+        "year": 2022,
+        "stage_or_round": "qualifying",
+    },
+    "http://school.astro.spbu.ru/?q=node/642": {
+        "year": 2022,
+        "stage_or_round": "final",
+        "round_detail": "theoretical",
+    },
+    "http://school.astro.spbu.ru/?q=node/646": {
+        "year": 2022,
+        "stage_or_round": "final",
+        "round_detail": "practical",
+    },
+    # XXX (2023)
+    "http://school.astro.spbu.ru/?q=node/649": {
+        "year": 2023,
+        "stage_or_round": "regional",
+    },
+    "http://school.astro.spbu.ru/?q=node/652": {
+        "year": 2023,
+        "stage_or_round": "qualifying",
+    },
+    "http://school.astro.spbu.ru/?q=node/654": {
+        "year": 2023,
+        "stage_or_round": "final",
+        "round_detail": "theoretical",
+    },
+    "http://school.astro.spbu.ru/?q=node/656": {
+        "year": 2023,
+        "stage_or_round": "final",
+        "round_detail": "practical",
+    },
+    # XXXI (2024)
+    "http://school.astro.spbu.ru/?q=node/663": {
+        "year": 2024,
+        "stage_or_round": "qualifying",
+    },
+    "http://school.astro.spbu.ru/?q=node/665": {
+        "year": 2024,
+        "stage_or_round": "final",
+        "round_detail": "theoretical",
+    },
+    "http://school.astro.spbu.ru/?q=node/667": {
+        "year": 2024,
+        "stage_or_round": "final",
+        "round_detail": "practical",
+    },
+    # XXXII (2025)
+    "http://school.astro.spbu.ru/?q=node/673": {
+        "year": 2025,
+        "stage_or_round": "qualifying",
+    },
+    "http://school.astro.spbu.ru/?q=node/678": {
+        "year": 2025,
+        "stage_or_round": "final",
+        "round_detail": "theoretical",
+    },
+    "http://school.astro.spbu.ru/?q=node/680": {
+        "year": 2025,
+        "stage_or_round": "final",
+        "round_detail": "practical",
+    },
+    # XXXIII (2026)
+    "http://school.astro.spbu.ru/?q=node/685": {
+        "year": 2026,
+        "stage_or_round": "qualifying",
+    },
+    "http://school.astro.spbu.ru/?q=node/687": {
+        "year": 2026,
+        "stage_or_round": "final",
+        "round_detail": "theoretical",
+    },
+}
+
 SOURCE_DEFINITIONS: list[SourceDefinition] = [
     SourceDefinition(
         source_id="vsosh_edsoo_official",
@@ -28,6 +135,17 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
         extras={"year_start": 2010, "year_end": CURRENT_YEAR},
     ),
     SourceDefinition(
+        source_id="vsosh_astroedu_archive",
+        label="ВсОШ астрономия: архив задач и решений на astroedu.ru",
+        olympiad_family="vsosh_astronomy",
+        source_role="archive",
+        source_priority=3,
+        strategy="static",
+        seed_urls=["https://astroedu.ru/vos/problems.html"],
+        notes="Глубокий архив задач и решений ВсОШ (1994–наст. время), регион и заключительный этапы.",
+        extras={"default_context": {"record_seed_page": False}},
+    ),
+    SourceDefinition(
         source_id="struve_moscow_year_pages",
         label="Струве: годовые страницы на vos.olimpiada.ru",
         olympiad_family="struve",
@@ -46,6 +164,7 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
         strategy="static",
         seed_urls=["https://owao.siriusolymp.ru/tasks"],
         notes="Официальная страница архива OWAO с материалами прошлых лет.",
+        extras={"default_context": {"record_seed_page": False}},
     ),
     SourceDefinition(
         source_id="serbia_astronomy_official",
@@ -66,6 +185,7 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
         strategy="static",
         seed_urls=["https://astroedu.ru/hq/problems/"],
         notes="Архив квалификационных тестов для кандидатов в сборную России по астрономии и астрофизике.",
+        extras={"default_context": {"record_seed_page": False}},
     ),
     SourceDefinition(
         source_id="mao_moscow_archive",
@@ -76,6 +196,49 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
         strategy="static",
         seed_urls=["https://mos.olimpiada.ru/tasks/astr"],
         notes="Официальный архив задач и решений МАО.",
+    ),
+    SourceDefinition(
+        source_id="spbao_official",
+        label="СПбАО: официальный сайт school.astro.spbu.ru",
+        olympiad_family="spbao",
+        source_role="official",
+        source_priority=1,
+        strategy="static",
+        seed_urls=[
+            # XXVII (2020)
+            "http://school.astro.spbu.ru/?q=node/596",
+            # XXVIII (2021)
+            "http://school.astro.spbu.ru/?q=node/604",
+            "http://school.astro.spbu.ru/?q=node/620",
+            "http://school.astro.spbu.ru/?q=node/622",
+            "http://school.astro.spbu.ru/?q=node/624",
+            # XXIX (2022)
+            "http://school.astro.spbu.ru/?q=node/630",
+            "http://school.astro.spbu.ru/?q=node/640",
+            "http://school.astro.spbu.ru/?q=node/642",
+            "http://school.astro.spbu.ru/?q=node/646",
+            # XXX (2023)
+            "http://school.astro.spbu.ru/?q=node/649",
+            "http://school.astro.spbu.ru/?q=node/652",
+            "http://school.astro.spbu.ru/?q=node/654",
+            "http://school.astro.spbu.ru/?q=node/656",
+            # XXXI (2024)
+            "http://school.astro.spbu.ru/?q=node/663",
+            "http://school.astro.spbu.ru/?q=node/665",
+            "http://school.astro.spbu.ru/?q=node/667",
+            # XXXII (2025)
+            "http://school.astro.spbu.ru/?q=node/673",
+            "http://school.astro.spbu.ru/?q=node/678",
+            "http://school.astro.spbu.ru/?q=node/680",
+            # XXXIII (2026)
+            "http://school.astro.spbu.ru/?q=node/685",
+            "http://school.astro.spbu.ru/?q=node/687",
+        ],
+        notes="Официальный архив СПбАО на сайте кафедры астрономии СПбГУ (2020–2026, все туры с PDF).",
+        extras={
+            "default_context": {"record_seed_page": False},
+            "seed_contexts": SPBAO_OFFICIAL_SEED_CONTEXTS,
+        },
     ),
     SourceDefinition(
         source_id="spbao_olimpiada_archive",
@@ -95,7 +258,12 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
         source_priority=2,
         strategy="spbao_year_class_pages",
         notes="Глубокие страницы архива по годам и классам.",
-        extras={"year_start": 2010, "year_end": 2023, "classes": list(range(5, 12))},
+        extras={
+            "year_start": 2010,
+            "year_end": CURRENT_YEAR,
+            "classes": list(range(5, 12)),
+            "default_context": {"record_seed_page": False, "container_only": True},
+        },
     ),
     SourceDefinition(
         source_id="ioaa_problems",
@@ -106,6 +274,7 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
         strategy="static",
         seed_urls=["https://www.ioaastrophysics.org/resources/problems-from-past-ioaa"],
         notes="Официальная подборка задач, решений и marking schemes.",
+        extras={"default_context": {"record_seed_page": False}},
     ),
     SourceDefinition(
         source_id="ioaa_proceedings",
@@ -116,6 +285,7 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
         strategy="static",
         seed_urls=["https://www.ioaastrophysics.org/resources/past-proceedings"],
         notes="Официальные proceedings с дополнительными материалами.",
+        extras={"default_context": {"record_seed_page": False}},
     ),
     SourceDefinition(
         source_id="ioaa_past_olympiads",
@@ -126,6 +296,7 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
         strategy="static",
         seed_urls=["https://www.ioaastrophysics.org/past-olympiads"],
         notes="Официальный индекс прошлых олимпиад с годовыми страницами.",
+        extras={"default_context": {"record_seed_page": False}},
     ),
     SourceDefinition(
         source_id="iao_eaae_index",
@@ -136,6 +307,13 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
         strategy="static",
         seed_urls=["https://eaae-astronomy.org/news/international-astronomy-olympiad"],
         notes="Исторический обзор со ссылками на официальные страницы IAO.",
+        extras={
+            "default_context": {
+                "record_seed_page": False,
+                "follow_second_hop": True,
+                "max_follow_depth": 2,
+            }
+        },
     ),
     SourceDefinition(
         source_id="iao_astroarena_mirror",
@@ -160,6 +338,14 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
 ]
 
 
+def _seed_context_for_url(source: SourceDefinition, url: str, extra_context: dict | None = None) -> dict:
+    context = dict(source.extras.get("default_context", {}))
+    context.update(source.extras.get("seed_contexts", {}).get(url, {}))
+    if extra_context:
+        context.update(extra_context)
+    return context
+
+
 def iter_seed_requests(source: SourceDefinition) -> list[SeedRequest]:
     if source.strategy == "static":
         return [
@@ -169,6 +355,7 @@ def iter_seed_requests(source: SourceDefinition) -> list[SeedRequest]:
                 olympiad_family=source.olympiad_family,
                 source_role=source.source_role,
                 source_priority=source.source_priority,
+                context=_seed_context_for_url(source, url),
             )
             for url in source.seed_urls
         ]
@@ -186,7 +373,11 @@ def iter_seed_requests(source: SourceDefinition) -> list[SeedRequest]:
                     olympiad_family=source.olympiad_family,
                     source_role=source.source_role,
                     source_priority=source.source_priority,
-                    context={"season_start": season_start, "season_end": end_year},
+                    context=_seed_context_for_url(
+                        source,
+                        f"https://vos.olimpiada.ru/astr/{season_start}_{end_year}",
+                        {"season_start": season_start, "season_end": end_year},
+                    ),
                 )
             )
         return seed_requests
@@ -205,7 +396,11 @@ def iter_seed_requests(source: SourceDefinition) -> list[SeedRequest]:
                         olympiad_family=source.olympiad_family,
                         source_role=source.source_role,
                         source_priority=source.source_priority,
-                        context={"archive_year": year, "grade": grade},
+                        context=_seed_context_for_url(
+                            source,
+                            f"https://olimpiada.ru/activity/287/tasks/{year}?class={grade}&year={year}",
+                            {"archive_year": year, "grade": grade},
+                        ),
                     )
                 )
         return seed_requests
