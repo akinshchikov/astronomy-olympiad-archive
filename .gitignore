@@ -1,5 +1,10 @@
 __pycache__/
 *.py[cod]
+.coverage
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+htmlcov/
 
 .venv/
 .python-version
@@ -16,4 +21,3 @@ data/logs/
 data/manifests/download_manifest.jsonl
 data/manifests/normalized_entries.jsonl
 data/manifests/relation_edges.jsonl
-

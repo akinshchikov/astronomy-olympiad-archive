@@ -112,6 +112,24 @@ Full run:
 python3 run_pipeline.py
 ```
 
+Full clean rebuild:
+
+```bash
+python3 run_pipeline.py --clean
+```
+
+Cleanup only, without running the pipeline:
+
+```bash
+python3 cleanup_outputs.py
+```
+
+The same cleanup via the orchestrator:
+
+```bash
+python3 run_pipeline.py --clean-only
+```
+
 Selected families only:
 
 ```bash
@@ -119,6 +137,30 @@ python3 run_pipeline.py --families struve owao serbia_astronomy russia_team_qual
 ```
 
 The same `--families` filter now also applies to `coverage_report.md`.
+
+Clean and rebuild only one family locally:
+
+```bash
+python3 run_pipeline.py --clean --families spbao
+```
+
+Cleanup only for selected families:
+
+```bash
+python3 cleanup_outputs.py --families spbao
+```
+
+The same family cleanup via the orchestrator:
+
+```bash
+python3 run_pipeline.py --clean-only --families spbao
+```
+
+Notes:
+
+- `python3 run_pipeline.py --clean` removes all generated local outputs first: `data/raw/`, `data/archive/`, `data/logs/`, generated manifests, and generated indices.
+- `python3 cleanup_outputs.py --families ...` removes only the selected family archive tree, matching raw source folders, and shared logs. It intentionally does not delete the shared `data/archive/objects/` store.
+- A focused run with `--families ...` is meant for local targeted refreshes. To rebuild the complete global manifests and indices again, run the pipeline without `--families`.
 
 ## First-priority source seeds
 

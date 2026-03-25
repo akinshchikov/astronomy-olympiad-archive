@@ -35,6 +35,26 @@ This repository is prepared for a public GitHub release as a reproducible pipeli
 3. Do not add `data/raw/`, `data/archive/`, or `data/logs/`.
 4. If you later want to publish binaries, review redistribution terms per source first.
 
+## Refreshing Local State
+
+Before preparing a fresh local snapshot, rebuild from a clean state:
+
+```bash
+python3 run_pipeline.py --clean
+```
+
+If you only want to remove generated local outputs first:
+
+```bash
+python3 cleanup_outputs.py
+```
+
+For a targeted local refresh of one family:
+
+```bash
+python3 run_pipeline.py --clean --families spbao
+```
+
 ## Recommended Release Model
 
 - GitHub repository: code + manifests + indices

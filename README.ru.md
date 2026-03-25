@@ -112,6 +112,24 @@ python3 run_pipeline.py --dry-run
 python3 run_pipeline.py
 ```
 
+Полная пересборка с очисткой:
+
+```bash
+python3 run_pipeline.py --clean
+```
+
+Только очистка, без запуска pipeline:
+
+```bash
+python3 cleanup_outputs.py
+```
+
+Та же очистка через оркестратор:
+
+```bash
+python3 run_pipeline.py --clean-only
+```
+
 Только выбранные семейства:
 
 ```bash
@@ -119,6 +137,30 @@ python3 run_pipeline.py --families struve owao serbia_astronomy russia_team_qual
 ```
 
 Тот же фильтр `--families` теперь применяется и к `coverage_report.md`.
+
+Очистить и локально пересобрать только одно семейство:
+
+```bash
+python3 run_pipeline.py --clean --families spbao
+```
+
+Только очистка для выбранных семейств:
+
+```bash
+python3 cleanup_outputs.py --families spbao
+```
+
+Та же семейная очистка через оркестратор:
+
+```bash
+python3 run_pipeline.py --clean-only --families spbao
+```
+
+Замечания:
+
+- `python3 run_pipeline.py --clean` сначала удаляет все локально сгенерированные артефакты: `data/raw/`, `data/archive/`, `data/logs/`, сгенерированные manifest-файлы и итоговые индексы.
+- `python3 cleanup_outputs.py --families ...` удаляет только дерево архива выбранного семейства, соответствующие папки в `data/raw/` и общие логи. Общее объектное хранилище `data/archive/objects/` оно намеренно не трогает.
+- Запуск с `--families ...` предназначен для локального точечного обновления. Чтобы снова получить полный глобальный набор manifest-файлов и индексов, после этого нужен прогон без `--families`.
 
 ## Источники первой очереди
 
