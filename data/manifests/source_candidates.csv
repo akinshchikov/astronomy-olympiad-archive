@@ -1,13 +1,15 @@
 source_id,label,olympiad_family,source_role,source_priority,seed_count,notes
 vsosh_edsoo_official,ВсОШ астрономия: официальный раздел vserosolimp.edsoo.ru,vsosh_astronomy,official,1,1,Официальные требования и архивы последних лет.
 vsosh_moscow_year_pages,ВсОШ астрономия: годовые страницы на vos.olimpiada.ru,vsosh_astronomy,mirror,2,17,"Глубокий архив по учебным годам, включая регион и заключительный этапы."
+vsosh_astroedu_archive,ВсОШ астрономия: архив задач и решений на astroedu.ru,vsosh_astronomy,archive,3,1,"Глубокий архив задач и решений ВсОШ (1994–наст. время), регион и заключительный этапы."
 struve_moscow_year_pages,Струве: годовые страницы на vos.olimpiada.ru,struve,mirror,2,5,Материалы олимпиады Струве на годовых страницах архива vos.olimpiada.ru.
 owao_tasks_official,OWAO: official archive page with tasks and solutions,owao,official,1,1,Официальная страница архива OWAO с материалами прошлых лет.
 serbia_astronomy_official,Serbia astronomy: official NAOK archive page,serbia_astronomy,official,1,1,Официальная страница NAOK / DAS с архивом задач и решений по годам.
 russia_team_qual_archive,Russia team qualification: archive of qualifying tests,russia_team_qual,official,1,1,Архив квалификационных тестов для кандидатов в сборную России по астрономии и астрофизике.
 mao_moscow_archive,МАО: архив на mos.olimpiada.ru,mao,official,1,1,Официальный архив задач и решений МАО.
+spbao_official,СПбАО: официальный сайт school.astro.spbu.ru,spbao,official,1,21,"Официальный архив СПбАО на сайте кафедры астрономии СПбГУ (2020–2026, все туры с PDF)."
 spbao_olimpiada_archive,СПбАО: архив на olimpiada.ru,spbao,archive,2,1,Архив с навигацией по годам и классам.
-spbao_year_class_pages,СПбАО: годовые страницы на olimpiada.ru,spbao,archive,2,98,Глубокие страницы архива по годам и классам.
+spbao_year_class_pages,СПбАО: годовые страницы на olimpiada.ru,spbao,archive,2,119,Глубокие страницы архива по годам и классам.
 ioaa_problems,IOAA: problems from past IOAA,ioaa,official,1,1,"Официальная подборка задач, решений и marking schemes."
 ioaa_proceedings,IOAA: past proceedings,ioaa,official,2,1,Официальные proceedings с дополнительными материалами.
 ioaa_past_olympiads,IOAA: past olympiads index,ioaa,official,2,1,Официальный индекс прошлых олимпиад с годовыми страницами.

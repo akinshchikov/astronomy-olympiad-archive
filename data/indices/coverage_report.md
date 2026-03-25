@@ -2,14 +2,14 @@
 
 ## vsosh_astronomy
 
-- Years found: 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026
-- Years with tasks: 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026
-- Years with solutions: 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026
-- Years with mirror material: 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026
-- Relation groups summary: exact_duplicate=4, partial_overlap=2, possible_duplicate=5, source_variant=453
-- Low-confidence years: 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026
-- Discovery-only / undownloaded years: 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024
-- Undownloaded document types: info=23, marking=2, solutions=68, tasks=78
+- Years found: 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026
+- Years with tasks: 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026
+- Years with solutions: 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026
+- Years with mirror material: 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026
+- Relation groups summary: exact_duplicate=59, partial_overlap=11, possible_duplicate=7, source_variant=766, translated_version=20
+- Low-confidence years: none
+- Discovery-only / undownloaded years: 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2023, 2024, 2025
+- Undownloaded document types: info=23, marking=2, solutions=68, tasks=79
 - Gaps: none observed inside discovered range
 
 ## struve
@@ -26,15 +26,7 @@
 
 ## owao
 
-- Years found: 2025
-- Years with tasks: 
-- Years with solutions: 
-- Years with mirror material: none
-- Relation groups summary: none
-- Low-confidence years: 2025
-- Discovery-only / undownloaded years: 2025
-- Undownloaded document types: solutions=2, tasks=2
-- Gaps: none observed inside discovered range
+- No materials discovered yet.
 
 ## serbia_astronomy
 
@@ -54,7 +46,7 @@
 - Years with tasks: 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026
 - Years with solutions: 
 - Years with mirror material: none
-- Relation groups summary: possible_duplicate=18, source_variant=38
+- Relation groups summary: possible_duplicate=23, reformatted_version=4, source_variant=39
 - Low-confidence years: none
 - Discovery-only / undownloaded years: none
 - Undownloaded document types: none
@@ -62,39 +54,39 @@
 
 ## spbao
 
-- Years found: 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024
-- Years with tasks: 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024
-- Years with solutions: 2010, 2011, 2014, 2015, 2016, 2017, 2018, 2019, 2021, 2022, 2024
+- Years found: 2010, 2011, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026
+- Years with tasks: 2010, 2011, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026
+- Years with solutions: 2010, 2011, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2023
 - Years with mirror material: none
-- Relation groups summary: exact_duplicate=10, partial_overlap=2, possible_duplicate=2, source_variant=408
+- Relation groups summary: annotated_version=5, exact_duplicate=10, partial_overlap=9, possible_duplicate=5, source_variant=403
 - Low-confidence years: none
 - Discovery-only / undownloaded years: 2012, 2013
 - Undownloaded document types: tasks=35
-- Gaps: none observed inside discovered range
+- Gaps: 2012, 2013
 
 ## mao
 
-- Years found: 2009, 2010, 2011, 2012, 2013, 2021, 2022, 2023, 2024, 2025
-- Years with tasks: 2009, 2010, 2011, 2012, 2013, 2021, 2022, 2023, 2024, 2025
-- Years with solutions: 2009, 2010, 2011, 2012, 2013, 2021, 2022, 2023, 2024, 2025
+- Years found: 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025
+- Years with tasks: 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025
+- Years with solutions: 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025
 - Years with mirror material: none
-- Relation groups summary: partial_overlap=2, possible_duplicate=2, source_variant=341
+- Relation groups summary: partial_overlap=2, possible_duplicate=1, source_variant=339
 - Low-confidence years: none
 - Discovery-only / undownloaded years: none
 - Undownloaded document types: none
-- Gaps: 2014, 2015, 2016, 2017, 2018, 2019, 2020
+- Gaps: none observed inside discovered range
 
 ## iao
 
-- Years found: 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2021, 2022, 2023
-- Years with tasks: 1996, 1997, 1998, 1999, 2000, 2003, 2004, 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2021, 2022
-- Years with solutions: 2003, 2007, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2021, 2023
+- Years found: 1989, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2021, 2022, 2023
+- Years with tasks: 1989, 1996, 1997, 1998, 1999, 2000, 2003, 2004, 2005, 2006, 2007, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2021, 2022
+- Years with solutions: 2003, 2006, 2007, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2021, 2023
 - Years with mirror material: 1996, 1997, 1998, 1999, 2000, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2021, 2022, 2023
-- Relation groups summary: exact_duplicate=10, possible_duplicate=30, reformatted_version=2, source_variant=24
-- Low-confidence years: 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013
-- Discovery-only / undownloaded years: none
-- Undownloaded document types: none
-- Gaps: 2020
+- Relation groups summary: exact_duplicate=60, possible_duplicate=72, reformatted_version=15, source_variant=67
+- Low-confidence years: 1989, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2015
+- Discovery-only / undownloaded years: 1996, 1997, 1998, 2002, 2006, 2010, 2011
+- Undownloaded document types: info=37, tasks=5
+- Gaps: 1990, 1991, 1992, 1993, 1994, 1995, 2020
 
 ## ioaa
 
@@ -102,7 +94,7 @@
 - Years with tasks: 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025
 - Years with solutions: 2007, 2008, 2009, 2010, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2023, 2024, 2025
 - Years with mirror material: 2003, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2021
-- Relation groups summary: exact_duplicate=4, partial_overlap=38, possible_duplicate=49, reformatted_version=2, source_variant=66
+- Relation groups summary: exact_duplicate=4, partial_overlap=24, possible_duplicate=32, source_variant=98
 - Low-confidence years: 2008, 2009, 2010, 2011, 2021
 - Discovery-only / undownloaded years: 2005, 2012
 - Undownloaded document types: solutions=2, tasks=5
