@@ -343,7 +343,12 @@ def normalize(root: Path, families: set[str] | None, dry_run: bool, limit: int |
         )
         if not is_owao_seed_page and document_type == "info" and inferred_document_type != "info":
             document_type = inferred_document_type
-        elif document_type == "tasks" and inferred_document_type in {"solutions", "marking", "analysis"}:
+        elif document_type == "tasks" and inferred_document_type in {
+            "solutions",
+            "marking",
+            "analysis",
+            "reference_data",
+        }:
             document_type = inferred_document_type
         stage_or_round = str(context.get("stage_or_round") or row["stage_or_round"])
         round_detail = str(context.get("round_detail") or row.get("round_detail") or "") or None

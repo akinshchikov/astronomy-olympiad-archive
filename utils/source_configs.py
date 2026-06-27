@@ -125,6 +125,26 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
         notes="Официальные требования и архивы последних лет.",
     ),
     SourceDefinition(
+        source_id="vsosh_edsoo_stage_documents",
+        label="ВсОШ астрономия: официальные страницы этапов vserosolimp.edsoo.ru",
+        olympiad_family="vsosh_astronomy",
+        source_role="official",
+        source_priority=1,
+        strategy="static",
+        seed_urls=[
+            "https://vserosolimp.edsoo.ru/region_way",
+            "https://vserosolimp.edsoo.ru/zakluchit_way",
+        ],
+        notes="Официальные требования, регламенты и приказы регионального и заключительного этапов.",
+        extras={
+            "default_context": {"record_seed_page": False, "year": CURRENT_YEAR},
+            "seed_contexts": {
+                "https://vserosolimp.edsoo.ru/region_way": {"stage_or_round": "regional"},
+                "https://vserosolimp.edsoo.ru/zakluchit_way": {"stage_or_round": "final"},
+            },
+        },
+    ),
+    SourceDefinition(
         source_id="vsosh_moscow_year_pages",
         label="ВсОШ астрономия: годовые страницы на vos.olimpiada.ru",
         olympiad_family="vsosh_astronomy",
@@ -141,9 +161,42 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
         source_role="archive",
         source_priority=3,
         strategy="static",
-        seed_urls=["https://astroedu.ru/vos/problems.html"],
+        seed_urls=["https://astroedu.ru/vos/problems"],
         notes="Глубокий архив задач и решений ВсОШ (1994–наст. время), регион и заключительный этапы.",
         extras={"default_context": {"record_seed_page": False}},
+    ),
+    SourceDefinition(
+        source_id="vsosh_moscow_team_year",
+        label="ВсОШ астрономия: страница команды Москвы",
+        olympiad_family="vsosh_astronomy",
+        source_role="mirror",
+        source_priority=3,
+        strategy="static",
+        seed_urls=[f"https://vos.olimpiada.ru/team/year/{CURRENT_YEAR}"],
+        notes="Публичная страница с provenance-ссылками на заключительный этап и результаты команды Москвы.",
+        extras={
+            "default_context": {
+                "year": CURRENT_YEAR,
+                "stage_or_round": "final",
+                "document_type": "info",
+            }
+        },
+    ),
+    SourceDefinition(
+        source_id="vsosh_sirius_final",
+        label="ВсОШ астрономия: официальный сайт заключительного этапа в Сириусе",
+        olympiad_family="vsosh_astronomy",
+        source_role="official",
+        source_priority=1,
+        strategy="static",
+        seed_urls=["https://astro.siriusolymp.ru/results"],
+        notes="Официальные результаты заключительного этапа и ссылка на протокол жюри.",
+        extras={
+            "default_context": {
+                "year": CURRENT_YEAR,
+                "stage_or_round": "final",
+            }
+        },
     ),
     SourceDefinition(
         source_id="struve_moscow_year_pages",

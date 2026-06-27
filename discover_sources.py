@@ -35,6 +35,9 @@ OWAO_SOURCE_ID = "owao_tasks_official"
 SERBIA_SOURCE_ID = "serbia_astronomy_official"
 RUSSIA_TEAM_QUAL_SOURCE_ID = "russia_team_qual_archive"
 VSOSH_ASTROEDU_SOURCE_ID = "vsosh_astroedu_archive"
+VSOSH_EDSOO_SOURCE_ID = "vsosh_edsoo_stage_documents"
+VSOSH_MOSCOW_TEAM_SOURCE_ID = "vsosh_moscow_team_year"
+VSOSH_SIRIUS_SOURCE_ID = "vsosh_sirius_final"
 SPBAO_OFFICIAL_SOURCE_ID = "spbao_official"
 SKIP_SEED_PAGE_SOURCE_IDS = {STRUVE_SOURCE_ID}
 CURRENT_YEAR = datetime.now().year
@@ -189,6 +192,26 @@ def is_vsosh_astroedu_archive_pdf(url: str) -> bool:
     return url.lower().startswith("https://astroedu.ru/assets/problems/vos/") and decoded_filename(url).lower().endswith(".pdf")
 
 
+def is_current_vsosh_edsoo_document(link_text: str, url: str) -> bool:
+    if "vso.edsoo.ru/public.php/dav/files/" not in url.lower():
+        return False
+    text = link_text.lower()
+    short_year = str(CURRENT_YEAR)[-2:]
+    season_tokens = (f"{CURRENT_YEAR - 1}/{short_year}", f"{CURRENT_YEAR - 1}-{short_year}", str(CURRENT_YEAR))
+    if not any(token in text for token in season_tokens):
+        return False
+    if "астроном" in text:
+        return True
+    return any(
+        phrase in text
+        for phrase in (
+            "приказ",
+            "регламент заключительного этапа",
+            "требования к организации и проведению регионального этапа",
+        )
+    )
+
+
 def is_spbao_official_pdf(url: str) -> bool:
     return "system/files/" in url and url.lower().endswith(".pdf")
 
@@ -203,6 +226,8 @@ def passes_source_specific_link_filter(seed: dict, link_text: str, href: str) ->
         return is_russia_team_qual_direct_archive_file(href)
     if source_id == VSOSH_ASTROEDU_SOURCE_ID:
         return is_vsosh_astroedu_archive_pdf(href)
+    if source_id == VSOSH_EDSOO_SOURCE_ID:
+        return is_current_vsosh_edsoo_document(link_text, href)
     if source_id == SERBIA_SOURCE_ID:
         return serbia_stage_from_url(href) is not None
     return True
@@ -210,9 +235,15 @@ def passes_source_specific_link_filter(seed: dict, link_text: str, href: str) ->
 
 def should_record_seed_link(seed: dict, link_text: str, href: str) -> bool:
     source_id = source_id_of(seed)
+    if source_id == VSOSH_MOSCOW_TEAM_SOURCE_ID:
+        return False
+    if source_id == VSOSH_SIRIUS_SOURCE_ID:
+        return "протокол" in link_text.lower() and infer_extension(href) == "pdf"
     # Sources with query-string file URLs bypass the generic extension check
     if source_id == SPBAO_OFFICIAL_SOURCE_ID:
         return is_spbao_official_pdf(href)
+    if source_id == VSOSH_EDSOO_SOURCE_ID:
+        return is_current_vsosh_edsoo_document(link_text, href)
     if not should_record_link(href):
         return False
     return passes_source_specific_link_filter(seed, link_text, href)
@@ -342,7 +373,7 @@ def build_candidate_entry(
         "parent_page_url": parent_page_url,
         "parent_page_title": parent_page_title,
         "filename_original": decoded_filename(href) or "download",
-        "extension": infer_extension(href),
+        "extension": "pdf" if source_id_of(seed) == VSOSH_EDSOO_SOURCE_ID else infer_extension(href),
         "variant_tag": variant_tag,
         "round_detail": round_detail,
         "notes": f"extra_types={','.join(extra_types)}",

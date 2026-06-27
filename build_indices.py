@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import re
 from collections import Counter, defaultdict
 from pathlib import Path
 
@@ -8,6 +9,133 @@ from utils.cli import build_common_parser
 from utils.fs_utils import load_jsonl
 from utils.logging_utils import configure_logger
 from utils.metadata import PRIORITY_FAMILIES
+
+
+VSOSH_2026_CORE_COMPONENTS = (
+    ("regional", "day-1", "Regional day 1"),
+    ("regional", "day-2", "Regional day 2"),
+    ("final", "theoretical", "Final theoretical"),
+    ("final", "practical", "Final practical"),
+    ("final", "test", "Final test/blitz"),
+)
+VSOSH_2026_GRADES = ("9", "10", "11")
+VSOSH_2026_DOCUMENT_TYPES = ("tasks", "solutions")
+
+
+def vsosh_2026_material_key(row: dict) -> tuple[str, str, str, str] | None:
+    if row.get("olympiad_family") != "vsosh_astronomy" or row.get("year") != 2026:
+        return None
+    document_type = str(row.get("document_type", ""))
+    if document_type not in VSOSH_2026_DOCUMENT_TYPES:
+        return None
+
+    text = " ".join(
+        str(row.get(key, ""))
+        for key in ("filename_original", "source_title", "source_url")
+    ).lower()
+    grade_match = re.search(r"(?:[-_ ])(9|10|11)(?:\.pdf|\b)", text)
+    if not grade_match:
+        return None
+
+    stage = str(row.get("stage_or_round", ""))
+    if stage == "regional":
+        day_match = re.search(r"\bday[-_ ]?([12])\b", text)
+        if not day_match:
+            return None
+        component = f"day-{day_match.group(1)}"
+    elif stage == "final":
+        component = str(row.get("round_detail") or "")
+        if component not in {"theoretical", "practical", "test"}:
+            return None
+    else:
+        return None
+
+    return stage, component, document_type, grade_match.group(1)
+
+
+def write_vsosh_2026_discovery_coverage(handle, discovered_rows: list[dict]) -> None:
+    rows = [
+        row
+        for row in discovered_rows
+        if row.get("olympiad_family") == "vsosh_astronomy" and row.get("year") == 2026
+    ]
+    found: set[tuple[str, str, str, str]] = set()
+    for row in rows:
+        key = vsosh_2026_material_key(row)
+        if key:
+            found.add(key)
+
+    handle.write("### 2026 discovery coverage\n\n")
+    handle.write("| Component | Found | Status |\n")
+    handle.write("| --- | --- | --- |\n")
+    complete_components = 0
+    for stage, component, label in VSOSH_2026_CORE_COMPONENTS:
+        expected = {
+            (stage, component, document_type, grade)
+            for document_type in VSOSH_2026_DOCUMENT_TYPES
+            for grade in VSOSH_2026_GRADES
+        }
+        present = found & expected
+        status = "complete" if present == expected else ("partial" if present else "missing")
+        if status == "complete":
+            complete_components += 1
+        found_parts = []
+        for document_type in VSOSH_2026_DOCUMENT_TYPES:
+            grades = [
+                grade
+                for grade in VSOSH_2026_GRADES
+                if (stage, component, document_type, grade) in present
+            ]
+            found_parts.append(f"{document_type}: {','.join(grades) or 'none'}")
+        handle.write(f"| {label} | {'; '.join(found_parts)} | {status} |\n")
+
+    reference_found = any(row.get("document_type") == "reference_data" for row in rows)
+    official_types_by_stage = defaultdict(set)
+    for row in rows:
+        if row.get("source_id") != "vsosh_edsoo_stage_documents":
+            continue
+        if row.get("document_type") in {"requirements", "regulations", "order"}:
+            official_types_by_stage[str(row.get("stage_or_round", "unknown"))].add(row["document_type"])
+    official_parts = [
+        f"{stage}: {','.join(sorted(document_types))}"
+        for stage, document_types in sorted(official_types_by_stage.items())
+    ]
+    result_types = sorted(
+        {
+            str(row.get("document_type"))
+            for row in rows
+            if row.get("stage_or_round") == "final"
+            and row.get("document_type") in {"results", "protocol"}
+        }
+    )
+    handle.write(
+        f"| Reference data | {'reference_data' if reference_found else 'none'} | "
+        f"{'complete' if reference_found else 'missing'} |\n"
+    )
+    official_status = (
+        "complete"
+        if all("requirements" in official_types_by_stage[stage] for stage in ("regional", "final"))
+        else ("partial" if official_parts else "missing")
+    )
+    handle.write(
+        f"| Official requirements/orders | {'; '.join(official_parts) or 'none'} | "
+        f"{official_status} |\n"
+    )
+    results_status = (
+        "complete"
+        if {"results", "protocol"} <= set(result_types)
+        else ("partial" if result_types else "missing")
+    )
+    handle.write(
+        f"| Results/protocols | {','.join(result_types) or 'none'} | "
+        f"{results_status} |\n"
+    )
+    overall = "complete" if complete_components == len(VSOSH_2026_CORE_COMPONENTS) else "partial"
+    handle.write(
+        f"\n- Core tasks/solutions: {overall} "
+        f"({complete_components}/{len(VSOSH_2026_CORE_COMPONENTS)} components complete).\n"
+    )
+    handle.write("- Status is based on discovered public sources; downloading is tracked separately below.\n\n")
 
 
 def build(root: Path, families: set[str] | None) -> int:
@@ -144,6 +272,8 @@ def build(root: Path, families: set[str] | None) -> int:
         for family in coverage_families:
             family_rows = by_family.get(family, [])
             handle.write(f"## {family}\n\n")
+            if family == "vsosh_astronomy":
+                write_vsosh_2026_discovery_coverage(handle, discovered_rows)
             if not family_rows:
                 handle.write("- No materials discovered yet.\n\n")
                 continue

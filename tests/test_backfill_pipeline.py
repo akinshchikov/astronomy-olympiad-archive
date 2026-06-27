@@ -6,11 +6,12 @@ from types import SimpleNamespace
 from unittest import TestCase
 from unittest.mock import patch
 
+import build_indices
 import crawl_source
 import discover_sources
 import normalize_archive
 from utils.fs_utils import load_jsonl, write_jsonl
-from utils.metadata import decoded_filename, infer_extension
+from utils.metadata import decoded_filename, infer_document_type, infer_extension
 from utils.models import SourceDefinition
 
 
@@ -84,6 +85,89 @@ class BackfillPipelineTests(TestCase):
         url = "http://school.astro.spbu.ru/?q=system/files/10%20%D0%BA%D0%BB%D0%B0%D1%81%D1%81%20-%20%D1%80%D0%B5%D1%88%D0%B5%D0%BD%D0%B8%D1%8F_51.pdf"
         self.assertEqual(decoded_filename(url), "10 класс - решения_51.pdf")
         self.assertEqual(infer_extension(url), "pdf")
+
+    def test_vsosh_astroedu_2026_final_filename_metadata(self) -> None:
+        seed = {
+            "source_id": "vsosh_astroedu_archive",
+            "olympiad_family": "vsosh_astronomy",
+            "source_role": "archive",
+            "source_priority": 1,
+        }
+        expected = {
+            "vos-2026-final-prob-T-9.pdf": ("tasks", "theoretical"),
+            "vos-2026-final-sol-T-9.pdf": ("solutions", "theoretical"),
+            "vos-2026-final-prob-P-10.pdf": ("tasks", "practical"),
+            "vos-2026-final-sol-P-10.pdf": ("solutions", "practical"),
+            "vos-2026-final-prob-B-11.pdf": ("tasks", "test"),
+            "vos-2026-final-sol-B-11.pdf": ("solutions", "test"),
+        }
+
+        for filename, (document_type, round_detail) in expected.items():
+            with self.subTest(filename=filename):
+                entry = discover_sources.build_candidate_entry(
+                    seed,
+                    href=f"https://astroedu.ru/assets/problems/vos/2026/{filename}",
+                    link_text=filename,
+                    page_title="Задания",
+                    parent_page_url="https://astroedu.ru/vos/problems",
+                    parent_page_title="Задания",
+                    context={},
+                )
+                self.assertEqual(entry["year"], 2026)
+                self.assertEqual(entry["stage_or_round"], "final")
+                self.assertEqual(entry["document_type"], document_type)
+                self.assertEqual(entry["round_detail"], round_detail)
+
+    def test_vsosh_reference_data_is_not_classified_as_tasks(self) -> None:
+        for title, url in (
+            (
+                "9-11 кл. справочные данные",
+                "https://vos.olimpiada.ru/files/spdata-astr-9-11-reg-25-26.pdf",
+            ),
+            (
+                "2026",
+                "https://astroedu.ru/assets/problems/vos/vos-spdata-2026.pdf",
+            ),
+        ):
+            with self.subTest(url=url):
+                document_type, extra_types = infer_document_type(title, url, "Задания")
+                self.assertEqual(document_type, "reference_data")
+                self.assertEqual(extra_types, ["reference_data"])
+
+    def test_vsosh_2026_coverage_reports_partial_final_materials(self) -> None:
+        discovered = []
+        for day in (1, 2):
+            for grade in (9, 10, 11):
+                for short_type, document_type in (("prob", "tasks"), ("sol", "solutions")):
+                    filename = f"vos-2026-reg-{short_type}-day{day}-{grade}.pdf"
+                    discovered.append(
+                        {
+                            "candidate_id": filename,
+                            "source_id": "vsosh_astroedu_archive",
+                            "olympiad_family": "vsosh_astronomy",
+                            "year": 2026,
+                            "stage_or_round": "regional",
+                            "round_detail": None,
+                            "document_type": document_type,
+                            "filename_original": filename,
+                            "source_title": str(grade),
+                            "source_url": f"https://example.test/{filename}",
+                        }
+                    )
+
+        with TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            write_jsonl(root / "data" / "manifests" / "discovered_documents.jsonl", discovered)
+            write_jsonl(root / "data" / "manifests" / "download_manifest.jsonl", [])
+            write_jsonl(root / "data" / "manifests" / "normalized_entries.jsonl", [])
+
+            result = build_indices.build(root, families={"vsosh_astronomy"})
+
+            self.assertEqual(result, 0)
+            report = (root / "data" / "indices" / "coverage_report.md").read_text(encoding="utf-8")
+            self.assertIn("| Regional day 1 | tasks: 9,10,11; solutions: 9,10,11 | complete |", report)
+            self.assertIn("| Final theoretical | tasks: none; solutions: none | missing |", report)
+            self.assertIn("- Core tasks/solutions: partial (2/5 components complete).", report)
 
     def test_discovery_uses_seed_context_and_skips_container_seed_page(self) -> None:
         seed_url = "https://example.org/archive"

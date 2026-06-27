@@ -75,6 +75,12 @@ THEORETICAL_TOKENS = (
 QUALIFYING_TOKENS = ("otbor", "qual", "qualifying", "dist", "school", "mun", "prigl", "invite", "отбор")
 REGIONAL_TOKENS = ("regional", "/reg/", "_reg_", "-reg-", "рэ", "регион")
 FINAL_TOKENS = ("final", "/final/", "-final-", "зе", "заключ")
+REFERENCE_TOKENS = ("spdata", "reference data", "reference-data", "справочн")
+REQUIREMENTS_TOKENS = ("requirements", "требован")
+REGULATIONS_TOKENS = ("regulations", "регламент")
+ORDER_TOKENS = ("приказ",)
+PROTOCOL_TOKENS = ("protocol", "протокол")
+RESULTS_TOKENS = ("results", "результат", "победител", "призер", "призёр")
 
 
 def decoded_url_path(url: str) -> str:
@@ -136,6 +142,19 @@ def infer_language(*texts: str) -> str:
 
 def infer_document_type(*texts: str) -> tuple[str, list[str]]:
     text = normalize_whitespace(" ".join(texts).lower())
+    if any(token in text for token in REFERENCE_TOKENS):
+        return "reference_data", ["reference_data"]
+    if any(token in text for token in PROTOCOL_TOKENS):
+        return "protocol", ["protocol"]
+    if any(token in text for token in RESULTS_TOKENS):
+        return "results", ["results"]
+    if any(token in text for token in REQUIREMENTS_TOKENS):
+        return "requirements", ["requirements"]
+    if any(token in text for token in REGULATIONS_TOKENS):
+        return "regulations", ["regulations"]
+    if any(token in text for token in ORDER_TOKENS):
+        return "order", ["order"]
+
     contains_tasks = any(token in text for token in TASK_TOKENS)
     combined_marker = any(
         marker in text
@@ -190,7 +209,13 @@ def infer_stage(olympiad_family: str, *texts: str) -> tuple[str, str | None]:
         if any(token in text for token in REGIONAL_TOKENS):
             return "regional", round_detail
         if any(token in text for token in FINAL_TOKENS):
-            if any(token in text for token in THEORETICAL_TOKENS):
+            if re.search(r"\bfinal[-_ ]+(?:prob|sol)[-_ ]+t(?:\b|[-_ ])", text):
+                round_detail = "theoretical"
+            elif re.search(r"\bfinal[-_ ]+(?:prob|sol)[-_ ]+p(?:\b|[-_ ])", text):
+                round_detail = "practical"
+            elif re.search(r"\bfinal[-_ ]+(?:prob|sol)[-_ ]+b(?:\b|[-_ ])", text):
+                round_detail = "test"
+            elif any(token in text for token in THEORETICAL_TOKENS):
                 round_detail = "theoretical"
             elif any(token in text for token in OBSERVATIONAL_TOKENS):
                 round_detail = "observational"
@@ -378,6 +403,7 @@ def _extract_track_tag(ascii_text: str, round_detail: str | None) -> str | None:
     round_tag_map = {
         "theoretical": "theory",
         "theoretical_or_data_analysis": "theory",
+        "practical": "practical",
         "observational": "observational",
         "test": "test",
         "team": "team",
