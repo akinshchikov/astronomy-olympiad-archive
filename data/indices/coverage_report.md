@@ -2,14 +2,30 @@
 
 ## vsosh_astronomy
 
+### 2026 discovery coverage
+
+| Component | Found | Status |
+| --- | --- | --- |
+| Regional day 1 | tasks: 9,10,11; solutions: 9,10,11 | complete |
+| Regional day 2 | tasks: 9,10,11; solutions: 9,10,11 | complete |
+| Final theoretical | tasks: 9,10,11; solutions: 9,10,11 | complete |
+| Final practical | tasks: 9,10,11; solutions: 9,10,11 | complete |
+| Final test/blitz | tasks: 9,10,11; solutions: 9,10,11 | complete |
+| Reference data | reference_data | complete |
+| Official requirements/orders | final: order,regulations,requirements; regional: order,requirements | complete |
+| Results/protocols | protocol,results | complete |
+
+- Core tasks/solutions: complete (5/5 components complete).
+- Status is based on discovered public sources; downloading is tracked separately below.
+
 - Years found: 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026
 - Years with tasks: 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026
 - Years with solutions: 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026
 - Years with mirror material: 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026
 - Relation groups summary: exact_duplicate=59, partial_overlap=11, possible_duplicate=7, source_variant=766, translated_version=20
 - Low-confidence years: none
-- Discovery-only / undownloaded years: 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2023, 2024, 2025
-- Undownloaded document types: info=23, marking=2, solutions=68, tasks=79
+- Discovery-only / undownloaded years: 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2023, 2024, 2025, 2026
+- Undownloaded document types: info=25, marking=2, order=2, protocol=2, regulations=1, requirements=2, results=1, solutions=77, tasks=88
 - Gaps: none observed inside discovered range
 
 ## struve

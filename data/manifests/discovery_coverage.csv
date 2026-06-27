@@ -359,6 +359,7 @@ vsosh_astronomy,2024,unknown,info,1
 vsosh_astronomy,2025,final,"info,solutions,tasks",3
 vsosh_astronomy,2025,qualifying,"solutions,tasks",2
 vsosh_astronomy,2025,regional,"info,solutions,tasks",3
+vsosh_astronomy,2026,final,"info,order,protocol,regulations,requirements,solutions,tasks",7
 vsosh_astronomy,2026,qualifying,"solutions,tasks",2
-vsosh_astronomy,2026,regional,"info,solutions,tasks",3
-vsosh_astronomy,2026,unknown,tasks,1
+vsosh_astronomy,2026,regional,"order,protocol,reference_data,requirements,results,solutions,tasks",7
+vsosh_astronomy,2026,unknown,reference_data,1

@@ -1,7 +1,10 @@
 source_id,label,olympiad_family,source_role,source_priority,seed_count,notes
 vsosh_edsoo_official,ВсОШ астрономия: официальный раздел vserosolimp.edsoo.ru,vsosh_astronomy,official,1,1,Официальные требования и архивы последних лет.
+vsosh_edsoo_stage_documents,ВсОШ астрономия: официальные страницы этапов vserosolimp.edsoo.ru,vsosh_astronomy,official,1,2,"Официальные требования, регламенты и приказы регионального и заключительного этапов."
 vsosh_moscow_year_pages,ВсОШ астрономия: годовые страницы на vos.olimpiada.ru,vsosh_astronomy,mirror,2,17,"Глубокий архив по учебным годам, включая регион и заключительный этапы."
 vsosh_astroedu_archive,ВсОШ астрономия: архив задач и решений на astroedu.ru,vsosh_astronomy,archive,3,1,"Глубокий архив задач и решений ВсОШ (1994–наст. время), регион и заключительный этапы."
+vsosh_moscow_team_year,ВсОШ астрономия: страница команды Москвы,vsosh_astronomy,mirror,3,1,Публичная страница с provenance-ссылками на заключительный этап и результаты команды Москвы.
+vsosh_sirius_final,ВсОШ астрономия: официальный сайт заключительного этапа в Сириусе,vsosh_astronomy,official,1,1,Официальные результаты заключительного этапа и ссылка на протокол жюри.
 struve_moscow_year_pages,Струве: годовые страницы на vos.olimpiada.ru,struve,mirror,2,5,Материалы олимпиады Струве на годовых страницах архива vos.olimpiada.ru.
 owao_tasks_official,OWAO: official archive page with tasks and solutions,owao,official,1,1,Официальная страница архива OWAO с материалами прошлых лет.
 serbia_astronomy_official,Serbia astronomy: official NAOK archive page,serbia_astronomy,official,1,1,Официальная страница NAOK / DAS с архивом задач и решений по годам.
