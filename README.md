@@ -176,6 +176,37 @@ Some families currently start from archive/mirror seeds rather than a priority-1
 
 The full current seed-source list is stored in [data/manifests/source_candidates.csv](data/manifests/source_candidates.csv).
 
+## OWAO: discovery first, manual import when needed
+
+OWAO's official archive pages are supported for automatic discovery. Running
+`python3 run_pipeline.py --families owao` refreshes the discovered-material metadata, but does not necessarily download PDFs or create `data/archive/owao/`.
+
+This is expected: OWAO is currently a discovery-first / manual-import family. The `my.sirius.online` PDFs are robots-blocked for automated fetching; Yandex Disk and Nextcloud share links stay discovery-only unless the page already provides a safe direct public file URL; and UTS / edu.sirius links are interactive or login-like. The pipeline does not bypass these restrictions.
+
+If a public file is manually downloaded in a browser, place it under `data/manual/owao/`, add its required sidecar row to `data/manual/owao/manual_manifest.jsonl`, run `python3 import_manual_files.py`, and then run normalization/indexing. Until then, the absence of `data/archive/owao/` is normal.
+
+### How to check OWAO locally
+
+```bash
+grep '^owao' data/manifests/discovery_coverage.csv
+python3 - <<'PY'
+import json
+from collections import Counter
+
+rows = []
+with open("data/manifests/discovered_documents.jsonl", encoding="utf-8") as f:
+    for line in f:
+        r = json.loads(line)
+        if r.get("olympiad_family") == "owao":
+            rows.append(r)
+
+print("OWAO discovered rows:", len(rows))
+for k, v in sorted(Counter((r.get("year"), r.get("stage_or_round"), r.get("document_type")) for r in rows).items()):
+    print(v, k)
+PY
+find data/archive -maxdepth 3 -type d -name 'owao' -print
+```
+
 ## Snapshot
 
 Current tracked public snapshot refreshed on `2026-03-20`:
@@ -210,7 +241,7 @@ Priority families in the current public indices:
 - PDF OCR and text extraction are still limited; near-duplicate detection currently relies on metadata, filenames, and file sizes.
 - Some older IAO pages on `issp.ac.ru` are unstable, so both official indexes and mirrors are used.
 - `vso.edsoo.ru` blocks part of the official material through `robots.txt`, so those files remain discovery-only.
-- OWAO official archive pages for 2022–2025 are discovered. There is no working standalone `2022en/tasks` page (HTTP 404); its material is discovered from the 2022 section embedded in the official current archive page. `my.sirius.online`, Yandex Disk, Nextcloud, UTS, and edu.sirius links are downloaded only when their public host and `robots.txt` permit it; interactive/login pages remain discovery-only. To normalize a public file obtained manually, place it under `data/manual/owao/`, add a `manual_manifest.jsonl` row with `source_url`, OWAO year/round/document metadata, `filename_original`, and `local_path`, then run `python3 import_manual_files.py`. Neither the files nor that local manifest are committed.
+- OWAO official archive pages for 2022–2025 are discovered. There is no working standalone `2022en/tasks` page (HTTP 404); its material is discovered from the 2022 section embedded in the official current archive page. See the OWAO discovery-first/manual-import workflow above.
 - `russia_team_qual` currently covers the direct-PDF subset from `astroedu.ru/assets/problems/hq/...pdf`; linked `uts.astroedu.ru` quiz pages are intentionally out of scope for now.
 - Old SPbAO and VsOSh archives still contain broken historical links (`404`), especially in mirrors.
 - If a single file contains both tasks and solutions, the file is not split; this is reflected in metadata.

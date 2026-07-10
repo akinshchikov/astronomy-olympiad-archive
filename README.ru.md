@@ -176,6 +176,37 @@ python3 run_pipeline.py --clean-only --families spbao
 
 Полный актуальный список seed-источников сохранён в [data/manifests/source_candidates.csv](data/manifests/source_candidates.csv).
 
+## OWAO: сначала discovery, затем ручной импорт при необходимости
+
+Для официальных архивных страниц OWAO поддерживается автоматическое discovery. Команда
+`python3 run_pipeline.py --families owao` обновляет metadata обнаруженных материалов, но не обязана скачивать PDF или создавать `data/archive/owao/`.
+
+Это ожидаемое поведение: сейчас OWAO — семейство с discovery-first / manual-import workflow. PDF на `my.sirius.online` блокируются `robots.txt` для автоматической загрузки; ссылки Yandex Disk и Nextcloud остаются discovery-only, если сама страница уже не даёт безопасный прямой публичный файл; ссылки UTS / edu.sirius интерактивны или требуют входа. Pipeline не обходит эти ограничения.
+
+Если публичный файл скачан вручную в браузере, положите его в `data/manual/owao/`, добавьте обязательную строку sidecar в `data/manual/owao/manual_manifest.jsonl`, запустите `python3 import_manual_files.py`, затем normalization/indexing. До этого отсутствие `data/archive/owao/` нормально.
+
+### Как проверить OWAO локально
+
+```bash
+grep '^owao' data/manifests/discovery_coverage.csv
+python3 - <<'PY'
+import json
+from collections import Counter
+
+rows = []
+with open("data/manifests/discovered_documents.jsonl", encoding="utf-8") as f:
+    for line in f:
+        r = json.loads(line)
+        if r.get("olympiad_family") == "owao":
+            rows.append(r)
+
+print("OWAO discovered rows:", len(rows))
+for k, v in sorted(Counter((r.get("year"), r.get("stage_or_round"), r.get("document_type")) for r in rows).items()):
+    print(v, k)
+PY
+find data/archive -maxdepth 3 -type d -name 'owao' -print
+```
+
 ## Snapshot
 
 Текущий публичный snapshot по коммитимым артефактам обновлён на `2026-03-20`:
@@ -210,7 +241,7 @@ python3 run_pipeline.py --clean-only --families spbao
 - Для PDF пока нет полноценного OCR/извлечения текста; near-duplicate строится по метаданным, именам и размерам файлов.
 - Часть старых IAO-страниц на `issp.ac.ru` нестабильна, поэтому используются и официальные индексы, и зеркала.
 - `vso.edsoo.ru` блокирует часть официальных файлов через `robots.txt`, поэтому они остаются только в discovery.
-- Для OWAO поддерживаются официальные архивные страницы 2022–2025. Отдельной рабочей страницы `2022en/tasks` нет (HTTP 404): материалы 2022 года обнаруживаются из встроенного раздела текущей официальной архивной страницы. Ссылки на `my.sirius.online`, Yandex Disk, Nextcloud, UTS и edu.sirius загружаются только если публичный хост и `robots.txt` это разрешают; интерактивные/login-страницы остаются discovery-only. Для публичного файла, скачанного вручную, положите его в `data/manual/owao/`, добавьте в `manual_manifest.jsonl` обязательные `source_url`, метаданные года/тура/документа OWAO, `filename_original` и `local_path`, затем запустите `python3 import_manual_files.py`. Ни файлы, ни этот локальный manifest не коммитятся.
+- Для OWAO поддерживаются официальные архивные страницы 2022–2025. Отдельной рабочей страницы `2022en/tasks` нет (HTTP 404): материалы 2022 года обнаруживаются из встроенного раздела текущей официальной архивной страницы. См. выше OWAO workflow discovery-first/manual-import.
 - Для `russia_team_qual` сейчас покрыт только direct-PDF-поднабор с `astroedu.ru/assets/problems/hq/...pdf`; связанные quiz-страницы на `uts.astroedu.ru` намеренно оставлены вне первого патча.
 - В старых архивах СПбАО и ВсОШ есть битые ссылки (`404`), особенно в исторических зеркалах.
 - Если один файл содержит и задачи, и решения, файл не режется; это отражается в metadata.

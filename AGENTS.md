@@ -126,6 +126,8 @@ For cleanup behavior, prefer tests over manual inspection. The cleanup code is i
 
 Committed indices and discovery manifests are useful public metadata snapshots. They may change when pipeline behavior changes, but avoid manual edits unless the task is explicitly a metadata correction.
 
+OWAO is discovery-first: missing `data/archive/owao/` is expected when its public links are robots-blocked, external shares, or interactive/login pages. Do not add bypasses; use the documented `data/manual/owao/` plus `import_manual_files.py` workflow only for files manually obtained from public sources.
+
 If a change updates generated metadata, mention:
 
 - which command produced the update;

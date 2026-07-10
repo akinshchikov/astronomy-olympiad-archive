@@ -28,6 +28,7 @@ This repository is prepared for a public GitHub release as a reproducible pipeli
 - The full local archive is large.
 - Public availability of a source URL is not the same thing as permission to republish mirrored binaries through GitHub.
 - The public repo should stay lightweight and reproducible.
+- Discovery-only OWAO metadata is still useful public coverage information. The absence of `data/archive/owao/` does not indicate a failed refresh when the linked hosts are robots-blocked, external-share, or interactive/login-only.
 
 ## Before Creating the GitHub Repo
 
