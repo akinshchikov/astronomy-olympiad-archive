@@ -219,6 +219,38 @@ def build(root: Path, families: set[str] | None) -> int:
         if entry.get("relation_group_id"):
             relation_groups_per_event[key].add(entry["relation_group_id"])
 
+    # Discovery-only sources still represent known event coverage.  Keep them in
+    # the lightweight event index even when robots, login requirements, or an
+    # external share prevent lawful automatic normalization.
+    for row in discovered_rows:
+        key = (row["olympiad_family"], row["year"], row["stage_or_round"])
+        if key not in olympiad_index:
+            olympiad_index[key] = {
+                "olympiad_family": row["olympiad_family"],
+                "year": row["year"],
+                "stage_or_round": row["stage_or_round"],
+                "has_tasks": False,
+                "has_solutions": False,
+                "has_marking": False,
+                "has_analysis": False,
+                "num_files": 0,
+                "num_relation_groups": 0,
+                "source_count": 0,
+                "confidence": 0.0,
+            }
+        payload = olympiad_index[key]
+        extra_types = set()
+        for note in str(row.get("notes", "")).split(";"):
+            note = note.strip()
+            if note.startswith("extra_types="):
+                extra_types.update(value for value in note.removeprefix("extra_types=").split(",") if value)
+        discovered_types = extra_types | {str(row.get("document_type", ""))}
+        payload["has_tasks"] = payload["has_tasks"] or "tasks" in discovered_types
+        payload["has_solutions"] = payload["has_solutions"] or "solutions" in discovered_types
+        payload["has_marking"] = payload["has_marking"] or "marking" in discovered_types
+        payload["has_analysis"] = payload["has_analysis"] or "analysis" in discovered_types
+        payload["confidence"] = round(max(payload["confidence"], float(row.get("confidence", 0.0))), 2)
+
     for key, group_ids in relation_groups_per_event.items():
         olympiad_index[key]["num_relation_groups"] = len(group_ids)
 

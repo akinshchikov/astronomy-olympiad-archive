@@ -66,6 +66,7 @@ data/
     relation_groups.csv
     coverage_report.md
   logs/                 # local logs, not committed
+  manual/owao/          # optional manually downloaded OWAO files, not committed
 ```
 
 Normalized filename format:
@@ -165,7 +166,7 @@ Notes:
 ## First-priority source seeds
 
 - `vsosh_edsoo_official`: `https://vserosolimp.edsoo.ru/astronom`
-- `owao_tasks_official`: `https://owao.siriusolymp.ru/tasks`
+- `owao_tasks_official`: `https://owao.siriusolymp.ru/2025en/tasks`, plus the 2024 and 2023 archive pages
 - `serbia_astronomy_official`: `https://www.das.org.rs/naoc.html`
 - `russia_team_qual_archive`: `https://astroedu.ru/hq/problems/`
 - `mao_moscow_archive`: `https://mos.olimpiada.ru/tasks/astr`
@@ -189,7 +190,7 @@ Priority families in the current public indices:
 
 - `vsosh_astronomy`: `2009..2026`, 18 years
 - `struve`: `2022..2025`, 4 years
-- `owao`: `2025`, 1 year
+- `owao`: official discovery support for `2022..2025`
 - `serbia_astronomy`: `2012..2026`, 15 years
 - `russia_team_qual`: `2016..2026`, 11 years
 - `spbao`: `2010..2024`, 15 years
@@ -209,7 +210,7 @@ Priority families in the current public indices:
 - PDF OCR and text extraction are still limited; near-duplicate detection currently relies on metadata, filenames, and file sizes.
 - Some older IAO pages on `issp.ac.ru` are unstable, so both official indexes and mirrors are used.
 - `vso.edsoo.ru` blocks part of the official material through `robots.txt`, so those files remain discovery-only.
-- OWAO currently discovers the official 2025 task/solution PDF links, but the downstream file host is `robots.txt`-limited, so the public indices still show those PDFs as discovery-only.
+- OWAO official archive pages for 2022–2025 are discovered. There is no working standalone `2022en/tasks` page (HTTP 404); its material is discovered from the 2022 section embedded in the official current archive page. `my.sirius.online`, Yandex Disk, Nextcloud, UTS, and edu.sirius links are downloaded only when their public host and `robots.txt` permit it; interactive/login pages remain discovery-only. To normalize a public file obtained manually, place it under `data/manual/owao/`, add a `manual_manifest.jsonl` row with `source_url`, OWAO year/round/document metadata, `filename_original`, and `local_path`, then run `python3 import_manual_files.py`. Neither the files nor that local manifest are committed.
 - `russia_team_qual` currently covers the direct-PDF subset from `astroedu.ru/assets/problems/hq/...pdf`; linked `uts.astroedu.ru` quiz pages are intentionally out of scope for now.
 - Old SPbAO and VsOSh archives still contain broken historical links (`404`), especially in mirrors.
 - If a single file contains both tasks and solutions, the file is not split; this is reflected in metadata.

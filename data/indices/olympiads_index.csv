@@ -330,3 +330,14 @@ vsosh_astronomy,2025,regional,True,True,False,False,17,2,17,0.99
 vsosh_astronomy,2026,qualifying,True,True,False,False,30,2,30,0.99
 vsosh_astronomy,2026,regional,True,True,False,False,19,2,19,0.99
 vsosh_astronomy,2026,unknown,True,False,False,False,1,0,1,0.8
+owao,2022,practical,True,True,False,False,0,0,0,0.99
+owao,2022,theoretical,True,True,False,False,0,0,0,0.99
+owao,2023,observational,True,True,False,False,0,0,0,0.99
+owao,2023,practical,True,True,False,False,0,0,0,0.99
+owao,2023,theoretical,True,True,False,False,0,0,0,0.99
+owao,2024,express,True,True,False,False,0,0,0,0.99
+owao,2024,observational,True,True,False,False,0,0,0,0.99
+owao,2024,practical,True,True,False,False,0,0,0,0.99
+owao,2024,theoretical,True,True,False,False,0,0,0,0.99
+owao,2025,practical,True,True,False,False,0,0,0,0.99
+owao,2025,theoretical,True,True,False,False,0,0,0,0.99

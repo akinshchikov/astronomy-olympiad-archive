@@ -20,6 +20,7 @@ This repository is prepared for a public GitHub release as a reproducible pipeli
 - `data/raw/`
 - `data/archive/`
 - `data/logs/`
+- `data/manual/` (including manually obtained OWAO files and their local manifest)
 - local/manually derived manifests with absolute paths
 
 ## Why
@@ -32,7 +33,7 @@ This repository is prepared for a public GitHub release as a reproducible pipeli
 
 1. Initialize git after the current `.gitignore` is in place.
 2. Keep the `MIT` code license in [`LICENSE`](LICENSE) unless you intentionally want a different licensing model.
-3. Do not add `data/raw/`, `data/archive/`, or `data/logs/`.
+3. Do not add `data/raw/`, `data/archive/`, `data/logs/`, or `data/manual/`.
 4. If you later want to publish binaries, review redistribution terms per source first.
 
 ## Refreshing Local State

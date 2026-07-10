@@ -46,6 +46,12 @@ SERBIA_ARCHIVE_PATTERNS = (
     (re.compile(r"^RegioCont(?P<year>\d{4})\.pdf$", flags=re.IGNORECASE), "regional"),
     (re.compile(r"^RepubCont(?P<year>\d{4})\.pdf$", flags=re.IGNORECASE), "final"),
 )
+OWAO_PAGE_TOKEN_RE = re.compile(
+    r"<(?P<heading>h[1-6])\b[^>]*>(?P<heading_text>.*?)</(?P=heading)>"
+    r"|<div\b[^>]*\bfield=(?P<quote>['\"])(?:tn_text_[^'\"]+|text)(?P=quote)[^>]*>(?P<label_text>.*?)</div>"
+    r"|<a\b[^>]*>(?P<anchor_text>.*?)</a>",
+    flags=re.IGNORECASE | re.DOTALL,
+)
 
 
 def build_source_candidates_csv(root: Path, families: set[str] | None) -> list[dict]:
@@ -216,6 +222,68 @@ def is_spbao_official_pdf(url: str) -> bool:
     return "system/files/" in url and url.lower().endswith(".pdf")
 
 
+def owao_page_links(raw_html: str, base_url: str) -> list[dict[str, str]]:
+    """Return OWAO links with the nearest round heading as page context.
+
+    The official pages group otherwise context-free share links under round headings.
+    Keeping that context here avoids a broad HTML parser change for other sources.
+    """
+    links_by_text: dict[str, list[dict[str, str]]] = defaultdict(list)
+    for link in extract_links(raw_html, base_url):
+        links_by_text[link["text"]].append(link)
+    current_section = ""
+    current_year = infer_year(base_url)
+    result: list[dict[str, str]] = []
+    seen: set[tuple[str, str]] = set()
+    for match in OWAO_PAGE_TOKEN_RE.finditer(raw_html):
+        label_contents = match.group("heading_text") or match.group("label_text")
+        if label_contents is not None:
+            text = html_to_text(label_contents).strip()
+            heading_year = infer_year(text)
+            if heading_year is not None:
+                current_year = heading_year
+            if "round" in text.lower():
+                current_section = text
+            # Tilda sometimes puts the Files-to-tasks anchor inside the positioned
+            # text element itself, so the outer div token consumes that anchor.
+            for link in extract_links(label_contents, base_url):
+                key = (link["href"], link["text"])
+                if key not in seen:
+                    seen.add(key)
+                    result.append({**link, "section": current_section, "year": current_year})
+            continue
+        text = html_to_text(match.group("anchor_text") or "").strip()
+        # Resolve this anchor through the established extractor so URL handling stays shared.
+        matching = links_by_text.get(text, [])
+        if matching:
+            # Anchors are processed in source order, as are extract_links results.
+            link = matching.pop(0)
+            key = (link["href"], text)
+            if key in seen:
+                continue
+            seen.add(key)
+            result.append({**link, "section": current_section, "year": current_year})
+    return result
+
+
+def owao_access_notes(url: str) -> str:
+    domain = source_domain(url)
+    notes = "official"
+    if domain == "my.sirius.online":
+        notes = append_note(notes, "host=my.sirius.online")
+    elif domain == "nextcloud-storage.talantiuspeh.ru":
+        notes = append_note(notes, "external_share=nextcloud")
+    elif domain == "disk.yandex.ru":
+        notes = append_note(notes, "external_share=yandex_disk")
+    elif domain == "uts.astroedu.ru":
+        notes = append_note(notes, "interactive_or_login=uts")
+        notes = append_note(notes, "discovery_only")
+    elif domain == "edu.sirius.online":
+        notes = append_note(notes, "interactive_or_login=edu_sirius")
+        notes = append_note(notes, "discovery_only")
+    return notes
+
+
 def passes_source_specific_link_filter(seed: dict, link_text: str, href: str) -> bool:
     source_id = source_id_of(seed)
     if source_id == STRUVE_SOURCE_ID:
@@ -244,6 +312,8 @@ def should_record_seed_link(seed: dict, link_text: str, href: str) -> bool:
         return is_spbao_official_pdf(href)
     if source_id == VSOSH_EDSOO_SOURCE_ID:
         return is_current_vsosh_edsoo_document(link_text, href)
+    if source_id == OWAO_SOURCE_ID:
+        return bool(re.search(r"problems?|solutions?|files to the tasks|задани|решени", link_text, re.IGNORECASE))
     if not should_record_link(href):
         return False
     return passes_source_specific_link_filter(seed, link_text, href)
@@ -324,6 +394,33 @@ def apply_source_specific_link_overrides(
     return document_type, extra_types, stage_or_round, round_detail, language
 
 
+def apply_owao_metadata(
+    link_text: str, page_title: str, href: str, document_type: str, extra_types: list[str], stage_or_round: str, round_detail: str | None
+) -> tuple[str, list[str], str, str | None]:
+    text = f"{link_text} {page_title} {href}".lower()
+    if "express round and observation round" in text:
+        stage_or_round, round_detail = "observational", "express_and_observational"
+    elif "express round" in text:
+        stage_or_round, round_detail = "express", "express"
+    elif "observation round" in text or "observational round" in text:
+        stage_or_round, round_detail = "observational", "observational"
+    elif "practical round" in text:
+        stage_or_round, round_detail = "practical", "practical"
+    elif "theoretical round" in text:
+        stage_or_round, round_detail = "theoretical", "theoretical"
+
+    link_lower = link_text.lower()
+    if "files to the tasks" in link_lower:
+        document_type, extra_types = "reference_data", ["reference_data"]
+    elif "problems and solutions" in link_lower:
+        document_type, extra_types = "solutions", ["tasks", "solutions"]
+    elif re.search(r"\bproblems?\b|задани", link_lower):
+        document_type, extra_types = "tasks", ["tasks"]
+    elif re.search(r"\bsolutions?\b|решени", link_lower):
+        document_type, extra_types = "solutions", ["solutions"]
+    return document_type, extra_types, stage_or_round, round_detail
+
+
 def build_candidate_entry(
     seed: dict,
     *,
@@ -340,6 +437,10 @@ def build_candidate_entry(
     document_type, extra_types = infer_document_type(*title_bits)
     stage_or_round, round_detail = infer_stage(family, *title_bits)
     language = infer_language(link_text, href)
+    if source_id_of(seed) == OWAO_SOURCE_ID:
+        document_type, extra_types, stage_or_round, round_detail = apply_owao_metadata(
+            link_text, page_title, href, document_type, extra_types, stage_or_round, round_detail
+        )
     document_type, extra_types, stage_or_round, round_detail, language = apply_source_specific_link_overrides(
         seed,
         href,
@@ -376,7 +477,7 @@ def build_candidate_entry(
         "extension": "pdf" if source_id_of(seed) == VSOSH_EDSOO_SOURCE_ID else infer_extension(href),
         "variant_tag": variant_tag,
         "round_detail": round_detail,
-        "notes": f"extra_types={','.join(extra_types)}",
+        "notes": append_note(f"extra_types={','.join(extra_types)}", owao_access_notes(href) if source_id_of(seed) == OWAO_SOURCE_ID else ""),
         "seed_context": context,
         "confidence": confidence_score(year, stage_or_round, document_type, link_text or page_title),
     }
@@ -435,6 +536,9 @@ def derive_child_context(parent_context: dict, entry: dict) -> dict:
 def discover_documents(root: Path, families: set[str] | None, dry_run: bool, limit: int | None) -> int:
     logger = configure_logger("discover_sources", root / "data" / "logs" / "crawl.log")
     errors_logger = configure_logger("discover_sources.errors", root / "data" / "logs" / "errors.log")
+    if dry_run:
+        logger.info("DISCOVERY dry_run: no manifests updated")
+        return 0
     client = HttpClient(logger=logger, dry_run=dry_run)
     source_rows = build_source_candidates_csv(root, families)
     logger.info("SOURCE_CANDIDATES count=%s", len(source_rows))
@@ -485,20 +589,36 @@ def discover_documents(root: Path, families: set[str] | None, dry_run: bool, lim
                 if key in discovered:
                     discovered[key]["notes"] = append_note(discovered[key]["notes"], "html_container=true")
 
-            links = extract_links(page_html, page_url)
+            links = owao_page_links(page_html, page_url) if source_id_of(seed) == OWAO_SOURCE_ID else extract_links(page_html, page_url)
             for link in links:
                 href = link["href"]
+                if source_id_of(seed) == OWAO_SOURCE_ID and not link.get("section"):
+                    continue
                 if not should_record_seed_link(seed, link["text"], href):
                     continue
 
+                link_page_title = page_title
+                if source_id_of(seed) == OWAO_SOURCE_ID and link.get("section"):
+                    link_page_title = f"{page_title} {link['section']}"
+                link_context = dict(page_context)
+                if source_id_of(seed) == OWAO_SOURCE_ID and isinstance(link.get("year"), int):
+                    link_context["year"] = link["year"]
+                if source_id_of(seed) == OWAO_SOURCE_ID:
+                    filename_year = infer_year(decoded_filename(href))
+                    if filename_year is not None:
+                        link_context["year"] = filename_year
+                if source_id_of(seed) == OWAO_SOURCE_ID and context_year(link_context) is None:
+                    owao_year = infer_year(f"{page_url} {link_page_title}")
+                    if owao_year is not None:
+                        link_context["year"] = owao_year
                 entry = build_candidate_entry(
                     seed,
                     href=href,
                     link_text=link["text"],
-                    page_title=page_title,
+                    page_title=link_page_title,
                     parent_page_url=page_url,
                     parent_page_title=page_title,
-                    context=page_context,
+                    context=link_context,
                 )
                 store_discovered_entry(discovered, entry, seen_from=page_url)
                 coverage[(entry["olympiad_family"], entry["year"], entry["stage_or_round"])].add(entry["document_type"])

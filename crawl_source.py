@@ -45,6 +45,13 @@ def crawl_documents(root: Path, families: set[str] | None, dry_run: bool, limit:
     downloads: list[dict] = []
     for row in discovered:
         url = row["source_url"]
+        notes = str(row.get("notes", ""))
+        if "discovery_only" in notes:
+            logger.info("DOWNLOAD skip_discovery_only url=%s notes=%s", url, row.get("notes", ""))
+            continue
+        if row.get("source_id") == "owao_tasks_official" and "external_share=" in notes:
+            logger.info("DOWNLOAD skip_external_share url=%s notes=%s", url, notes)
+            continue
         extension = infer_extension(url)
         raw_path = target_raw_path(root, row["source_id"], url, extension)
         legacy_bin_path = target_raw_path(root, row["source_id"], url, "bin") if extension != "bin" else raw_path
@@ -73,8 +80,15 @@ def crawl_documents(root: Path, families: set[str] | None, dry_run: bool, limit:
         try:
             response = client.fetch(url)
         except Exception as error:
-            errors_logger.error("DOWNLOAD failed url=%s error=%s", url, error)
+            errors_logger.error("DOWNLOAD failed url=%s error_type=%s error=%s", url, type(error).__name__, error)
             continue
+
+        content_type = get_header_value(response.headers, "Content-Type")
+        if infer_extension(url) in {"pdf", "doc", "docx", "zip"} and "html" in content_type.lower():
+            page_text = html_to_text(response.text).lower()
+            if any(token in page_text for token in ("login", "sign in", "войти", "авторизац")):
+                errors_logger.error("DOWNLOAD skipped_login_page url=%s final_url=%s", url, response.final_url)
+                continue
 
         if dry_run:
             download_record = dict(row)
@@ -87,7 +101,6 @@ def crawl_documents(root: Path, families: set[str] | None, dry_run: bool, limit:
         logger.info("DOWNLOAD saved url=%s path=%s bytes=%s", url, raw_path, len(response.content))
 
         txt_saved = ""
-        content_type = get_header_value(response.headers, "Content-Type")
         if infer_extension(url, content_type) in {"html", "htm"}:
             txt_payload = html_to_text(response.text)
             txt_path.write_text(txt_payload, encoding="utf-8")

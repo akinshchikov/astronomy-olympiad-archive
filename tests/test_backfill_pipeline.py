@@ -9,6 +9,7 @@ from unittest.mock import patch
 import build_indices
 import crawl_source
 import discover_sources
+import import_manual_files
 import normalize_archive
 from utils.fs_utils import load_jsonl, write_jsonl
 from utils.metadata import decoded_filename, infer_document_type, infer_extension
@@ -81,6 +82,75 @@ def make_download_row(root: Path, *, name: str, raw_suffix: str, raw_text: str, 
 
 
 class BackfillPipelineTests(TestCase):
+    def test_owao_discovery_keeps_round_context_and_access_notes(self) -> None:
+        urls = [f"https://owao.siriusolymp.ru/{year}en/tasks" for year in (2025, 2024, 2023, 2022)]
+        pages = {
+            urls[0]: """<title>OWAO 2025</title><h2>Theoretical Round</h2>
+                <a href='https://my.sirius.online/content/theory-problems.pdf'>Problems</a>
+                <a href='https://my.sirius.online/content/theory-solutions.pdf'>Solutions</a>
+                <h2>Practical Round</h2><a href='https://my.sirius.online/content/practical-problems.pdf'>Problems</a>
+                <a href='https://my.sirius.online/content/practical-solutions.pdf'>Solutions</a>""",
+            urls[1]: """<title>OWAO 2024</title><h2>Practical Round</h2>
+                <a href='https://nextcloud-storage.talantiuspeh.ru/task-files'>Files to the tasks</a>
+                <a href='https://nextcloud-storage.talantiuspeh.ru/problems'>Problems</a>
+                <a href='https://nextcloud-storage.talantiuspeh.ru/solutions'>Solutions</a>
+                <h2>Observation Round</h2><a href='https://uts.astroedu.ru/quiz'>Problems and Solutions</a>""",
+            urls[2]: """<title>OWAO 2023</title><h2>Theoretical Round</h2>
+                <a href='https://disk.yandex.ru/problems'>Problems</a><a href='https://disk.yandex.ru/solutions'>Solutions</a>
+                <h2>Express Round and Observation Round</h2><a href='https://edu.sirius.online/item'>Problems and Solutions</a>""",
+            urls[3]: """<title>OWAO 2022</title><h2>Theoretical Round</h2><a href='https://disk.yandex.ru/theory'>Problems</a>
+                <h2>Practical Round</h2><a href='https://disk.yandex.ru/files'>Files to the tasks</a><a href='https://disk.yandex.ru/practice'>Solutions</a>""",
+        }
+        source = SourceDefinition("owao_tasks_official", "OWAO", "owao", "official", 1, "static", urls,
+            extras={"default_context": {"record_seed_page": False, "follow_second_hop": False}})
+        with TemporaryDirectory() as tmpdir, patch.object(discover_sources, "SOURCE_DEFINITIONS", [source]), patch.object(
+            discover_sources, "HttpClient", fake_http_client({url: fake_response(url, html) for url, html in pages.items()})
+        ):
+            root = Path(tmpdir)
+            self.assertEqual(discover_sources.discover_documents(root, None, False, None), 0)
+            rows = load_jsonl(root / "data" / "manifests" / "discovered_documents.jsonl")
+        by_url = {row["source_url"]: row for row in rows}
+        self.assertEqual(by_url["https://my.sirius.online/content/practical-problems.pdf"]["stage_or_round"], "practical")
+        self.assertEqual(by_url["https://nextcloud-storage.talantiuspeh.ru/task-files"]["document_type"], "reference_data")
+        combined = by_url["https://uts.astroedu.ru/quiz"]
+        self.assertEqual(combined["document_type"], "solutions")
+        self.assertIn("extra_types=tasks,solutions", combined["notes"])
+        self.assertIn("discovery_only", combined["notes"])
+        self.assertEqual(by_url["https://edu.sirius.online/item"]["round_detail"], "express_and_observational")
+        self.assertEqual({row["year"] for row in rows}, {2022, 2023, 2024, 2025})
+        parsed = discover_sources.owao_page_links(
+            "<h2>2025</h2><h3>Theoretical Round</h3><a href='a.pdf'>Problems</a>"
+            "<h2>2022</h2><h3>Practical Round</h3><a href='b.pdf'>Problems</a>",
+            "https://owao.siriusolymp.ru/2025en/tasks",
+        )
+        self.assertEqual([(link["year"], link["section"]) for link in parsed], [(2025, "Theoretical Round"), (2022, "Practical Round")])
+        nested = discover_sources.owao_page_links(
+            "<div field='text'>2024</div><div field='tn_text_1'>Practical Round</div>"
+            "<div field='tn_text_2'><a href='files'>Files to the tasks</a></div>",
+            "https://owao.siriusolymp.ru/2025en/tasks",
+        )
+        self.assertEqual(nested[0]["text"], "Files to the tasks")
+        self.assertEqual(nested[0]["year"], 2024)
+
+    def test_manual_owao_import_feeds_normalization(self) -> None:
+        with TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            manual_root = root / "data" / "manual" / "owao"
+            manual_root.mkdir(parents=True)
+            pdf_path = manual_root / "2025-theory.pdf"
+            pdf_path.write_bytes(b"%PDF-1.4\n%manual\n")
+            write_jsonl(manual_root / "manual_manifest.jsonl", [{
+                "source_url": "https://my.sirius.online/content/2025-theory.pdf", "olympiad_family": "owao",
+                "year": 2025, "stage_or_round": "theoretical", "round_detail": "theoretical",
+                "document_type": "tasks", "language": "en", "variant_tag": "official",
+                "filename_original": "2025-theory.pdf", "local_path": "2025-theory.pdf",
+            }])
+            self.assertEqual(import_manual_files.import_manual_files(root), 1)
+            downloaded = load_jsonl(root / "data" / "manifests" / "download_manifest.jsonl")
+            self.assertEqual(downloaded[0]["status"], "manual")
+            self.assertEqual(normalize_archive.normalize(root, None, False, None), 0)
+            normalized = load_jsonl(root / "data" / "manifests" / "normalized_entries.jsonl")
+            self.assertEqual(normalized[0]["stage_or_round"], "theoretical")
     def test_metadata_handles_drupal_query_file_urls(self) -> None:
         url = "http://school.astro.spbu.ru/?q=system/files/10%20%D0%BA%D0%BB%D0%B0%D1%81%D1%81%20-%20%D1%80%D0%B5%D1%88%D0%B5%D0%BD%D0%B8%D1%8F_51.pdf"
         self.assertEqual(decoded_filename(url), "10 класс - решения_51.pdf")

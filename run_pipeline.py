@@ -8,6 +8,7 @@ import cleanup_outputs
 import crawl_source
 import detect_relations
 import discover_sources
+import import_manual_files
 import normalize_archive
 
 
@@ -30,7 +31,10 @@ def main() -> int:
             return 0
 
     discover_sources.discover_documents(args.root, families, args.dry_run, args.discover_limit)
+    if args.dry_run:
+        return 0
     crawl_source.crawl_documents(args.root, families, args.dry_run, args.download_limit)
+    import_manual_files.import_manual_files(args.root, families)
     normalize_archive.normalize(args.root, families, args.dry_run, None)
     detect_relations.detect(args.root, families)
     build_indices.build(args.root, families)

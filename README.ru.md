@@ -66,6 +66,7 @@ data/
     relation_groups.csv
     coverage_report.md
   logs/                 # локальные логи, не коммитятся
+  manual/owao/          # опциональные вручную загруженные OWAO-файлы, не коммитятся
 ```
 
 Нормализованное имя файла:
@@ -165,7 +166,7 @@ python3 run_pipeline.py --clean-only --families spbao
 ## Источники первой очереди
 
 - `vsosh_edsoo_official`: `https://vserosolimp.edsoo.ru/astronom`
-- `owao_tasks_official`: `https://owao.siriusolymp.ru/tasks`
+- `owao_tasks_official`: страница `https://owao.siriusolymp.ru/2025en/tasks` и архивные страницы 2024 и 2023 годов
 - `serbia_astronomy_official`: `https://www.das.org.rs/naoc.html`
 - `russia_team_qual_archive`: `https://astroedu.ru/hq/problems/`
 - `mao_moscow_archive`: `https://mos.olimpiada.ru/tasks/astr`
@@ -189,7 +190,7 @@ python3 run_pipeline.py --clean-only --families spbao
 
 - `vsosh_astronomy`: `2009..2026`, 18 лет
 - `struve`: `2022..2025`, 4 года
-- `owao`: `2025`, 1 год
+- `owao`: поддерживается official discovery за `2022..2025`
 - `serbia_astronomy`: `2012..2026`, 15 лет
 - `russia_team_qual`: `2016..2026`, 11 лет
 - `spbao`: `2010..2024`, 15 лет
@@ -209,7 +210,7 @@ python3 run_pipeline.py --clean-only --families spbao
 - Для PDF пока нет полноценного OCR/извлечения текста; near-duplicate строится по метаданным, именам и размерам файлов.
 - Часть старых IAO-страниц на `issp.ac.ru` нестабильна, поэтому используются и официальные индексы, и зеркала.
 - `vso.edsoo.ru` блокирует часть официальных файлов через `robots.txt`, поэтому они остаются только в discovery.
-- Для OWAO сейчас обнаруживаются официальные PDF задач и решений за 2025 год, но хост с самими файлами ограничен через `robots.txt`, поэтому в публичных индексах они пока остаются discovery-only.
+- Для OWAO поддерживаются официальные архивные страницы 2022–2025. Отдельной рабочей страницы `2022en/tasks` нет (HTTP 404): материалы 2022 года обнаруживаются из встроенного раздела текущей официальной архивной страницы. Ссылки на `my.sirius.online`, Yandex Disk, Nextcloud, UTS и edu.sirius загружаются только если публичный хост и `robots.txt` это разрешают; интерактивные/login-страницы остаются discovery-only. Для публичного файла, скачанного вручную, положите его в `data/manual/owao/`, добавьте в `manual_manifest.jsonl` обязательные `source_url`, метаданные года/тура/документа OWAO, `filename_original` и `local_path`, затем запустите `python3 import_manual_files.py`. Ни файлы, ни этот локальный manifest не коммитятся.
 - Для `russia_team_qual` сейчас покрыт только direct-PDF-поднабор с `astroedu.ru/assets/problems/hq/...pdf`; связанные quiz-страницы на `uts.astroedu.ru` намеренно оставлены вне первого патча.
 - В старых архивах СПбАО и ВсОШ есть битые ссылки (`404`), особенно в исторических зеркалах.
 - Если один файл содержит и задачи, и решения, файл не режется; это отражается в metadata.

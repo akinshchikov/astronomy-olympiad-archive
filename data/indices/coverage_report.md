@@ -42,7 +42,16 @@
 
 ## owao
 
-- No materials discovered yet.
+- Years found: 2022, 2023, 2024, 2025
+- Years with tasks: 2022, 2023, 2024, 2025
+- Years with solutions: 2022, 2023, 2024, 2025
+- Years with mirror material: none
+- Relation groups summary: none
+- Low-confidence years: none
+- Discovery-only / undownloaded years: 2022, 2023, 2024, 2025
+- Undownloaded document types: reference_data=3, solutions=17, tasks=14
+- Gaps: none observed inside discovered range
+
 
 ## serbia_astronomy
 

@@ -215,9 +215,13 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
         source_role="official",
         source_priority=1,
         strategy="static",
-        seed_urls=["https://owao.siriusolymp.ru/tasks"],
-        notes="Официальная страница архива OWAO с материалами прошлых лет.",
-        extras={"default_context": {"record_seed_page": False}},
+        seed_urls=[
+            "https://owao.siriusolymp.ru/2025en/tasks",
+            "https://owao.siriusolymp.ru/2024en/tasks",
+            "https://owao.siriusolymp.ru/2023en/tasks",
+        ],
+        notes="Официальные страницы OWAO 2025/2024/2023; раздел 2022 встроен в текущую страницу архива.",
+        extras={"default_context": {"record_seed_page": False, "follow_second_hop": False}},
     ),
     SourceDefinition(
         source_id="serbia_astronomy_official",

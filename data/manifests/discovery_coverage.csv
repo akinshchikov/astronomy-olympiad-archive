@@ -181,8 +181,6 @@ mao,2024,theoretical,"solutions,tasks",2
 mao,2025,observational,"solutions,tasks",2
 mao,2025,qualifying,"solutions,tasks",2
 mao,2025,theoretical,"solutions,tasks",2
-owao,2025,observational,"solutions,tasks",2
-owao,2025,theoretical,"solutions,tasks",2
 russia_team_qual,,qualifying,tasks,1
 russia_team_qual,2016,qualifying,tasks,1
 russia_team_qual,2017,qualifying,tasks,1
@@ -363,3 +361,14 @@ vsosh_astronomy,2026,final,"info,order,protocol,regulations,requirements,solutio
 vsosh_astronomy,2026,qualifying,"solutions,tasks",2
 vsosh_astronomy,2026,regional,"order,protocol,reference_data,requirements,results,solutions,tasks",7
 vsosh_astronomy,2026,unknown,reference_data,1
+owao,2022,practical,"reference_data,solutions,tasks",3
+owao,2022,theoretical,"solutions,tasks",2
+owao,2023,observational,solutions,1
+owao,2023,practical,"reference_data,solutions,tasks",3
+owao,2023,theoretical,"solutions,tasks",2
+owao,2024,express,solutions,1
+owao,2024,observational,solutions,1
+owao,2024,practical,"reference_data,solutions,tasks",3
+owao,2024,theoretical,"solutions,tasks",2
+owao,2025,practical,"solutions,tasks",2
+owao,2025,theoretical,"solutions,tasks",2
