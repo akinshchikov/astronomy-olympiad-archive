@@ -167,6 +167,7 @@ python3 run_pipeline.py --clean-only --families spbao
 
 - `vsosh_edsoo_official`: `https://vserosolimp.edsoo.ru/astronom`
 - `owao_tasks_official`: страница `https://owao.siriusolymp.ru/2025en/tasks` и архивные страницы 2024 и 2023 годов
+- `owao_astroedu_archive`: `https://astroedu.ru/hq/problems/owao` (direct-file fallback для теоретического и практического туров)
 - `serbia_astronomy_official`: `https://www.das.org.rs/naoc.html`
 - `russia_team_qual_archive`: `https://astroedu.ru/hq/problems/`
 - `mao_moscow_archive`: `https://mos.olimpiada.ru/tasks/astr`
@@ -176,14 +177,19 @@ python3 run_pipeline.py --clean-only --families spbao
 
 Полный актуальный список seed-источников сохранён в [data/manifests/source_candidates.csv](data/manifests/source_candidates.csv).
 
-## OWAO: сначала discovery, затем ручной импорт при необходимости
+## OWAO: прямой fallback Astroedu, official discovery и ручной импорт
 
-Для официальных архивных страниц OWAO поддерживается автоматическое discovery. Команда
-`python3 run_pipeline.py --families owao` обновляет metadata обнаруженных материалов, но не обязана скачивать PDF или создавать `data/archive/owao/`.
+Официальные архивные страницы OWAO остаются discovery-источником первого приоритета. Часть их файлов находится на robots-blocked, external-share, интерактивных или login-like сервисах, поэтому такие ссылки могут оставаться discovery-only.
 
-Это ожидаемое поведение: сейчас OWAO — семейство с discovery-first / manual-import workflow. PDF на `my.sirius.online` блокируются `robots.txt` для автоматической загрузки; ссылки Yandex Disk и Nextcloud остаются discovery-only, если сама страница уже не даёт безопасный прямой публичный файл; ссылки UTS / edu.sirius интерактивны или требуют входа. Pipeline не обходит эти ограничения.
+Источник второго приоритета `owao_astroedu_archive` даёт прямые публичные PDF и ZIP с данными практического тура со страницы `https://astroedu.ru/hq/problems/owao`. Для перечисленных там лет точечный запуск
 
-Если публичный файл скачан вручную в браузере, положите его в `data/manual/owao/`, добавьте обязательную строку sidecar в `data/manual/owao/manual_manifest.jsonl`, запустите `python3 import_manual_files.py`, затем normalization/indexing. До этого отсутствие `data/archive/owao/` нормально.
+```bash
+python3 run_pipeline.py --clean --families owao
+```
+
+должен скачать прямые материалы теоретического и практического туров и создать `data/archive/owao/`. Онлайн-наблюдательный и блиц-туры, ведущие в UTS, остаются discovery-only; pipeline не обходит ограничения доступа.
+
+Ручной импорт по-прежнему нужен для публичных файлов OWAO, которых нет в прямом архиве. Положите скачанный в браузере файл в `data/manual/owao/`, добавьте обязательную sidecar-строку в `data/manual/owao/manual_manifest.jsonl`, запустите `python3 import_manual_files.py`, затем normalization/indexing.
 
 ### Как проверить OWAO локально
 
@@ -241,7 +247,7 @@ find data/archive -maxdepth 3 -type d -name 'owao' -print
 - Для PDF пока нет полноценного OCR/извлечения текста; near-duplicate строится по метаданным, именам и размерам файлов.
 - Часть старых IAO-страниц на `issp.ac.ru` нестабильна, поэтому используются и официальные индексы, и зеркала.
 - `vso.edsoo.ru` блокирует часть официальных файлов через `robots.txt`, поэтому они остаются только в discovery.
-- Для OWAO поддерживаются официальные архивные страницы 2022–2025. Отдельной рабочей страницы `2022en/tasks` нет (HTTP 404): материалы 2022 года обнаруживаются из встроенного раздела текущей официальной архивной страницы. См. выше OWAO workflow discovery-first/manual-import.
+- Для OWAO поддерживаются официальные архивные страницы 2022–2025, а fallback Astroedu даёт прямые PDF теоретического/практического туров и архивы данных для перечисленных там лет. Отдельной рабочей страницы `2022en/tasks` нет (HTTP 404): official metadata за 2022 год извлекается из встроенного раздела. Онлайн-туры UTS и заблокированные внешние ссылки остаются discovery-only.
 - Для `russia_team_qual` сейчас покрыт только direct-PDF-поднабор с `astroedu.ru/assets/problems/hq/...pdf`; связанные quiz-страницы на `uts.astroedu.ru` намеренно оставлены вне первого патча.
 - В старых архивах СПбАО и ВсОШ есть битые ссылки (`404`), особенно в исторических зеркалах.
 - Если один файл содержит и задачи, и решения, файл не режется; это отражается в metadata.

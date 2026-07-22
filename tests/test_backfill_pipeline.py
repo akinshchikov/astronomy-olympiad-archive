@@ -40,6 +40,16 @@ def fake_response(url: str, html: str, status_code: int = 200) -> SimpleNamespac
     )
 
 
+def fake_binary_response(url: str, content: bytes, content_type: str) -> SimpleNamespace:
+    return SimpleNamespace(
+        final_url=url,
+        status_code=200,
+        text=content.decode("utf-8", errors="replace"),
+        content=content,
+        headers={"Content-Type": content_type},
+    )
+
+
 def make_download_row(root: Path, *, name: str, raw_suffix: str, raw_text: str, txt_text: str = "", **overrides) -> dict:
     raw_path = root / "data" / "raw" / f"{name}{raw_suffix}"
     raw_path.parent.mkdir(parents=True, exist_ok=True)
@@ -131,6 +141,80 @@ class BackfillPipelineTests(TestCase):
         )
         self.assertEqual(nested[0]["text"], "Files to the tasks")
         self.assertEqual(nested[0]["year"], 2024)
+
+    def test_owao_astroedu_filename_metadata_is_strict(self) -> None:
+        cases = {
+            "https://astroedu.ru/assets/problems/owao/2025/OWAO-2025-prob-T.pdf": ("tasks", ["tasks"], "theoretical", "theoretical"),
+            "https://astroedu.ru/assets/problems/owao/2024/OWAO-2024-sol-P.pdf": ("solutions", ["solutions"], "practical", "practical"),
+            "https://astroedu.ru/assets/problems/owao/2022/OWAO-2022-P-files.zip": ("reference_data", ["reference_data"], "practical", "practical"),
+        }
+        for url, expected in cases.items():
+            with self.subTest(url=url):
+                self.assertEqual(discover_sources.owao_astroedu_material_metadata(url), expected)
+
+        rejected = [
+            "https://example.org/assets/problems/owao/2025/OWAO-2025-prob-T.pdf",
+            "https://astroedu.ru/assets/problems/owao/2024/OWAO-2025-prob-T.pdf",
+            "https://astroedu.ru/assets/problems/owao/2025/OWAO-2025-P-files.pdf",
+            "https://astroedu.ru/assets/problems/owao/2025/OWAO-2025-prob-T.zip",
+            "https://uts.astroedu.ru/course/owao-2025",
+        ]
+        for url in rejected:
+            with self.subTest(url=url):
+                self.assertIsNone(discover_sources.owao_astroedu_material_metadata(url))
+
+    def test_owao_astroedu_archive_discovers_downloadable_materials(self) -> None:
+        page_url = "https://astroedu.ru/hq/problems/owao"
+        files = {
+            "https://astroedu.ru/assets/problems/owao/2025/OWAO-2025-prob-T.pdf": ("tasks", "theoretical"),
+            "https://astroedu.ru/assets/problems/owao/2025/OWAO-2025-sol-T.pdf": ("solutions", "theoretical"),
+            "https://astroedu.ru/assets/problems/owao/2025/OWAO-2025-prob-P.pdf": ("tasks", "practical"),
+            "https://astroedu.ru/assets/problems/owao/2025/OWAO-2025-P-files.zip": ("reference_data", "practical"),
+            "https://astroedu.ru/assets/problems/owao/2025/OWAO-2025-sol-P.pdf": ("solutions", "practical"),
+        }
+        anchors = "".join(
+            f"<a href='{url}'>{'[данные]' if url.endswith('.zip') else 'Условия'}</a>"
+            for url in files
+        ) + "<a href='https://uts.astroedu.ru/quiz'>Observation</a><a href='/assets/problems/hq/unrelated.pdf'>Other</a>"
+        source = SourceDefinition(
+            "owao_astroedu_archive", "OWAO astroedu", "owao", "archive", 2, "static", [page_url],
+            extras={"default_context": {"record_seed_page": False}},
+        )
+        discovery_responses = {page_url: fake_response(page_url, f"<title>OWAO</title>{anchors}")}
+        download_responses = {
+            url: fake_binary_response(
+                url,
+                b"PK\x03\x04test" if url.endswith(".zip") else b"%PDF-1.4\n%test\n",
+                "application/zip" if url.endswith(".zip") else "application/pdf",
+            )
+            for url in files
+        }
+        with TemporaryDirectory() as tmpdir, patch.object(discover_sources, "SOURCE_DEFINITIONS", [source]), patch.object(
+            discover_sources, "HttpClient", fake_http_client(discovery_responses)
+        ), patch.object(crawl_source, "HttpClient", fake_http_client(download_responses)):
+            root = Path(tmpdir)
+            self.assertEqual(discover_sources.discover_documents(root, None, False, None), 0)
+            rows = load_jsonl(root / "data" / "manifests" / "discovered_documents.jsonl")
+            self.assertEqual(len(rows), len(files))
+            by_url = {row["source_url"]: row for row in rows}
+            for url, (document_type, stage_or_round) in files.items():
+                with self.subTest(url=url):
+                    self.assertEqual(by_url[url]["year"], 2025)
+                    self.assertEqual(by_url[url]["document_type"], document_type)
+                    self.assertEqual(by_url[url]["stage_or_round"], stage_or_round)
+                    self.assertEqual(by_url[url]["round_detail"], stage_or_round)
+                    self.assertEqual(by_url[url]["language"], "en")
+                    self.assertNotIn("discovery_only", by_url[url]["notes"])
+
+            self.assertEqual(crawl_source.crawl_documents(root, {"owao"}, False, None), 0)
+            downloaded = load_jsonl(root / "data" / "manifests" / "download_manifest.jsonl")
+            self.assertEqual(len(downloaded), len(files))
+            self.assertTrue(all(row["status"] == "downloaded" for row in downloaded))
+            self.assertEqual(normalize_archive.normalize(root, {"owao"}, False, None), 0)
+            normalized = load_jsonl(root / "data" / "manifests" / "normalized_entries.jsonl")
+            self.assertEqual(len(normalized), len(files))
+            self.assertTrue((root / "data" / "archive" / "owao" / "2025" / "theoretical").is_dir())
+            self.assertTrue((root / "data" / "archive" / "owao" / "2025" / "practical").is_dir())
 
     def test_manual_owao_import_feeds_normalization(self) -> None:
         with TemporaryDirectory() as tmpdir:

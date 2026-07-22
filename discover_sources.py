@@ -32,6 +32,7 @@ ALLOWED_EXTENSIONS = {"pdf", "doc", "docx", "zip", "html", "htm"}
 DIRECT_FILE_EXTENSIONS = {"pdf", "doc", "docx", "zip"}
 STRUVE_SOURCE_ID = "struve_moscow_year_pages"
 OWAO_SOURCE_ID = "owao_tasks_official"
+OWAO_ASTROEDU_SOURCE_ID = "owao_astroedu_archive"
 SERBIA_SOURCE_ID = "serbia_astronomy_official"
 RUSSIA_TEAM_QUAL_SOURCE_ID = "russia_team_qual_archive"
 VSOSH_ASTROEDU_SOURCE_ID = "vsosh_astroedu_archive"
@@ -222,6 +223,34 @@ def is_spbao_official_pdf(url: str) -> bool:
     return "system/files/" in url and url.lower().endswith(".pdf")
 
 
+OWAO_ASTROEDU_MATERIAL_RE = re.compile(
+    r"^/assets/problems/owao/(?P<path_year>20\d{2})/"
+    r"OWAO-(?P<filename_year>20\d{2})-"
+    r"(?:(?P<kind>prob|sol)-(?P<round>T|P)|P-files)\.(?P<extension>pdf|zip)$",
+    flags=re.IGNORECASE,
+)
+
+
+def owao_astroedu_material_metadata(url: str) -> tuple[str, list[str], str, str] | None:
+    """Infer OWAO metadata from direct files in the astroedu.ru archive."""
+    if source_domain(url) != "astroedu.ru":
+        return None
+    match = OWAO_ASTROEDU_MATERIAL_RE.fullmatch(decoded_url_path(url))
+    if not match or match.group("path_year") != match.group("filename_year"):
+        return None
+    extension = match.group("extension").lower()
+    kind = match.group("kind")
+    if kind is None:
+        if extension != "zip":
+            return None
+        return "reference_data", ["reference_data"], "practical", "practical"
+    if extension != "pdf":
+        return None
+    stage_or_round = "theoretical" if match.group("round").lower() == "t" else "practical"
+    document_type = "tasks" if kind.lower() == "prob" else "solutions"
+    return document_type, [document_type], stage_or_round, stage_or_round
+
+
 def owao_page_links(raw_html: str, base_url: str) -> list[dict[str, str]]:
     """Return OWAO links with the nearest round heading as page context.
 
@@ -292,6 +321,8 @@ def passes_source_specific_link_filter(seed: dict, link_text: str, href: str) ->
         return "struve" in f"{link_text} {href}".lower()
     if source_id == RUSSIA_TEAM_QUAL_SOURCE_ID:
         return is_russia_team_qual_direct_archive_file(href)
+    if source_id == OWAO_ASTROEDU_SOURCE_ID:
+        return owao_astroedu_material_metadata(href) is not None
     if source_id == VSOSH_ASTROEDU_SOURCE_ID:
         return is_vsosh_astroedu_archive_pdf(href)
     if source_id == VSOSH_EDSOO_SOURCE_ID:
@@ -391,6 +422,11 @@ def apply_source_specific_link_overrides(
             return "solutions", ["tasks", "solutions"], serbia_stage, None, "sr"
     if source_id == RUSSIA_TEAM_QUAL_SOURCE_ID and is_russia_team_qual_direct_archive_file(href):
         return document_type, extra_types, "qualifying", round_detail, language
+    if source_id == OWAO_ASTROEDU_SOURCE_ID:
+        metadata = owao_astroedu_material_metadata(href)
+        if metadata is not None:
+            document_type, extra_types, stage_or_round, round_detail = metadata
+            return document_type, extra_types, stage_or_round, round_detail, "en"
     return document_type, extra_types, stage_or_round, round_detail, language
 
 

@@ -167,6 +167,7 @@ Notes:
 
 - `vsosh_edsoo_official`: `https://vserosolimp.edsoo.ru/astronom`
 - `owao_tasks_official`: `https://owao.siriusolymp.ru/2025en/tasks`, plus the 2024 and 2023 archive pages
+- `owao_astroedu_archive`: `https://astroedu.ru/hq/problems/owao` (direct-file fallback for theoretical/practical materials)
 - `serbia_astronomy_official`: `https://www.das.org.rs/naoc.html`
 - `russia_team_qual_archive`: `https://astroedu.ru/hq/problems/`
 - `mao_moscow_archive`: `https://mos.olimpiada.ru/tasks/astr`
@@ -176,14 +177,19 @@ Some families currently start from archive/mirror seeds rather than a priority-1
 
 The full current seed-source list is stored in [data/manifests/source_candidates.csv](data/manifests/source_candidates.csv).
 
-## OWAO: discovery first, manual import when needed
+## OWAO: direct Astroedu fallback, official discovery, and manual import
 
-OWAO's official archive pages are supported for automatic discovery. Running
-`python3 run_pipeline.py --families owao` refreshes the discovered-material metadata, but does not necessarily download PDFs or create `data/archive/owao/`.
+The official OWAO archive pages remain the priority-1 discovery source. Some of their files are hosted on robots-blocked, external-share, interactive, or login-like services, so those links may remain discovery-only.
 
-This is expected: OWAO is currently a discovery-first / manual-import family. The `my.sirius.online` PDFs are robots-blocked for automated fetching; Yandex Disk and Nextcloud share links stay discovery-only unless the page already provides a safe direct public file URL; and UTS / edu.sirius links are interactive or login-like. The pipeline does not bypass these restrictions.
+The priority-2 `owao_astroedu_archive` source provides direct public PDFs and practical-round ZIP data from `https://astroedu.ru/hq/problems/owao`. For the years currently listed there, a focused run
 
-If a public file is manually downloaded in a browser, place it under `data/manual/owao/`, add its required sidecar row to `data/manual/owao/manual_manifest.jsonl`, run `python3 import_manual_files.py`, and then run normalization/indexing. Until then, the absence of `data/archive/owao/` is normal.
+```bash
+python3 run_pipeline.py --clean --families owao
+```
+
+should download the direct theoretical and practical materials and create `data/archive/owao/`. Online observation/blitz rounds linked to UTS remain discovery-only; the pipeline does not bypass access restrictions.
+
+Manual import remains available for public OWAO files not covered by the direct archive. Place a browser-downloaded file under `data/manual/owao/`, add the required sidecar row to `data/manual/owao/manual_manifest.jsonl`, run `python3 import_manual_files.py`, and then run normalization/indexing.
 
 ### How to check OWAO locally
 
@@ -241,7 +247,7 @@ Priority families in the current public indices:
 - PDF OCR and text extraction are still limited; near-duplicate detection currently relies on metadata, filenames, and file sizes.
 - Some older IAO pages on `issp.ac.ru` are unstable, so both official indexes and mirrors are used.
 - `vso.edsoo.ru` blocks part of the official material through `robots.txt`, so those files remain discovery-only.
-- OWAO official archive pages for 2022–2025 are discovered. There is no working standalone `2022en/tasks` page (HTTP 404); its material is discovered from the 2022 section embedded in the official current archive page. See the OWAO discovery-first/manual-import workflow above.
+- OWAO official archive pages for 2022–2025 are discovered, while the Astroedu fallback supplies direct theoretical/practical PDFs and practical data archives for the years it lists. There is no working standalone `2022en/tasks` page (HTTP 404); official 2022 metadata is discovered from the embedded 2022 section. Online UTS rounds and blocked external shares remain discovery-only.
 - `russia_team_qual` currently covers the direct-PDF subset from `astroedu.ru/assets/problems/hq/...pdf`; linked `uts.astroedu.ru` quiz pages are intentionally out of scope for now.
 - Old SPbAO and VsOSh archives still contain broken historical links (`404`), especially in mirrors.
 - If a single file contains both tasks and solutions, the file is not split; this is reflected in metadata.

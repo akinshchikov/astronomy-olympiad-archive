@@ -224,6 +224,17 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
         extras={"default_context": {"record_seed_page": False, "follow_second_hop": False}},
     ),
     SourceDefinition(
+        source_id="owao_astroedu_archive",
+        label="OWAO: direct-file archive on astroedu.ru",
+        olympiad_family="owao",
+        source_role="archive",
+        source_priority=2,
+        strategy="static",
+        seed_urls=["https://astroedu.ru/hq/problems/owao"],
+        notes="Прямые PDF и ZIP с условиями, решениями и данными OWAO 2022–2025; резервный источник для локальной сборки.",
+        extras={"default_context": {"record_seed_page": False}},
+    ),
+    SourceDefinition(
         source_id="serbia_astronomy_official",
         label="Serbia astronomy: official NAOK archive page",
         olympiad_family="serbia_astronomy",

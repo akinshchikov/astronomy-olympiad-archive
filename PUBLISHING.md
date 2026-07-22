@@ -28,7 +28,7 @@ This repository is prepared for a public GitHub release as a reproducible pipeli
 - The full local archive is large.
 - Public availability of a source URL is not the same thing as permission to republish mirrored binaries through GitHub.
 - The public repo should stay lightweight and reproducible.
-- Discovery-only OWAO metadata is still useful public coverage information. The absence of `data/archive/owao/` does not indicate a failed refresh when the linked hosts are robots-blocked, external-share, or interactive/login-only.
+- OWAO has both discovery-only links and a direct-file Astroedu fallback. A local build may contain downloaded OWAO binaries, but those binaries remain excluded from GitHub; blocked external-share and interactive/login-only links still contribute discovery metadata only.
 
 ## Before Creating the GitHub Repo
 
