@@ -32,6 +32,10 @@
 
 Правила публикации собраны в [PUBLISHING.md](PUBLISHING.md).
 
+## Источники и ограничения
+
+Основной архив Струве — `https://astroedu.ru/struve/problems`; старые страницы Москвы сохранены как mirror. Основной архив МАО — `https://mosastro.olimpiada.ru/tasks`; `mao_moscow_archive` сохранён как исторический fallback. Ссылки UTS/Edu Sirius остаются discovery-only metadata: архив не проходит авторизацию и не скачивает интерактивные туры. Исторические ссылки СПбАО 2012–2013 могут оставаться нерабочими; поддерживаемый путь восстановления — документированный ручной импорт, а не непроверенные зеркала.
+
 ## Pipeline
 
 1. [discover_sources.py](discover_sources.py)

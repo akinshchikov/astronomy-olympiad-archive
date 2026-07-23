@@ -170,12 +170,15 @@ Notes:
 - `owao_astroedu_archive`: `https://astroedu.ru/hq/problems/owao` (direct-file fallback for theoretical/practical materials)
 - `serbia_astronomy_official`: `https://www.das.org.rs/naoc.html`
 - `russia_team_qual_archive`: `https://astroedu.ru/hq/problems/`
-- `mao_moscow_archive`: `https://mos.olimpiada.ru/tasks/astr`
+- `struve_astroedu_archive`: `https://astroedu.ru/struve/problems` (official; the older Moscow year pages remain a mirror)
+- `mao_official_archive`: `https://mosastro.olimpiada.ru/tasks` (official; `mao_moscow_archive` remains a historical fallback)
 - `ioaa_problems`: `https://www.ioaastrophysics.org/resources/problems-from-past-ioaa`
 
-Some families currently start from archive/mirror seeds rather than a priority-1 official source, notably `struve`, `spbao`, and `iao`.
+Some families currently start from archive/mirror seeds rather than a priority-1 official source, notably `spbao` and parts of `iao`. IAO targets on `issp.ac.ru` retain official target provenance even when discovered through an archive index.
 
 The full current seed-source list is stored in [data/manifests/source_candidates.csv](data/manifests/source_candidates.csv).
+
+Interactive UTS/Edu Sirius rounds are retained as discovery-only metadata and are never authenticated or downloaded. Historical SPbAO 2012–2013 links can remain broken/undownloaded; the documented manual-import route is the supported rescue path rather than unverified mirrors.
 
 ## OWAO: direct Astroedu fallback, official discovery, and manual import
 
