@@ -46,7 +46,7 @@ def crawl_documents(root: Path, families: set[str] | None, dry_run: bool, limit:
     for row in discovered:
         url = row["source_url"]
         notes = str(row.get("notes", ""))
-        if "discovery_only" in notes:
+        if row.get("access_mode", "download") == "discovery_only" or "discovery_only" in notes:
             logger.info("DOWNLOAD skip_discovery_only url=%s notes=%s", url, row.get("notes", ""))
             continue
         if row.get("source_id") == "owao_tasks_official" and "external_share=" in notes:

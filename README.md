@@ -180,6 +180,17 @@ The full current seed-source list is stored in [data/manifests/source_candidates
 
 Interactive UTS/Edu Sirius rounds are retained as discovery-only metadata and are never authenticated or downloaded. Historical SPbAO 2012–2013 links can remain broken/undownloaded; the documented manual-import route is the supported rescue path rather than unverified mirrors.
 
+## Manual source-expansion refresh
+
+Run the full, networked metadata refresh in a persistent terminal session:
+
+```bash
+tmux new -s olympiad-refresh
+./scripts/refresh_source_expansion.sh
+```
+
+Detach with `Ctrl-b d`, then resume with `tmux attach -t olympiad-refresh`. The script uses a temporary staging copy, validates the discovery snapshot before copying it back, and leaves that copy available if validation fails.
+
 ## OWAO: direct Astroedu fallback, official discovery, and manual import
 
 The official OWAO archive pages remain the priority-1 discovery source. Some of their files are hosted on robots-blocked, external-share, interactive, or login-like services, so those links may remain discovery-only.

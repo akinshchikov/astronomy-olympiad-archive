@@ -5,15 +5,24 @@ vsosh_moscow_year_pages,ВсОШ астрономия: годовые стран
 vsosh_astroedu_archive,ВсОШ астрономия: архив задач и решений на astroedu.ru,vsosh_astronomy,archive,3,1,"Глубокий архив задач и решений ВсОШ (1994–наст. время), регион и заключительный этапы."
 vsosh_moscow_team_year,ВсОШ астрономия: страница команды Москвы,vsosh_astronomy,mirror,3,1,Публичная страница с provenance-ссылками на заключительный этап и результаты команды Москвы.
 vsosh_sirius_final,ВсОШ астрономия: официальный сайт заключительного этапа в Сириусе,vsosh_astronomy,official,1,1,Официальные результаты заключительного этапа и ссылка на протокол жюри.
+struve_astroedu_archive,Струве: официальный архив заданий Astroedu,struve,official,1,1,Официальный архив Струве; интерактивные онлайн-туры сохраняются только как metadata.
 struve_moscow_year_pages,Струве: годовые страницы на vos.olimpiada.ru,struve,mirror,2,5,Материалы олимпиады Струве на годовых страницах архива vos.olimpiada.ru.
 owao_tasks_official,OWAO: official archive page with tasks and solutions,owao,official,1,3,Официальные страницы OWAO 2025/2024/2023; раздел 2022 встроен в текущую страницу архива.
 owao_astroedu_archive,OWAO: direct-file archive on astroedu.ru,owao,archive,2,1,"Прямые PDF и ZIP с условиями, решениями и данными OWAO 2022–2025; резервный источник для локальной сборки."
 serbia_astronomy_official,Serbia astronomy: official NAOK archive page,serbia_astronomy,official,1,1,Официальная страница NAOK / DAS с архивом задач и решений по годам.
 russia_team_qual_archive,Russia team qualification: archive of qualifying tests,russia_team_qual,official,1,1,Архив квалификационных тестов для кандидатов в сборную России по астрономии и астрофизике.
-mao_moscow_archive,МАО: архив на mos.olimpiada.ru,mao,official,1,1,Официальный архив задач и решений МАО.
+mao_official_archive,МАО: официальный архив mosastro.olimpiada.ru,mao,official,1,1,Текущий официальный архив задач МАО.
+mao_moscow_archive,МАО: архив на mos.olimpiada.ru,mao,archive,2,1,Исторический резервный архив задач и решений МАО.
 spbao_official,СПбАО: официальный сайт school.astro.spbu.ru,spbao,official,1,21,"Официальный архив СПбАО на сайте кафедры астрономии СПбГУ (2020–2026, все туры с PDF)."
 spbao_olimpiada_archive,СПбАО: архив на olimpiada.ru,spbao,archive,2,1,Архив с навигацией по годам и классам.
 spbao_year_class_pages,СПбАО: годовые страницы на olimpiada.ru,spbao,archive,2,119,Глубокие страницы архива по годам и классам.
+ioaa_junior_official,IOAA Junior: official past-olympiads archive,ioaa_junior,official,1,1,Official IOAA-Junior year pages and public questions/answers PDFs (2022-present).
+usaaao_past_exams,USAAAO: official past exams,usaaao,official,1,1,"Official First Round, NAC, and selection-exam papers and solutions (2014-present)."
+inao_hbcse_past_papers,INAO: official HBCSE past papers,inao,official,1,1,"Official INAO English/Hindi question papers and model solutions; public metadata only, with explicit HBCSE redistribution restrictions."
+inao_hbcse_current,INAO: official HBCSE current-year page,inao,official,1,1,Current official INAO English/Hindi question papers and published solutions when available.
+czech_astronomy_official,Czech Astronomical Olympiad: official archive,czech_astronomy,official,1,1,"Official archive by school year, category, and round (2003/04-present); protected materials remain discovery-only."
+gecaa_ioaa_archive,GeCAA 2020: official IOAA event archive,gecaa,official,1,1,"Official IOAA-hosted GeCAA 2020 theory, data-analysis, observation, and guide PDFs."
+gecaa_official_archive,GeCAA 2020: official competition archive,gecaa,official,1,1,"Official GeCAA archive, including individual and team competition materials."
 ioaa_problems,IOAA: problems from past IOAA,ioaa,official,1,1,"Официальная подборка задач, решений и marking schemes."
 ioaa_proceedings,IOAA: past proceedings,ioaa,official,2,1,Официальные proceedings с дополнительными материалами.
 ioaa_past_olympiads,IOAA: past olympiads index,ioaa,official,2,1,Официальный индекс прошлых олимпиад с годовыми страницами.

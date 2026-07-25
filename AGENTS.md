@@ -15,6 +15,11 @@ Priority families, in order:
 7. `mao`
 8. `iao`
 9. `ioaa`
+10. `ioaa_junior`
+11. `usaaao`
+12. `inao`
+13. `czech_astronomy`
+14. `gecaa`
 
 ## Repository layout
 
@@ -127,6 +132,8 @@ For cleanup behavior, prefer tests over manual inspection. The cleanup code is i
 Committed indices and discovery manifests are useful public metadata snapshots. They may change when pipeline behavior changes, but avoid manual edits unless the task is explicitly a metadata correction.
 
 OWAO combines priority-1 official discovery with the priority-2 direct-file Astroedu fallback. Direct theoretical/practical PDFs and practical data archives from `astroedu.ru/assets/problems/owao/` should be downloaded normally; robots-blocked external shares and interactive/login pages remain discovery-only. Do not add bypasses. Use the documented `data/manual/owao/` plus `import_manual_files.py` workflow only for remaining public files obtained manually.
+
+Keep `ioaa_junior` and `gecaa` separate from core `ioaa`. Preserve source context for USAAAO, INAO, and Czech AO; INAO records must retain `redistribution_status=explicit-no-redistribution`, and protected Czech material is a discovery gap rather than a bypass target.
 
 If a change updates generated metadata, mention:
 

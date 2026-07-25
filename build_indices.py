@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import json
 import re
 from collections import Counter, defaultdict
 from pathlib import Path
@@ -8,7 +9,7 @@ from pathlib import Path
 from utils.cli import build_common_parser
 from utils.fs_utils import load_jsonl
 from utils.logging_utils import configure_logger
-from utils.metadata import PRIORITY_FAMILIES
+from utils.metadata import PRIORITY_FAMILIES, logical_document_types
 
 
 VSOSH_2026_CORE_COMPONENTS = (
@@ -20,6 +21,26 @@ VSOSH_2026_CORE_COMPONENTS = (
 )
 VSOSH_2026_GRADES = ("9", "10", "11")
 VSOSH_2026_DOCUMENT_TYPES = ("tasks", "solutions")
+
+
+def load_family_history(root: Path) -> dict[str, dict]:
+    """Load and validate the conservative chronology configuration."""
+    path = root / "data" / "config" / "family_history.json"
+    if not path.exists():
+        return {}
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise ValueError("family_history.json must contain an object")
+    for family, history in payload.items():
+        if not isinstance(history, dict) or not isinstance(history.get("first_competition_year"), int):
+            raise ValueError(f"family history for {family} requires integer first_competition_year")
+        for key in ("prehistory_or_anomalous_years", "known_not_held_years"):
+            if not isinstance(history.get(key, []), list) or not all(isinstance(year, int) for year in history.get(key, [])):
+                raise ValueError(f"family history for {family} has invalid {key}")
+        for component in history.get("not_held_components", []):
+            if not isinstance(component, dict) or not isinstance(component.get("year"), int) or not component.get("stage_or_round"):
+                raise ValueError(f"family history for {family} has invalid not_held_components")
+    return payload
 
 
 def vsosh_2026_material_key(row: dict) -> tuple[str, str, str, str] | None:
@@ -207,14 +228,11 @@ def build(root: Path, families: set[str] | None) -> int:
             max(olympiad_index[key]["confidence"], float(entry.get("confidence", 0.0))),
             2,
         )
-        if entry["document_type"] == "tasks":
-            olympiad_index[key]["has_tasks"] = True
-        elif entry["document_type"] == "solutions":
-            olympiad_index[key]["has_solutions"] = True
-        elif entry["document_type"] == "marking":
-            olympiad_index[key]["has_marking"] = True
-        elif entry["document_type"] == "analysis":
-            olympiad_index[key]["has_analysis"] = True
+        entry_types = logical_document_types(entry)
+        olympiad_index[key]["has_tasks"] = olympiad_index[key]["has_tasks"] or "tasks" in entry_types
+        olympiad_index[key]["has_solutions"] = olympiad_index[key]["has_solutions"] or "solutions" in entry_types
+        olympiad_index[key]["has_marking"] = olympiad_index[key]["has_marking"] or "marking" in entry_types
+        olympiad_index[key]["has_analysis"] = olympiad_index[key]["has_analysis"] or "analysis" in entry_types
 
         if entry.get("relation_group_id"):
             relation_groups_per_event[key].add(entry["relation_group_id"])
@@ -239,12 +257,7 @@ def build(root: Path, families: set[str] | None) -> int:
                 "confidence": 0.0,
             }
         payload = olympiad_index[key]
-        extra_types = set()
-        for note in str(row.get("notes", "")).split(";"):
-            note = note.strip()
-            if note.startswith("extra_types="):
-                extra_types.update(value for value in note.removeprefix("extra_types=").split(",") if value)
-        discovered_types = extra_types | {str(row.get("document_type", ""))}
+        discovered_types = logical_document_types(row)
         payload["has_tasks"] = payload["has_tasks"] or "tasks" in discovered_types
         payload["has_solutions"] = payload["has_solutions"] or "solutions" in discovered_types
         payload["has_marking"] = payload["has_marking"] or "marking" in discovered_types
@@ -301,6 +314,7 @@ def build(root: Path, families: set[str] | None) -> int:
         else:
             coverage_families = PRIORITY_FAMILIES
 
+        family_history = load_family_history(root)
         for family in coverage_families:
             family_rows = by_family.get(family, [])
             handle.write(f"## {family}\n\n")
@@ -340,7 +354,7 @@ def build(root: Path, families: set[str] | None) -> int:
             missing_by_doc = Counter(row["document_type"] for row in missing_rows)
 
             handle.write(f"- Years found: {', '.join(map(str, years))}\n")
-            handle.write(f"- Years with tasks: {', '.join(map(str, tasks_years))}\n")
+            handle.write(f"- Years with tasks: {', '.join(map(str, tasks_years)) or 'none'}\n")
             handle.write(f"- Years with solutions: {', '.join(map(str, solutions_years))}\n")
             handle.write(f"- Years with mirror material: {', '.join(map(str, mirror_only)) or 'none'}\n")
             handle.write(
@@ -360,12 +374,23 @@ def build(root: Path, families: set[str] | None) -> int:
                 + "\n"
             )
 
+            history = family_history.get(family, {})
+            first_year = history.get("first_competition_year")
+            prehistory = sorted(year for year in years if first_year is not None and year < first_year)
+            valid_years = [year for year in years if first_year is None or year >= first_year]
             missing = []
-            if years:
-                for year in range(min(years), max(years) + 1):
-                    if year not in years:
+            if valid_years:
+                for year in range(max(min(valid_years), first_year or min(valid_years)), max(valid_years) + 1):
+                    if year not in valid_years:
                         missing.append(str(year))
-            handle.write(f"- Gaps: {', '.join(missing) or 'none observed inside discovered range'}\n\n")
+            handle.write(f"- Gaps: {', '.join(missing) or 'none observed inside valid competition range'}\n")
+            if prehistory:
+                handle.write(f"- Prehistory/anomalous years retained: {', '.join(map(str, prehistory))}\n")
+            not_held = history.get("not_held_components", [])
+            if not_held:
+                rendered = "; ".join(f"{item['year']} {item['stage_or_round']} ({item['reason']})" for item in not_held)
+                handle.write(f"- Known not-held components: {rendered}\n")
+            handle.write("\n")
 
     logger.info("INDICES files=%s olympiad_rows=%s", len(files_rows), len(olympiad_index))
     return 0

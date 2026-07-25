@@ -29,6 +29,8 @@ This repository is prepared for a public GitHub release as a reproducible pipeli
 - Public availability of a source URL is not the same thing as permission to republish mirrored binaries through GitHub.
 - The public repo should stay lightweight and reproducible.
 - OWAO has both discovery-only links and a direct-file Astroedu fallback. A local build may contain downloaded OWAO binaries, but those binaries remain excluded from GitHub; blocked external-share and interactive/login-only links still contribute discovery metadata only.
+- HBCSE restricts third-party publication of INAO papers and solutions. INAO records therefore carry `redistribution_status=explicit-no-redistribution`; downloaded INAO files must remain local.
+- Junior IOAA, USAAAO, Czech AO, and GeCAA use the same code-plus-metadata model. Do not add login automation or other access-control workarounds for protected Czech materials.
 
 ## Before Creating the GitHub Repo
 

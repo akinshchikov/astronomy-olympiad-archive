@@ -5,6 +5,7 @@ from tempfile import TemporaryDirectory
 from unittest import TestCase
 
 import cleanup_outputs
+from utils.fs_utils import load_jsonl, write_jsonl
 
 
 def touch(path: Path) -> None:
@@ -44,6 +45,7 @@ class CleanupOutputsTests(TestCase):
             touch(root / "data" / "logs" / "download.log")
             touch(root / "data" / "manifests" / "download_manifest.jsonl")
             touch(root / "data" / "indices" / "files_index.csv")
+            write_jsonl(root / "data" / "manifests" / "normalized_entries.jsonl", [{"olympiad_family": "spbao"}, {"olympiad_family": "iao"}])
 
             cleanup_outputs.clean_outputs(root, families={"spbao"})
 
@@ -58,3 +60,4 @@ class CleanupOutputsTests(TestCase):
             self.assertTrue((root / "data" / "archive" / "objects").exists())
             self.assertTrue((root / "data" / "manifests" / "download_manifest.jsonl").exists())
             self.assertTrue((root / "data" / "indices" / "files_index.csv").exists())
+            self.assertEqual(load_jsonl(root / "data" / "manifests" / "normalized_entries.jsonl"), [{"olympiad_family": "iao"}])

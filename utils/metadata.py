@@ -24,6 +24,11 @@ PRIORITY_FAMILIES = [
     "mao",
     "iao",
     "ioaa",
+    "ioaa_junior",
+    "usaaao",
+    "inao",
+    "czech_astronomy",
+    "gecaa",
 ]
 
 TASK_TOKENS = ("task", "tasks", "problem", "problems", "question", "questions", "задани", "задач")
@@ -111,9 +116,9 @@ def infer_year(raw_text: str) -> int | None:
     if season_match:
         return int(season_match.group(2))
 
-    # Handle mixed format: 4-digit + 1-or-2-digit short year (e.g. "2018-19", "2018-9")
-    # Exclude "/" to avoid matching URL path components like "2010/5_..."
-    season_mixed_match = re.search(r"(20\d{2})[-_](\d{1,2})(?!\d)", text)
+    # Academic-year shorthand must have a two-digit ending year.  A one-digit
+    # suffix in a filename (for example ``2025-1``) is a revision, not 2031.
+    season_mixed_match = re.search(r"(20\d{2})[-_](\d{2})(?!\d)", text)
     if season_mixed_match:
         first = int(season_mixed_match.group(1))
         short_str = season_mixed_match.group(2)
@@ -199,6 +204,20 @@ def infer_document_type(*texts: str) -> tuple[str, list[str]]:
     if contains_tasks:
         return "tasks", extra_types
     return "info", extra_types
+
+
+def logical_document_types(row: dict) -> set[str]:
+    """Return every material type represented by a discovery or archive row."""
+    result = {str(row.get("document_type", ""))} - {""}
+    structured = row.get("logical_types") or row.get("logical_document_types") or []
+    if isinstance(structured, str):
+        structured = structured.split(",")
+    result.update(str(value).strip() for value in structured if str(value).strip())
+    for note in str(row.get("notes", "")).split(";"):
+        note = note.strip()
+        if note.startswith("extra_types="):
+            result.update(value for value in note.removeprefix("extra_types=").split(",") if value)
+    return result
 
 
 def infer_stage(olympiad_family: str, *texts: str) -> tuple[str, str | None]:
@@ -339,6 +358,10 @@ def _extract_grade_tag(ascii_text: str) -> str | None:
 
 
 def _extract_group_tag(ascii_text: str) -> str | None:
+    category_match = re.search(r"\b(?:category|kategorie)\s*[-_:]?\s*(ab|cd|ef|gh)\b", ascii_text)
+    if category_match:
+        return f"category-{category_match.group(1)}"
+
     patterns = (
         ("struve", r"\bstruve\b"),
         ("junior", r"\bjunior\b"),
@@ -403,6 +426,7 @@ def _extract_track_tag(ascii_text: str, round_detail: str | None) -> str | None:
     round_tag_map = {
         "theoretical": "theory",
         "theoretical_or_data_analysis": "theory",
+        "data_analysis": "data-analysis",
         "practical": "practical",
         "observational": "observational",
         "test": "test",
@@ -428,6 +452,10 @@ def _extract_material_tags(ascii_text: str, document_type: str, extension: str) 
     for label, pattern in explicit_patterns:
         if re.search(pattern, ascii_text):
             _append_unique(tags, label)
+
+    version_match = re.search(r"\b(?:version|ver|v)[-_ ]*([1-9])\b", ascii_text)
+    if version_match:
+        _append_unique(tags, f"version-{version_match.group(1)}")
 
     order_match = re.search(r"\b(?:pr|prikaz|order)[-_ ]*(?:minpros|donm|msk|mos|edu)?[-_ ]*(\d{2,5})\b", ascii_text)
     if order_match:

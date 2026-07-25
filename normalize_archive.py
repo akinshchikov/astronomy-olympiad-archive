@@ -179,8 +179,16 @@ def compute_direct_file_preference_keys(
 
         resolved_year = resolve_year(row, max_reasonable_year, "")
         context = seed_context(row)
-        stage_or_round = str(context.get("stage_or_round") or row.get("stage_or_round", "unknown"))
-        round_detail = str(context.get("round_detail") or row.get("round_detail") or "") or None
+        context_stage = str(context.get("stage_or_round") or "")
+        stage_or_round = str(row.get("stage_or_round", "unknown")) if context_stage in {"", "unknown"} else context_stage
+        context_detail = str(context.get("round_detail") or "")
+        round_detail = context_detail or str(row.get("round_detail") or "") or None
+        filename_lower = str(row.get("filename_original", "")).lower()
+        if str(row.get("source_id", "")) in {"inao_hbcse_past_papers", "inao_hbcse_current"}:
+            if "inaosr" in filename_lower:
+                round_detail = "senior"
+            elif "inaojr" in filename_lower:
+                round_detail = "junior"
         language = str(row.get("language", "unknown"))
         document_type = str(row.get("document_type", "info"))
         inferred_document_type, _ = infer_document_type(
@@ -350,8 +358,19 @@ def normalize(root: Path, families: set[str] | None, dry_run: bool, limit: int |
             "reference_data",
         }:
             document_type = inferred_document_type
-        stage_or_round = str(context.get("stage_or_round") or row["stage_or_round"])
-        round_detail = str(context.get("round_detail") or row.get("round_detail") or "") or None
+        # Page containers can carry an explicit ``unknown`` placeholder.  It
+        # must never erase a source-specific classification stored on the
+        # discovered direct file (notably Junior IOAA and INAO divisions).
+        context_stage = str(context.get("stage_or_round") or "")
+        stage_or_round = str(row["stage_or_round"]) if context_stage in {"", "unknown"} else context_stage
+        context_detail = str(context.get("round_detail") or "")
+        round_detail = context_detail or str(row.get("round_detail") or "") or None
+        filename_lower = str(row.get("filename_original", "")).lower()
+        if str(row.get("source_id", "")) in {"inao_hbcse_past_papers", "inao_hbcse_current"}:
+            if "inaosr" in filename_lower:
+                round_detail = "senior"
+            elif "inaojr" in filename_lower:
+                round_detail = "junior"
         if stage_or_round == "unknown" or not round_detail:
             inferred_stage, inferred_round_detail = infer_stage(
                 row["olympiad_family"],

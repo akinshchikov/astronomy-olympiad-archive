@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import argparse
+import json
 import shutil
 from pathlib import Path
 
+from utils.fs_utils import load_jsonl, write_jsonl
 from utils.metadata import path_slug
 from utils.source_configs import SOURCE_DEFINITIONS
 
@@ -41,6 +43,24 @@ def source_ids_for_families(families: set[str]) -> set[str]:
     }
 
 
+def remove_family_manifest_rows(root: Path, families: set[str], removed: list[str]) -> None:
+    """Drop stale rows for a focused rebuild without deleting other families."""
+    for filename in GENERATED_MANIFEST_FILES:
+        path = root / "data" / "manifests" / filename
+        if not path.exists() or path.suffix != ".jsonl":
+            continue
+        try:
+            rows = load_jsonl(path)
+        except json.JSONDecodeError:
+            # A partially-written manifest is not useful to a future focused
+            # rebuild, but its family scope is unknowable; leave it alone.
+            continue
+        retained = [row for row in rows if row.get("olympiad_family") not in families]
+        if len(retained) != len(rows):
+            write_jsonl(path, retained)
+            removed.append(str(path))
+
+
 def clean_outputs(root: Path, families: set[str] | None) -> list[str]:
     removed: list[str] = []
 
@@ -49,6 +69,7 @@ def clean_outputs(root: Path, families: set[str] | None) -> list[str]:
             remove_path(root / "data" / "raw" / source_id, removed)
         for family in sorted(families):
             remove_path(root / "data" / "archive" / path_slug(family, fallback="olympiad"), removed)
+        remove_family_manifest_rows(root, families, removed)
         remove_path(root / "data" / "logs", removed)
         return removed
 

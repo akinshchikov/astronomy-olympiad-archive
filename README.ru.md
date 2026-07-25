@@ -36,6 +36,17 @@
 
 Основной архив Струве — `https://astroedu.ru/struve/problems`; старые страницы Москвы сохранены как mirror. Основной архив МАО — `https://mosastro.olimpiada.ru/tasks`; `mao_moscow_archive` сохранён как исторический fallback. Ссылки UTS/Edu Sirius остаются discovery-only metadata: архив не проходит авторизацию и не скачивает интерактивные туры. Исторические ссылки СПбАО 2012–2013 могут оставаться нерабочими; поддерживаемый путь восстановления — документированный ручной импорт, а не непроверенные зеркала.
 
+## Ручное обновление source-expansion
+
+Полное сетевое обновление metadata запускайте в persistent-сессии:
+
+```bash
+tmux new -s olympiad-refresh
+./scripts/refresh_source_expansion.sh
+```
+
+Отсоединиться: `Ctrl-b d`; вернуться: `tmux attach -t olympiad-refresh`. Скрипт использует временную staging-копию, проверяет discovery snapshot до копирования и оставляет staging-копию при ошибке проверки.
+
 ## Pipeline
 
 1. [discover_sources.py](discover_sources.py)

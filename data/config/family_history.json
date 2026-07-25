@@ -1,0 +1,5 @@
+{
+  "iao": {"first_competition_year": 1996, "prehistory_or_anomalous_years": [1989], "known_not_held_years": [], "notes": "IAO began in 1996; retained precursor rows are not editions."},
+  "ioaa": {"first_competition_year": 2007, "prehistory_or_anomalous_years": [2003, 2005], "known_not_held_years": [], "notes": "IOAA began in 2007; retained GeCAA-related rows are not editions."},
+  "struve": {"first_competition_year": 2022, "prehistory_or_anomalous_years": [], "known_not_held_years": [], "not_held_components": [{"year": 2022, "stage_or_round": "final", "reason": "The official Struve archive states that the final was not held."}], "notes": "A not-held component is not a missing document."}
+}
