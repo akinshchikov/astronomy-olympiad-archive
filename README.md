@@ -15,6 +15,11 @@ Priority coverage:
 7. `mao`
 8. `iao`
 9. `ioaa`
+10. `ioaa_junior`
+11. `usaaao`
+12. `inao`
+13. `czech_astronomy`
+14. `gecaa`
 
 ## What the public repository contains
 
@@ -161,6 +166,7 @@ Notes:
 
 - `python3 run_pipeline.py --clean` removes all generated local outputs first: `data/raw/`, `data/archive/`, `data/logs/`, generated manifests, and generated indices.
 - `python3 cleanup_outputs.py --families ...` removes only the selected family archive tree, matching raw source folders, and shared logs. It intentionally does not delete the shared `data/archive/objects/` store.
+- Focused cleanup also removes rows for the selected families from generated JSONL manifests, preventing stale records from being reused in a focused rebuild. It does not delete `data/archive/objects/`.
 - A focused run with `--families ...` is meant for local targeted refreshes. To rebuild the complete global manifests and indices again, run the pipeline without `--families`.
 
 ## First-priority source seeds
@@ -173,6 +179,14 @@ Notes:
 - `struve_astroedu_archive`: `https://astroedu.ru/struve/problems` (official; the older Moscow year pages remain a mirror)
 - `mao_official_archive`: `https://mosastro.olimpiada.ru/tasks` (official; `mao_moscow_archive` remains a historical fallback)
 - `ioaa_problems`: `https://www.ioaastrophysics.org/resources/problems-from-past-ioaa`
+
+Batch A source policies:
+
+- `ioaa_junior_official` keeps Junior IOAA separate from core IOAA. Its official past-olympiads PDFs can combine several competition components in one document.
+- `usaaao_past_exams` preserves the competition context in its metadata, including practice, First Round, NAC, and selection exams.
+- `inao_hbcse_past_papers` and `inao_hbcse_current` provide public metadata, but HBCSE’s explicit no-redistribution policy is retained as `redistribution_status=explicit-no-redistribution`. Downloaded INAO papers and solutions remain local and are not committed or republished.
+- `czech_astronomy_official` is a separate Czech Astronomical Olympiad family, not IAO. Protected or unavailable material is a discovery gap; the pipeline does not bypass login or access controls and filters unrelated IAO, press, and results material.
+- `gecaa_ioaa_archive` supplies available official GeCAA material from the IOAA-hosted archive. `gecaa_official_archive` remains an external availability gap: current `gecaa.ee` downloads, including known team documents, are not claimed as locally archived.
 
 Some families currently start from archive/mirror seeds rather than a priority-1 official source, notably `spbao` and parts of `iao`. IAO targets on `issp.ac.ru` retain official target provenance even when discovered through an archive index.
 
@@ -227,27 +241,38 @@ PY
 find data/archive -maxdepth 3 -type d -name 'owao' -print
 ```
 
+## Metadata semantics
+
+- A physical document can logically represent several document types (for example, tasks and solutions). It is not split merely to force one `document_type` per file.
+- `access_mode=discovery_only` retains useful public provenance that is not a download target.
+- Chronology configuration distinguishes actual competition gaps from retained prehistory/anomalous years and known not-held components.
+
 ## Snapshot
 
-Current tracked public snapshot refreshed on `2026-03-20`:
+Current tracked public snapshot refreshed on `2026-07-26`:
 
-- configured seed sources: `15`
-- discovered public documents: `1939`
-- olympiad index rows: `297`
-- unique public files in `files_index.csv`: `1659`
-- relation groups: `298`
+- configured seed sources: `30`
+- discovered public documents: `3209`
+- olympiad index rows: `496`
+- unique public files in `files_index.csv`: `2598`
+- relation groups: `34`
 
-Priority families in the current public indices:
+Priority families in the current public indices (recorded-year ranges; see the coverage report for document types, discovery-only records, prehistory, and not-held components):
 
-- `vsosh_astronomy`: `2009..2026`, 18 years
-- `struve`: `2022..2025`, 4 years
-- `owao`: official discovery support for `2022..2025`
+- `vsosh_astronomy`: `1994..2026`, 33 years
+- `struve`: `2022..2026`, 5 years
+- `owao`: `2022..2025`, 4 years
 - `serbia_astronomy`: `2012..2026`, 15 years
 - `russia_team_qual`: `2016..2026`, 11 years
-- `spbao`: `2010..2024`, 15 years
-- `mao`: `2009..2025`, 10 years
-- `iao`: `1996..2023`, 27 years
-- `ioaa`: `2003..2025`, 20 years
+- `spbao`: `2010..2026`, 17 years
+- `mao`: `2010..2026`, 16 years
+- `iao`: `1989..2023`, 28 years (including retained 1989 prehistory)
+- `ioaa`: `2003..2025`, 20 years (2003 and 2005 retained as prehistory)
+- `ioaa_junior`: `2022..2025`, 4 years
+- `usaaao`: `2014..2026`, 13 years
+- `inao`: `2008..2026`, 18 years
+- `czech_astronomy`: `2004..2025`, 22 years
+- `gecaa`: `2020`, 1 year
 
 ## Output indices
 
@@ -264,7 +289,9 @@ Priority families in the current public indices:
 - OWAO official archive pages for 2022–2025 are discovered, while the Astroedu fallback supplies direct theoretical/practical PDFs and practical data archives for the years it lists. There is no working standalone `2022en/tasks` page (HTTP 404); official 2022 metadata is discovered from the embedded 2022 section. Online UTS rounds and blocked external shares remain discovery-only.
 - `russia_team_qual` currently covers the direct-PDF subset from `astroedu.ru/assets/problems/hq/...pdf`; linked `uts.astroedu.ru` quiz pages are intentionally out of scope for now.
 - Old SPbAO and VsOSh archives still contain broken historical links (`404`), especially in mirrors.
-- If a single file contains both tasks and solutions, the file is not split; this is reflected in metadata.
+- INAO/HBCSE papers and solutions remain local under the explicit no-redistribution policy.
+- Protected Czech AO material remains a discovery gap; no authentication or access-control bypass is attempted.
+- The IOAA-hosted GeCAA archive is indexed, but the current `gecaa.ee` download failure remains an external gap, including known team documents.
 
 ## For GitHub
 

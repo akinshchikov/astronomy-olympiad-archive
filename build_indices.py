@@ -355,7 +355,7 @@ def build(root: Path, families: set[str] | None) -> int:
 
             handle.write(f"- Years found: {', '.join(map(str, years))}\n")
             handle.write(f"- Years with tasks: {', '.join(map(str, tasks_years)) or 'none'}\n")
-            handle.write(f"- Years with solutions: {', '.join(map(str, solutions_years))}\n")
+            handle.write(f"- Years with solutions: {', '.join(map(str, solutions_years)) or 'none'}\n")
             handle.write(f"- Years with mirror material: {', '.join(map(str, mirror_only)) or 'none'}\n")
             handle.write(
                 "- Relation groups summary: "

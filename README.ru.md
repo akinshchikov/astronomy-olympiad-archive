@@ -15,6 +15,11 @@
 7. `mao`
 8. `iao`
 9. `ioaa`
+10. `ioaa_junior`
+11. `usaaao`
+12. `inao`
+13. `czech_astronomy`
+14. `gecaa`
 
 ## Что лежит в публичной версии
 
@@ -176,6 +181,7 @@ python3 run_pipeline.py --clean-only --families spbao
 
 - `python3 run_pipeline.py --clean` сначала удаляет все локально сгенерированные артефакты: `data/raw/`, `data/archive/`, `data/logs/`, сгенерированные manifest-файлы и итоговые индексы.
 - `python3 cleanup_outputs.py --families ...` удаляет только дерево архива выбранного семейства, соответствующие папки в `data/raw/` и общие логи. Общее объектное хранилище `data/archive/objects/` оно намеренно не трогает.
+- Точечная очистка также удаляет строки выбранных семейств из сгенерированных JSONL-manifest, чтобы в точечной пересборке не использовались устаревшие записи. `data/archive/objects/` при этом не удаляется.
 - Запуск с `--families ...` предназначен для локального точечного обновления. Чтобы снова получить полный глобальный набор manifest-файлов и индексов, после этого нужен прогон без `--families`.
 
 ## Источники первой очереди
@@ -185,8 +191,16 @@ python3 run_pipeline.py --clean-only --families spbao
 - `owao_astroedu_archive`: `https://astroedu.ru/hq/problems/owao` (direct-file fallback для теоретического и практического туров)
 - `serbia_astronomy_official`: `https://www.das.org.rs/naoc.html`
 - `russia_team_qual_archive`: `https://astroedu.ru/hq/problems/`
-- `mao_moscow_archive`: `https://mos.olimpiada.ru/tasks/astr`
+- `mao_official_archive`: `https://mosastro.olimpiada.ru/tasks` (official; `mao_moscow_archive` остаётся историческим fallback)
 - `ioaa_problems`: `https://www.ioaastrophysics.org/resources/problems-from-past-ioaa`
+
+Политика источников Batch A:
+
+- `ioaa_junior_official` ведёт Junior IOAA отдельно от core IOAA. В официальных PDF прошлых олимпиад один документ может объединять несколько компонентов соревнования.
+- `usaaao_past_exams` сохраняет в metadata фактический контекст соревнования: practice, First Round, NAC и selection exams.
+- `inao_hbcse_past_papers` и `inao_hbcse_current` дают публичные metadata, но явное требование HBCSE о запрете перераспространения сохраняется как `redistribution_status=explicit-no-redistribution`. Скачанные материалы и решения INAO остаются локальными и не коммитятся и не публикуются повторно.
+- `czech_astronomy_official` — отдельное семейство Чешской астрономической олимпиады, не IAO. Защищённые или недоступные материалы — это discovery gap; pipeline не обходит login/access control и отфильтровывает не относящиеся к делу IAO, пресс- и result-материалы.
+- `gecaa_ioaa_archive` даёт доступные официальные материалы GeCAA из IOAA-hosted archive. `gecaa_official_archive` остаётся внешним availability gap: текущие загрузки с `gecaa.ee`, включая известные team documents, не заявляются как локально архивированные.
 
 Часть семейств сейчас стартует не с источника первого приоритета, а с archive/mirror-источников, прежде всего `struve`, `spbao` и `iao`.
 
@@ -228,27 +242,38 @@ PY
 find data/archive -maxdepth 3 -type d -name 'owao' -print
 ```
 
+## Семантика metadata
+
+- Один физический документ может логически представлять несколько типов материалов (например, задачи и решения). Он не разрезается лишь ради одного `document_type` на файл.
+- `access_mode=discovery_only` сохраняет полезную публичную provenance-информацию, но не является целью скачивания.
+- Конфигурация хронологии отличает реальные пробелы соревнований от сохранённых prehistory/anomalous years и известных не проведённых компонентов.
+
 ## Snapshot
 
-Текущий публичный snapshot по коммитимым артефактам обновлён на `2026-03-20`:
+Текущий публичный snapshot по коммитимым артефактам обновлён на `2026-07-26`:
 
-- настроенные seed-источники: `15`
-- обнаруженные публичные документы: `1939`
-- строки в `olympiads_index.csv`: `297`
-- уникальные публичные файлы в `files_index.csv`: `1659`
-- relation groups: `298`
+- настроенные seed-источники: `30`
+- обнаруженные публичные документы: `3209`
+- строки в `olympiads_index.csv`: `496`
+- уникальные публичные файлы в `files_index.csv`: `2598`
+- relation groups: `34`
 
-Приоритетные семейства в текущих публичных индексах:
+Приоритетные семейства в текущих публичных индексах (диапазоны представленных лет; типы материалов, discovery-only записи, prehistory и не проведённые компоненты приведены в coverage report):
 
-- `vsosh_astronomy`: `2009..2026`, 18 лет
-- `struve`: `2022..2025`, 4 года
-- `owao`: поддерживается official discovery за `2022..2025`
+- `vsosh_astronomy`: `1994..2026`, 33 года
+- `struve`: `2022..2026`, 5 лет
+- `owao`: `2022..2025`, 4 года
 - `serbia_astronomy`: `2012..2026`, 15 лет
 - `russia_team_qual`: `2016..2026`, 11 лет
-- `spbao`: `2010..2024`, 15 лет
-- `mao`: `2009..2025`, 10 лет
-- `iao`: `1996..2023`, 27 лет
-- `ioaa`: `2003..2025`, 20 лет
+- `spbao`: `2010..2026`, 17 лет
+- `mao`: `2010..2026`, 16 лет
+- `iao`: `1989..2023`, 28 лет (с сохранённым prehistory 1989)
+- `ioaa`: `2003..2025`, 20 лет (2003 и 2005 сохранены как prehistory)
+- `ioaa_junior`: `2022..2025`, 4 года
+- `usaaao`: `2014..2026`, 13 лет
+- `inao`: `2008..2026`, 18 лет
+- `czech_astronomy`: `2004..2025`, 22 года
+- `gecaa`: `2020`, 1 год
 
 ## Итоговые индексы
 
@@ -265,7 +290,9 @@ find data/archive -maxdepth 3 -type d -name 'owao' -print
 - Для OWAO поддерживаются официальные архивные страницы 2022–2025, а fallback Astroedu даёт прямые PDF теоретического/практического туров и архивы данных для перечисленных там лет. Отдельной рабочей страницы `2022en/tasks` нет (HTTP 404): official metadata за 2022 год извлекается из встроенного раздела. Онлайн-туры UTS и заблокированные внешние ссылки остаются discovery-only.
 - Для `russia_team_qual` сейчас покрыт только direct-PDF-поднабор с `astroedu.ru/assets/problems/hq/...pdf`; связанные quiz-страницы на `uts.astroedu.ru` намеренно оставлены вне первого патча.
 - В старых архивах СПбАО и ВсОШ есть битые ссылки (`404`), особенно в исторических зеркалах.
-- Если один файл содержит и задачи, и решения, файл не режется; это отражается в metadata.
+- Материалы и решения INAO/HBCSE остаются локальными в соответствии с явным запретом на перераспространение.
+- Защищённые материалы Czech AO остаются discovery gap; обход authentication/access control не предпринимается.
+- IOAA-hosted archive GeCAA индексируется, но текущая ошибка загрузки с `gecaa.ee` остаётся внешним gap, включая известные team documents.
 
 ## Для GitHub
 
