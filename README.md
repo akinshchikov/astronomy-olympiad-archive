@@ -4,7 +4,7 @@
 
 `astronomy-olympiad-archive` is a reproducible local archive builder for publicly available materials from past astronomy olympiads. The public GitHub repository is intentionally prepared as `code + metadata`, without committing mirrored binary files.
 
-Priority coverage:
+Core baseline families:
 
 1. `vsosh_astronomy`
 2. `struve`
@@ -20,6 +20,13 @@ Priority coverage:
 12. `inao`
 13. `czech_astronomy`
 14. `gecaa`
+
+The archive distinguishes three coverage states. The current public indices contain
+local-file metadata for 27 families; the olympiad-level index represents 32 families,
+including discovery-only provenance. The [Batch C activation audit](data/audits/global_expansion_batch_c.csv)
+is the authoritative record for evaluated sources that remain discovery-only,
+unresolved, or deferred. A source record is not a claim that its binaries were
+downloaded or that its historic archive is complete.
 
 ## What the public repository contains
 
@@ -49,7 +56,10 @@ Orchestration:
 
 - [run_pipeline.py](run_pipeline.py)
 
-The scripts use only public URLs, respect `robots.txt`, write logs, and continue running when individual sources fail.
+The scripts use only public URLs, respect `robots.txt`, write logs, validate the
+actual response type before accepting a download, and continue when an individual
+source fails. Resumable checkpoints reuse a validated local binary but refresh its
+metadata from current discovery.
 
 ## Structure
 
@@ -182,7 +192,7 @@ Notes:
 - `mao_official_archive`: `https://mosastro.olimpiada.ru/tasks` (official; `mao_moscow_archive` remains a historical fallback)
 - `ioaa_problems`: `https://www.ioaastrophysics.org/resources/problems-from-past-ioaa`
 
-Batch A source policies:
+Source-policy boundaries:
 
 - `ioaa_junior_official` keeps Junior IOAA separate from core IOAA. Its official past-olympiads PDFs can combine several competition components in one document.
 - `usaaao_past_exams` preserves the competition context in its metadata, including practice, First Round, NAC, and selection exams.
@@ -192,9 +202,15 @@ Batch A source policies:
 
 Some families currently start from archive/mirror seeds rather than a priority-1 official source, notably `spbao` and parts of `iao`. IAO targets on `issp.ac.ru` retain official target provenance even when discovered through an archive index.
 
+Batch C keeps distinct competition lineages separate: Poland senior (`poland_astronomy`) is not Poland junior; Sri Lanka senior and junior are separate; and Slovenia high-school, primary-school, and Utrinek are three families. Bangladesh BAO is separate from BDOAA, and Macao local preliminary papers are not CNAO papers. CNAO excludes provincial Chinese feeder competitions. Nepal currently contributes only unknown-year sample/practice papers, not verified historic national rounds.
+
+Source roles are preserved. Iran is represented by a mirror source, not an official archive; an Israel Space Agency event page does not make the Multi-Space archive authoritative. Croatia uses bounded local extraction of validated public ZIP containers; extracted members remain local. OBA retains level/category semantics and excludes unsupported training/selection material.
+
 The full current seed-source list is stored in [data/manifests/source_candidates.csv](data/manifests/source_candidates.csv).
 
 Interactive UTS/Edu Sirius rounds are retained as discovery-only metadata and are never authenticated or downloaded. Historical SPbAO 2012–2013 links can remain broken/undownloaded; the documented manual-import route is the supported rescue path rather than unverified mirrors.
+
+Discovery-only Batch C coverage is intentional where policy or source access prevents safe ingestion: OLAA and NZOAA official Drive-linked files are blocked by crawler policy; Thailand files are form-gated; Singapore and Malaysia official pages are robots-blocked; and some official pages expose provenance but no safely enumerable paper archive. The audit also records unresolved and deferred candidates without placing them in runtime ingestion configuration.
 
 ## Manual source-expansion refresh
 
@@ -259,9 +275,9 @@ Current tracked public snapshot refreshed on `2026-08-01`:
 - unique public files in `files_index.csv`: `3538`
 - relation groups: `592`
 
-Batch C adds bounded, source-specific coverage for 13 further families: Bangladesh BAO, Brazil OBA, Bulgaria, CAAO, Croatia, Macao, Nepal, Poland senior astronomy, three distinct Slovenia lineages, and Sri Lanka senior and junior. The durable [Batch C audit](data/audits/global_expansion_batch_c.csv) records every evaluated source, including official archives retained as discovery-only where robots rules, form gates, unavailable files, or limited public archives prevent safe ingestion.
+Batch C adds 940 indexed files across 13 further families: Bangladesh BAO, Brazil OBA, Bulgaria, CAAO, Croatia, Macao, Nepal, Poland senior astronomy, three distinct Slovenia lineages, and Sri Lanka senior and junior. The durable [Batch C audit](data/audits/global_expansion_batch_c.csv) has 32 candidates: 13 `INGESTED_PARTIAL`, 11 `ACTIVE_DISCOVERY_ONLY`, 7 `CONDITIONAL_UNRESOLVED`, and 1 `DEFERRED_NO_RELIABLE_ARCHIVE`.
 
-Priority families in the current public indices (recorded-year ranges; see the coverage report for document types, discovery-only records, prehistory, and not-held components):
+Families with indexed local files (27; recorded-year ranges for the core baseline are below; see the coverage report for document types, discovery-only records, prehistory, and not-held components):
 
 - `vsosh_astronomy`: `1994..2026`, 33 years
 - `struve`: `2022..2026`, 5 years
@@ -277,6 +293,10 @@ Priority families in the current public indices (recorded-year ranges; see the c
 - `inao`: `2008..2026`, 18 years
 - `czech_astronomy`: `2004..2025`, 22 years
 - `gecaa`: `2020`, 1 year
+
+- Batch C: `bangladesh_bao`, `brazil_oba`, `bulgaria_astronomy`, `caao`, `croatia_astronomy`, `macao_astronomy`, `nepal_astronomy`, `poland_astronomy`, `slovenia_astronomy`, `slovenia_astronomy_primary`, `slovenia_utrinek`, `sri_lanka_astronomy`, and `sri_lanka_junior_astronomy`.
+
+Five further olympiad-index families have provenance coverage without indexed local files: `baao`, `olaa`, `poland_astronomy_junior`, `singapore_astronomy`, and `thailand_astronomy`. Other audit candidates are deliberately unresolved or deferred rather than represented as ingested archives.
 
 ## Output indices
 
@@ -296,6 +316,7 @@ Priority families in the current public indices (recorded-year ranges; see the c
 - INAO/HBCSE papers and solutions remain local under the explicit no-redistribution policy.
 - Protected Czech AO material remains a discovery gap; no authentication or access-control bypass is attempted.
 - The IOAA-hosted GeCAA archive is indexed, but the current `gecaa.ee` download failure remains an external gap, including known team documents.
+- The Batch C audit retains further gaps rather than bypassing them: robots restrictions, external-host policies, form gates, unavailable archives, and mirror-only provenance do not authorize alternative scraping or redistribution.
 
 ## For GitHub
 

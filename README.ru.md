@@ -4,7 +4,7 @@
 
 `astronomy-olympiad-archive` собирает воспроизводимый локальный архив публичных материалов прошлых лет по астрономическим олимпиадам. Для публичного GitHub-репо он подготовлен как `code + metadata`, без коммита тяжёлых бинарных зеркал.
 
-Приоритет покрытия:
+Базовые семейства:
 
 1. `vsosh_astronomy`
 2. `struve`
@@ -20,6 +20,8 @@
 12. `inao`
 13. `czech_astronomy`
 14. `gecaa`
+
+Архив различает три состояния покрытия. В текущих публичных индексах есть metadata локальных файлов для 27 семейств; олимпиадный индекс представляет 32 семейства, включая discovery-only provenance. [Аудит активации Batch C](data/audits/global_expansion_batch_c.csv) — авторитетная запись об источниках, которые остаются discovery-only, неразрешёнными или отложенными. Наличие записи об источнике не означает, что его бинарные файлы скачаны или что исторический архив полон.
 
 ## Что лежит в публичной версии
 
@@ -64,7 +66,7 @@ tmux new -s olympiad-refresh
 
 - [run_pipeline.py](run_pipeline.py)
 
-Скрипты работают только с публичными URL, уважают `robots.txt`, пишут логи и продолжают работу при ошибках отдельных источников.
+Скрипты работают только с публичными URL, уважают `robots.txt`, пишут логи, проверяют фактический тип ответа перед принятием загрузки и продолжают работу при ошибках отдельных источников. Возобновляемые checkpoint используют только проверенный локальный бинарный файл, а metadata обновляют из текущего discovery.
 
 ## Структура
 
@@ -196,7 +198,7 @@ python3 run_pipeline.py --clean-only --families spbao
 - `mao_official_archive`: `https://mosastro.olimpiada.ru/tasks` (official; `mao_moscow_archive` остаётся историческим fallback)
 - `ioaa_problems`: `https://www.ioaastrophysics.org/resources/problems-from-past-ioaa`
 
-Политика источников Batch A:
+Границы и политика источников:
 
 - `ioaa_junior_official` ведёт Junior IOAA отдельно от core IOAA. В официальных PDF прошлых олимпиад один документ может объединять несколько компонентов соревнования.
 - `usaaao_past_exams` сохраняет в metadata фактический контекст соревнования: practice, First Round, NAC и selection exams.
@@ -206,11 +208,17 @@ python3 run_pipeline.py --clean-only --families spbao
 
 Часть семейств сейчас стартует не с источника первого приоритета, а с archive/mirror-источников, прежде всего `struve`, `spbao` и `iao`.
 
+Batch C сохраняет отдельность линий: старшая польская олимпиада (`poland_astronomy`) не является младшей; старшая и младшая олимпиады Шри-Ланки различны; а словенские high-school, primary-school и Utrinek — три отдельные семьи. Bangladesh BAO отделён от BDOAA, а местные предварительные работы Макао не являются работами CNAO. CNAO исключает провинциальные китайские отборы. Непал пока представлен только sample/practice-работами с неизвестным годом, а не подтверждёнными историческими национальными турами.
+
+Роли источников сохраняются. Иран представлен mirror-источником, а не официальным архивом; страница события Israel Space Agency не делает Multi-Space авторитетным архивом. Для Хорватии используется ограниченное локальное извлечение проверенных публичных ZIP-контейнеров; извлечённые материалы остаются локальными. OBA сохраняет семантику уровней/категорий и исключает неподтверждённые training/selection-материалы.
+
 Полный актуальный список seed-источников сохранён в [data/manifests/source_candidates.csv](data/manifests/source_candidates.csv).
 
 ## OWAO: прямой fallback Astroedu, official discovery и ручной импорт
 
 Официальные архивные страницы OWAO остаются discovery-источником первого приоритета. Часть их файлов находится на robots-blocked, external-share, интерактивных или login-like сервисах, поэтому такие ссылки могут оставаться discovery-only.
+
+Discovery-only покрытие Batch C намеренно там, где политика или доступ не позволяют безопасно ingest: официальные Drive-файлы OLAA и NZOAA заблокированы политикой crawler; файлы Таиланда требуют форму; официальные страницы Сингапура и Малайзии закрыты robots; часть официальных страниц даёт provenance, но не безопасно перечисляемый архив работ. Аудит также сохраняет неразрешённые и отложенные кандидаты вне runtime-конфигурации ingestion.
 
 Источник второго приоритета `owao_astroedu_archive` даёт прямые публичные PDF и ZIP с данными практического тура со страницы `https://astroedu.ru/hq/problems/owao`. Для перечисленных там лет точечный запуск
 
@@ -260,9 +268,9 @@ find data/archive -maxdepth 3 -type d -name 'owao' -print
 - уникальные публичные файлы в `files_index.csv`: `3538`
 - relation groups: `592`
 
-Batch C добавляет ограниченное source-specific покрытие ещё для 13 семейств: Bangladesh BAO, Brazil OBA, Болгарии, CAAO, Хорватии, Макао, Непала, старшей польской астрономической олимпиады, трёх самостоятельных словенских линий, а также старшей и младшей олимпиад Шри-Ланки. В долговечном [аудите Batch C](data/audits/global_expansion_batch_c.csv) зафиксирован каждый проверенный источник, включая официальные архивы, оставленные discovery-only, когда robots rules, формы, недоступные файлы или ограниченный публичный архив не позволяют безопасно выполнить ingestion.
+Batch C добавляет 940 индексированных файлов ещё для 13 семейств: Bangladesh BAO, Brazil OBA, Болгарии, CAAO, Хорватии, Макао, Непала, старшей польской астрономической олимпиады, трёх самостоятельных словенских линий, а также старшей и младшей олимпиад Шри-Ланки. В долговечном [аудите Batch C](data/audits/global_expansion_batch_c.csv) 32 кандидата: 13 `INGESTED_PARTIAL`, 11 `ACTIVE_DISCOVERY_ONLY`, 7 `CONDITIONAL_UNRESOLVED` и 1 `DEFERRED_NO_RELIABLE_ARCHIVE`.
 
-Приоритетные семейства в текущих публичных индексах (диапазоны представленных лет; типы материалов, discovery-only записи, prehistory и не проведённые компоненты приведены в coverage report):
+Семейства с индексированными локальными файлами (27; диапазоны представленных лет для базовых семейств ниже; типы материалов, discovery-only записи, prehistory и не проведённые компоненты приведены в coverage report):
 
 - `vsosh_astronomy`: `1994..2026`, 33 года
 - `struve`: `2022..2026`, 5 лет
@@ -278,6 +286,10 @@ Batch C добавляет ограниченное source-specific покрыт
 - `inao`: `2008..2026`, 18 лет
 - `czech_astronomy`: `2004..2025`, 22 года
 - `gecaa`: `2020`, 1 год
+
+- Batch C: `bangladesh_bao`, `brazil_oba`, `bulgaria_astronomy`, `caao`, `croatia_astronomy`, `macao_astronomy`, `nepal_astronomy`, `poland_astronomy`, `slovenia_astronomy`, `slovenia_astronomy_primary`, `slovenia_utrinek`, `sri_lanka_astronomy` и `sri_lanka_junior_astronomy`.
+
+Ещё пять семейств в олимпиадном индексе имеют provenance-покрытие без индексированных локальных файлов: `baao`, `olaa`, `poland_astronomy_junior`, `singapore_astronomy` и `thailand_astronomy`. Остальные кандидаты аудита намеренно остаются неразрешёнными или отложенными, а не представлены как ingested-архивы.
 
 ## Итоговые индексы
 
@@ -297,6 +309,7 @@ Batch C добавляет ограниченное source-specific покрыт
 - Материалы и решения INAO/HBCSE остаются локальными в соответствии с явным запретом на перераспространение.
 - Защищённые материалы Czech AO остаются discovery gap; обход authentication/access control не предпринимается.
 - IOAA-hosted archive GeCAA индексируется, но текущая ошибка загрузки с `gecaa.ee` остаётся внешним gap, включая известные team documents.
+- Аудит Batch C сохраняет дополнительные gaps вместо их обхода: robots-ограничения, политика внешних хостов, формы, недоступные архивы и mirror-only provenance не разрешают альтернативный scraping или перераспространение.
 
 ## Для GitHub
 
