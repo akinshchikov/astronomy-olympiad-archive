@@ -479,15 +479,15 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
     ),
 ]
 
-# Batch C sources passed a normal, bounded live-source check.  Sources that
-# were unavailable, had invalid TLS, required login, or remain deferred are
-# deliberately kept in data/audits rather than being made crawl targets.
-BATCH_C_ACTIVE_SOURCES = (
+# These sources passed a normal, bounded live-source check. Sources that are
+# unavailable, access-restricted, unresolved, or deferred remain in the neutral
+# source-coverage catalog rather than becoming crawl targets.
+ADDITIONAL_SOURCE_DEFINITIONS = (
     ("olaa_official_archive", "OLAA: official exams archive", "olaa", "official", 1, "https://www.olaa-astro.org/p/pruebas_3.html", "Official OLAA exams and solutions; language and round variants are retained."),
     ("poland_astronomy_planetarium_official", "Polish Astronomy Olympiad: Planetarium Śląskie archive", "poland_astronomy", "official", 1, "https://www.planetarium.edu.pl/olimpiada/archiwum.html", "Official senior archive; online coverage is partial relative to competition history."),
     ("poland_astronomy_junior_official", "Polish Junior Astronomy Olympiad: official archive", "poland_astronomy_junior", "official", 1, "https://oaj.edu.pl/archiwum/", "Separate junior lineage; preserve stages I/II/III and practical/theory context."),
     ("caao_official_past_contests", "Canadian Astronomy and Astrophysics Olympiad: past contests", "caao", "official", 1, "https://caao.ca/past-contests/", "Official Canadian archive; linked IOAA material is excluded."),
-    ("baao_bpho_official", "British Astronomy and Astrophysics Olympiad: BPhO", "baao", "official", 1, "https://www.bpho.org.uk/baao/", "Canonical public BPhO source reached during Batch C audit."),
+    ("baao_bpho_official", "British Astronomy and Astrophysics Olympiad: BPhO", "baao", "official", 1, "https://www.bpho.org.uk/baao/", "Canonical public BPhO source reached during the bounded source audit."),
     ("singapore_astronomy_official", "Singapore Astronomy Olympiad: Astronomy.SG", "singapore_astronomy", "official", 1, "https://astronomy.sg/singapore-astronomy-olympiad/", "Only documents explicitly linked from this official page are followed."),
     ("sri_lanka_ipsl_official", "Sri Lanka Astronomy Olympiad: IPSL", "sri_lanka_astronomy", "official", 1, "https://ipsl.lk/astronomy-olympiad/", "Senior lineage; translations remain language variants."),
     ("sri_lanka_junior_ipsl_official", "Sri Lanka Junior Astronomy Olympiad: IPSL", "sri_lanka_junior_astronomy", "official", 1, "https://ipsl.lk/astronomy-olympiad/", "Separate junior lineage; translations remain language variants."),
@@ -525,7 +525,7 @@ SOURCE_DEFINITIONS.extend(
         notes=notes,
         extras={"default_context": {"record_seed_page": False, **({"follow_second_hop": True, "max_follow_depth": 1} if source_id == "croatia_astronomy_azoo_official" else {}), **({"follow_second_hop": True, "max_follow_depth": 2} if source_id == "thailand_astronomy_posn_official" else {})}},
     )
-    for source_id, label, family, role, priority, seed_url, notes in BATCH_C_ACTIVE_SOURCES
+    for source_id, label, family, role, priority, seed_url, notes in ADDITIONAL_SOURCE_DEFINITIONS
 )
 
 

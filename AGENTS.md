@@ -4,10 +4,10 @@
 
 This repository builds a reproducible local archive from public astronomy-olympiad
 sources. GitHub contains code and lightweight metadata only, never a mirror of
-downloaded binaries. The core baseline has 14 families; the current public indices
-have local-file metadata for 27 families and olympiad-level provenance for 32.
-The authoritative Batch C source-status record is
-`data/audits/global_expansion_batch_c.csv`.
+downloaded binaries. Every olympiad family is first-class. Coverage fields describe
+current source evidence and acquisition state, not the value of a competition. The
+repository-wide source catalog is `data/audits/source_coverage.csv`; the generated
+family view is in `data/indices/coverage_report.md`.
 
 Core stages are `discover_sources.py`, `crawl_source.py`,
 `import_manual_files.py`, `normalize_archive.py`, `detect_relations.py`,
@@ -18,8 +18,9 @@ in `utils/`; tests are in `tests/`.
 
 - Use public URLs, respect `robots.txt`, and never bypass login, form, paywall, or
   anti-bot controls. Record a bounded failure and continue with other sources.
-- `ACTIVE_DISCOVERY_ONLY`, `CONDITIONAL_UNRESOLVED`, and deferred audit rows are
-  durable provenance, not runtime ingestion targets.
+- `metadata_only`, `unresolved`, and `deferred` catalog rows are durable provenance,
+  not automatic runtime ingestion targets. Incompleteness and access limitations are
+  revisitable source states.
 - Preserve source roles (`official`, `mirror`, archive) and competition boundaries:
   Poland senior/junior; Sri Lanka senior/junior; Slovenia high-school/primary/Utrinek;
   BAO/BDOAA; Macao/CNAO; and CNAO/provincial contests are distinct. Iran's source is
@@ -31,6 +32,14 @@ in `utils/`; tests are in `tests/`.
   HTTP response/signature before storing a PDF or archive.
 - ZIP/container processing must be source-specific, bounded, validated, and local.
   Never commit raw containers or extracted members.
+
+Every family follows the same workflow:
+
+```text
+identify family -> identify source -> preserve source role -> record access state
+-> discover documents -> acquire what is safely accessible -> normalize
+-> update content, completeness, access, provenance, and redistribution dimensions
+```
 
 ## Committed and local data
 

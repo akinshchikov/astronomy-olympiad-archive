@@ -52,7 +52,7 @@ INAO_SOURCE_IDS = {"inao_hbcse_past_papers", "inao_hbcse_current"}
 CZECH_SOURCE_ID = "czech_astronomy_official"
 GECAA_SOURCE_IDS = {"gecaa_ioaa_archive", "gecaa_official_archive"}
 IOAA_CORE_SOURCE_IDS = {"ioaa_problems", "ioaa_proceedings", "ioaa_past_olympiads"}
-BATCH_C_SOURCE_IDS = {
+BOUNDED_ARCHIVE_SOURCE_IDS = {
     "olaa_official_archive", "poland_astronomy_planetarium_official", "poland_astronomy_junior_official",
     "caao_official_past_contests", "baao_bpho_official", "singapore_astronomy_official",
     "sri_lanka_ipsl_official", "sri_lanka_junior_ipsl_official", "bulgaria_astronomy_official",
@@ -65,8 +65,8 @@ BATCH_C_SOURCE_IDS = {
 RESULT_OR_PROMOTION_TOKENS = re.compile(r"result|winner|award|press|news|gallery|photo|video|registration|course|mock|preparation|training|paid", re.I)
 
 
-def batch_c_page_link(source_id: str, href: str) -> bool:
-    """Return whether an explicitly whitelisted Batch C archive link is HTML."""
+def source_specific_page_link(source_id: str, href: str) -> bool:
+    """Return whether an explicitly whitelisted source archive link is HTML."""
     path = decoded_url_path(href).lower()
     if source_id == "baao_bpho_official":
         return path.startswith("/baao/papers/") or bool(re.fullmatch(r"/baao/(?:round-[12]|astro-challenge|junior-astro-challenge)/?", path))
@@ -431,7 +431,7 @@ def usaaao_event_year(href: str, context: dict) -> int | None:
 
 
 def batch_a_page_links(seed: dict, raw_html: str, base_url: str, page_context: dict) -> list[dict]:
-    """Parse the five Batch A archives without broad domain crawling."""
+    """Parse structured archives without broad domain crawling."""
     source_id = source_id_of(seed)
     parser = parsed_page(raw_html, base_url)
     if source_id in INAO_SOURCE_IDS:
@@ -640,7 +640,7 @@ def passes_source_specific_link_filter(seed: dict, link_text: str, href: str) ->
         return "/f/detail/" in href or infer_extension(href) == "pdf" or bool(re.search(r"/archiv/\d+-rocnik-20\d{2}-(?:\d{2}|20\d{2})/?$", href))
     if source_id in GECAA_SOURCE_IDS:
         return infer_extension(href) == "pdf" and not bool(re.search(r"circular|regulation|result", combined)) and bool(re.search(r"theor|data[_ -]*analysis|observation|student[_ -]*user[_ -]*guide|team[_ -]*competition|moon|pixie", combined))
-    if source_id in BATCH_C_SOURCE_IDS:
+    if source_id in BOUNDED_ARCHIVE_SOURCE_IDS:
         if source_id == "bangladesh_bao_official":
             return (
                 source_domain(href) == "www.astronomybangla.com"
@@ -688,7 +688,7 @@ def passes_source_specific_link_filter(seed: dict, link_text: str, href: str) ->
             return False
         if source_id == "olaa_official_archive" and source_domain(href) == "drive.google.com":
             return True
-        if batch_c_page_link(source_id, href):
+        if source_specific_page_link(source_id, href):
             return True
         if infer_extension(href) not in DIRECT_FILE_EXTENSIONS:
             return False
@@ -725,7 +725,7 @@ def should_record_seed_link(seed: dict, link_text: str, href: str) -> bool:
     if source_id == "thailand_astronomy_posn_official":
         if "#" in href:
             return False
-        return batch_c_page_link(source_id, href)
+        return source_specific_page_link(source_id, href)
     if source_id in {"slovenia_astronomy_dmfa_official", "slovenia_astronomy_primary_dmfa_official", "slovenia_utrinek_dmfa_official"}:
         return passes_source_specific_link_filter(seed, link_text, href)
     if source_id == "croatia_astronomy_azoo_official":
@@ -734,11 +734,11 @@ def should_record_seed_link(seed: dict, link_text: str, href: str) -> bool:
         return passes_source_specific_link_filter(seed, link_text, href)
     if source_id == "baao_bpho_official" and not decoded_url_path(href).lower().startswith("/baao/"):
         return False
-    if source_id in BATCH_C_SOURCE_IDS and batch_c_page_link(source_id, href):
+    if source_id in BOUNDED_ARCHIVE_SOURCE_IDS and source_specific_page_link(source_id, href):
         return True
     if source_id == "olaa_official_archive" and source_domain(href) == "drive.google.com":
         return True
-    if source_id in BATCH_C_SOURCE_IDS and (infer_extension(href) in {"html", "htm"} or "." not in decoded_filename(href)):
+    if source_id in BOUNDED_ARCHIVE_SOURCE_IDS and (infer_extension(href) in {"html", "htm"} or "." not in decoded_filename(href)):
         context = f"{link_text} {href}"
         return (
             source_domain(href) == source_domain(seed["url"])
@@ -1313,8 +1313,8 @@ def discover_documents(root: Path, families: set[str] | None, dry_run: bool, lim
 
                 extension = "html" if (
                     re.search(r"/(?:junior-ioaa/past-olympiads/20\d{2}|archiv/\d+-rocnik-20\d{2}-(?:\d{2}|20\d{2}))/?$", href)
-                    or batch_c_page_link(source_id, href)
-                    or (source_id in BATCH_C_SOURCE_IDS and "." not in decoded_filename(href))
+                    or source_specific_page_link(source_id, href)
+                    or (source_id in BOUNDED_ARCHIVE_SOURCE_IDS and "." not in decoded_filename(href))
                 ) else infer_extension(href)
                 if source_id == "thailand_astronomy_posn_official" and "#exam-" in href:
                     # A visible card is provenance, not a link to follow: POSN

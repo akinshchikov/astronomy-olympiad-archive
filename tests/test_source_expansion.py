@@ -33,7 +33,7 @@ def client(pages, calls=None):
 
 
 class SourceExpansionTests(TestCase):
-    def test_batch_c_runtime_sources_match_active_audit_and_keep_deferred_out(self):
+    def test_runtime_sources_include_accessible_catalog_sources_and_keep_deferred_out(self):
         runtime = {source.source_id: source.olympiad_family for source in SOURCE_DEFINITIONS}
         self.assertIn("olaa_official_archive", runtime)
         self.assertEqual(runtime["bangladesh_bao_official"], "bangladesh_bao")
@@ -42,7 +42,7 @@ class SourceExpansionTests(TestCase):
         self.assertNotIn("taiwan_astronomy_deferred_reference", runtime)
         self.assertNotIn("hong_kong_astronomy_space_museum", runtime)
 
-    def test_batch_c_negative_filters_preserve_lineages_and_reject_non_papers(self):
+    def test_source_specific_filters_preserve_lineages_and_reject_non_papers(self):
         def seed(source_id, family):
             return {"source_id": source_id, "olympiad_family": family, "source_role": "official", "source_priority": 1, "url": "https://example.test", "context": {}}
 

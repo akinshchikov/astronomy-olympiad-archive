@@ -9,7 +9,7 @@ from pathlib import Path
 from utils.cli import build_common_parser
 from utils.fs_utils import load_jsonl
 from utils.logging_utils import configure_logger
-from utils.metadata import PRIORITY_FAMILIES, logical_document_types
+from utils.metadata import logical_document_types
 
 
 VSOSH_2026_CORE_COMPONENTS = (
@@ -41,6 +41,135 @@ def load_family_history(root: Path) -> dict[str, dict]:
             if not isinstance(component, dict) or not isinstance(component.get("year"), int) or not component.get("stage_or_round"):
                 raise ValueError(f"family history for {family} has invalid not_held_components")
     return payload
+
+
+def load_csv_rows(path: Path) -> list[dict[str, str]]:
+    if not path.exists():
+        return []
+    with path.open("r", encoding="utf-8", newline="") as handle:
+        return list(csv.DictReader(handle))
+
+
+def family_coverage_rows(
+    root: Path,
+    files_rows: list[dict],
+    olympiad_rows: list[dict],
+    families: set[str] | None,
+) -> list[dict[str, str | int]]:
+    metadata_rows = load_csv_rows(root / "data" / "config" / "family_metadata.csv")
+    source_rows = load_csv_rows(root / "data" / "audits" / "source_coverage.csv")
+    metadata = {row["family_id"]: row for row in metadata_rows}
+    sources_by_family: dict[str, list[dict[str, str]]] = defaultdict(list)
+    for row in source_rows:
+        sources_by_family[row["family"]].append(row)
+
+    family_ids = set(metadata) | set(sources_by_family) | {
+        row["olympiad_family"] for row in olympiad_rows
+    }
+    if families:
+        family_ids &= families
+
+    file_counts = Counter(row["olympiad_family"] for row in files_rows)
+    years_by_family: dict[str, set[int]] = defaultdict(set)
+    for row in olympiad_rows:
+        if row["year"] not in {None, ""}:
+            years_by_family[row["olympiad_family"]].add(int(row["year"]))
+
+    state_order = {"indexed": 0, "metadata_only": 1, "unresolved": 2, "deferred": 3}
+    completeness_order = {
+        "sample_only": 0,
+        "partial_archive": 1,
+        "known_complete_scope": 2,
+        "unknown": 3,
+    }
+    result: list[dict[str, str | int]] = []
+    for family in family_ids:
+        family_sources = sources_by_family.get(family, [])
+        source_states = {row["content_state"] for row in family_sources}
+        if file_counts[family]:
+            content_state = "indexed"
+        else:
+            content_state = min(source_states or {"unresolved"}, key=lambda value: state_order[value])
+
+        completeness_values = {row["completeness"] for row in family_sources}
+        completeness = min(
+            completeness_values or {"unknown"},
+            key=lambda value: completeness_order[value],
+        )
+        years = sorted(years_by_family.get(family, set()))
+        access_states = sorted({row["access_state"] for row in family_sources})
+        roles = sorted({row["source_role"] for row in family_sources})
+        restrictions = sorted(
+            {
+                row["redistribution_status"]
+                for row in family_sources
+                if row["redistribution_status"] != "unknown"
+            }
+        )
+        limitations = [
+            f"{row['source_id']}={row['access_state']}"
+            for row in family_sources
+            if row["access_state"] not in {"open", "not_applicable"}
+        ]
+        notes = limitations + restrictions
+        info = metadata.get(family, {})
+        result.append(
+            {
+                "family_id": family,
+                "name_en": info.get("name_en", family),
+                "name_ru": info.get("name_ru", family),
+                "region": info.get("region", "Unknown"),
+                "competition_scope": info.get("competition_scope", "unknown"),
+                "indexed_files": file_counts[family],
+                "year_range": f"{years[0]}–{years[-1]}" if years else "none",
+                "content_state": content_state,
+                "completeness": completeness,
+                "provenance": ", ".join(roles) or "unknown",
+                "access": ", ".join(access_states) or "unknown",
+                "notes": "; ".join(notes) or "none",
+            }
+        )
+    return sorted(result, key=lambda row: (str(row["name_en"]).casefold(), str(row["family_id"])))
+
+
+def write_family_coverage_table(handle, rows: list[dict[str, str | int]]) -> None:
+    content_labels = {
+        "indexed": "Indexed local archive",
+        "metadata_only": "Metadata catalogued",
+        "unresolved": "Source currently unresolved",
+        "deferred": "Deferred pending a reliable archive",
+    }
+    completeness_labels = {
+        "known_complete_scope": "Known complete scope",
+        "partial_archive": "Partial archive",
+        "sample_only": "Sample only",
+        "unknown": "Unknown",
+    }
+    handle.write("## Family coverage overview\n\n")
+    handle.write(
+        "Coverage labels describe the current archive state, not the importance or "
+        "quality of an olympiad. Source-level evidence is in "
+        "[`data/audits/source_coverage.csv`](../audits/source_coverage.csv).\n\n"
+    )
+    handle.write(
+        "| Family ID | English name | Russian name | Region | Scope | Indexed files | "
+        "Years | Content state | Completeness | Provenance | Access | Important notes |\n"
+    )
+    handle.write("| --- | --- | --- | --- | --- | ---: | --- | --- | --- | --- | --- | --- |\n")
+    for row in rows:
+        access_label = ", ".join(
+            value.replace("_", " ") for value in str(row["access"]).split(", ")
+        )
+        values = [
+            row["family_id"], row["name_en"], row["name_ru"], row["region"],
+            row["competition_scope"], row["indexed_files"], row["year_range"],
+            content_labels[str(row["content_state"])],
+            completeness_labels[str(row["completeness"])], row["provenance"],
+            access_label, row["notes"],
+        ]
+        escaped = [str(value).replace("|", "\\|").replace("\n", " ") for value in values]
+        handle.write("| " + " | ".join(escaped) + " |\n")
+    handle.write("\n## Detailed discovery and archive coverage\n\n")
 
 
 def vsosh_2026_material_key(row: dict) -> tuple[str, str, str, str] | None:
@@ -308,11 +437,9 @@ def build(root: Path, families: set[str] | None) -> int:
         for entry in entries:
             entries_by_family[entry["olympiad_family"]].append(entry)
 
-        if families:
-            coverage_families = [family for family in PRIORITY_FAMILIES if family in families]
-            coverage_families.extend(sorted(families - set(PRIORITY_FAMILIES)))
-        else:
-            coverage_families = PRIORITY_FAMILIES
+        overview_rows = family_coverage_rows(root, files_rows, list(olympiad_index.values()), families)
+        write_family_coverage_table(handle, overview_rows)
+        coverage_families = [str(row["family_id"]) for row in overview_rows]
 
         family_history = load_family_history(root)
         for family in coverage_families:

@@ -14,8 +14,9 @@ not itself grant permission to redistribute that file.
 - Lightweight public indices: `data/indices/olympiads_index.csv`,
   `data/indices/files_index.csv`, `data/indices/relation_groups.csv`, and
   `data/indices/coverage_report.md`.
-- The durable source-status record
-  `data/audits/global_expansion_batch_c.csv`.
+- The repository-wide source coverage catalog
+  `data/audits/source_coverage.csv` and `data/config/family_metadata.csv`, used by
+  the generated coverage report.
 - Release notes and automatically generated GitHub source-code archives.
 
 ## Always local and ignored
@@ -33,15 +34,20 @@ not itself grant permission to redistribute that file.
 The public GitHub release must not attach those files. GitHub's normal source-code
 archives are sufficient release assets.
 
-## Source status and roles
+## Independent coverage dimensions
 
-The Batch C audit distinguishes `INGESTED_PARTIAL`, `ACTIVE_DISCOVERY_ONLY`,
-`CONDITIONAL_UNRESOLVED`, and `DEFERRED_NO_RELIABLE_ARCHIVE`. Discovery-only,
-form-gated, robots-blocked, policy-blocked, unavailable, or deferred records retain
-provenance; they do not represent downloaded coverage and must not be bypassed.
+The source catalog records local content state (`indexed`, `metadata_only`,
+`unresolved`, or `deferred`) independently from archive completeness, current access,
+source provenance, and redistribution restrictions. These fields describe current
+evidence and may be revisited; they do not rank olympiad families.
+
+Metadata-only, form-gated, robots-blocked, policy-blocked, unavailable, or deferred
+records retain provenance; they do not represent downloaded coverage and must not be
+bypassed. Partial archives and sample-only coverage are not claims about the full
+competition history.
 
 `official`, `mirror`, and archive roles are metadata, not interchangeable claims of
-authority. In particular, Iran's Batch C source is a mirror; Israel Space Agency
+authority. In particular, Iran's catalogued source is a mirror; Israel Space Agency
 provenance does not make Multi-Space authoritative; and provincial Chinese contests
 are not CNAO. Preserve family boundaries such as Poland senior/junior, Sri Lanka
 senior/junior, the three Slovenia lineages, BAO/BDOAA, and Macao/CNAO.
