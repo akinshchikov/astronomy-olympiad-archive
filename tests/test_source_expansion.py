@@ -1,6 +1,8 @@
 from pathlib import Path
+import json
 from tempfile import TemporaryDirectory
 from types import SimpleNamespace
+import urllib.error
 from unittest import TestCase
 from unittest.mock import patch
 
@@ -9,7 +11,9 @@ import crawl_source
 import discover_sources
 import normalize_archive
 from utils.fs_utils import load_jsonl, write_jsonl
+from utils.metadata import thai_buddhist_year_to_gregorian
 from utils.models import SourceDefinition
+from utils.source_configs import SOURCE_DEFINITIONS
 
 
 FIXTURES = Path(__file__).parent / "fixtures"
@@ -29,6 +33,175 @@ def client(pages, calls=None):
 
 
 class SourceExpansionTests(TestCase):
+    def test_batch_c_runtime_sources_match_active_audit_and_keep_deferred_out(self):
+        runtime = {source.source_id: source.olympiad_family for source in SOURCE_DEFINITIONS}
+        self.assertIn("olaa_official_archive", runtime)
+        self.assertEqual(runtime["bangladesh_bao_official"], "bangladesh_bao")
+        self.assertEqual(runtime["sri_lanka_junior_ipsl_official"], "sri_lanka_junior_astronomy")
+        self.assertNotIn("apao_issp_official", runtime)
+        self.assertNotIn("taiwan_astronomy_deferred_reference", runtime)
+        self.assertNotIn("hong_kong_astronomy_space_museum", runtime)
+
+    def test_batch_c_negative_filters_preserve_lineages_and_reject_non_papers(self):
+        def seed(source_id, family):
+            return {"source_id": source_id, "olympiad_family": family, "source_role": "official", "source_priority": 1, "url": "https://example.test", "context": {}}
+
+        cases = [
+            (seed("caao_official_past_contests", "caao"), "IOAA 2025 theory", "https://caao.ca/ioaa-2025.pdf", False),
+            (seed("caao_official_past_contests", "caao"), "Senior contest problems", "https://caao.ca/contest.pdf", True),
+            (seed("china_cnao_beijing_planetarium_official", "china_cnao"), "Provincial feeder", "https://bjp.org.cn/provincial.pdf", False),
+            (seed("iran_astronomy_irysc_mirror", "iran_astronomy"), "Mock course", "https://irysc.com/mock.pdf", False),
+            (seed("macao_astronomy_sepam_official", "macao_astronomy"), "CNAO preparation", "https://sepam.org/cnao.pdf", False),
+            (seed("macao_astronomy_sepam_official", "macao_astronomy"), "2024预赛A卷试题及答案", "https://sepam.org/wp-content/uploads/2026/03/2024.pdf", True),
+            (seed("macao_astronomy_sepam_official", "macao_astronomy"), "获奖名单", "https://sepam.org/wp-content/uploads/results.pdf", False),
+            (seed("singapore_astronomy_official", "singapore_astronomy"), "Olympiad paper", "https://drive.google.com/file/d/1/view.pdf", True),
+            (seed("singapore_astronomy_official", "singapore_astronomy"), "Olympiad paper", "https://example.net/paper.pdf", False),
+            (seed("nzoaa_official", "nzoaa"), "Question Paper", "https://drive.google.com/file/d/nzoaa/view", True),
+            (seed("nzoaa_official", "nzoaa"), "IOAA preparation", "https://ioaastrophysics.org/paper.pdf", False),
+            (seed("nzoaa_official", "nzoaa"), "USAAAO preparation", "https://usaaao.org/paper.pdf", False),
+            (seed("sri_lanka_ipsl_official", "sri_lanka_astronomy"), "Senior paper", "https://ipsl.lk/documents/astro/astro-test-2011_Sinhala.pdf", True),
+            (seed("sri_lanka_ipsl_official", "sri_lanka_astronomy"), "Junior paper", "https://ipsl.lk/documents/astro/SLJAO-test-2011_Sinhala.pdf", False),
+            (seed("sri_lanka_junior_ipsl_official", "sri_lanka_junior_astronomy"), "Junior paper", "https://ipsl.lk/documents/astro/SLJAO-test-2011_Sinhala.pdf", True),
+            (seed("sri_lanka_junior_ipsl_official", "sri_lanka_junior_astronomy"), "Navigation", "https://ipsl.lk/physics-olympiad/", False),
+            (seed("slovenia_astronomy_dmfa_official", "slovenia_astronomy"), "As_Drzavno_2024.pdf", "https://www.dmfa.si/Tekmovanja/GetPDF.ashx?src=As_Drzavno_2024.pdf", True),
+            (seed("slovenia_astronomy_primary_dmfa_official", "slovenia_astronomy_primary"), "As_Drzavno_2024.pdf", "https://www.dmfa.si/Tekmovanja/GetPDF.ashx?src=As_Drzavno_2024.pdf", False),
+            (seed("slovenia_astronomy_primary_dmfa_official", "slovenia_astronomy_primary"), "AsOS_Solsko_2024.pdf", "https://www.dmfa.si/Tekmovanja/GetPDF.ashx?src=AsOS_Solsko_2024.pdf", True),
+            (seed("slovenia_utrinek_dmfa_official", "slovenia_utrinek"), "AsOSU_Drzavno_2024.pdf", "https://www.dmfa.si/Tekmovanja/GetPDF.ashx?src=AsOSU_Drzavno_2024.pdf", True),
+        ]
+        for candidate, text, url, expected in cases:
+            with self.subTest(url=url):
+                self.assertEqual(discover_sources.passes_source_specific_link_filter(candidate, text, url), expected)
+
+        archive_seed = seed("olaa_official_archive", "olaa")
+        self.assertTrue(discover_sources.should_record_seed_link(archive_seed, "Past contests 2025", "https://example.test/past-contests/2025"))
+        self.assertFalse(discover_sources.should_record_seed_link(archive_seed, "Latest news", "https://example.test/news"))
+
+    def test_thai_buddhist_era_conversion_is_explicit_and_bounded(self):
+        self.assertEqual(thai_buddhist_year_to_gregorian(2567, explicit_buddhist_era=True), 2024)
+        self.assertEqual(thai_buddhist_year_to_gregorian(2024, explicit_buddhist_era=True), 2024)
+        self.assertEqual(thai_buddhist_year_to_gregorian(2567, explicit_buddhist_era=False), 2567)
+
+    def test_olaa_official_drive_links_and_baao_paper_containers_are_bounded(self):
+        olaa_page = "https://www.olaa-astro.org/p/pruebas_3.html"
+        drive = "https://drive.google.com/file/d/olaa-2024/view"
+        olaa = SourceDefinition("olaa_official_archive", "OLAA", "olaa", "official", 1, "static", [olaa_page], extras={"default_context": {"record_seed_page": False}})
+        olaa_rows = self.discover_rows(olaa, {olaa_page: response(olaa_page, f"<h2>2024 Problems</h2><a href='{drive}'>Problems and solutions</a>")})
+        self.assertEqual(olaa_rows[drive]["extension"], "pdf")
+        self.assertEqual(olaa_rows[drive]["olympiad_family"], "olaa")
+        self.assertEqual(olaa_rows[drive]["access_mode"], "discovery_only")
+        self.assertEqual(crawl_source.public_download_url(drive), "https://drive.usercontent.google.com/download?id=olaa-2024&export=download")
+        self.assertEqual(crawl_source.public_download_url("https://example.test/provas/nível-1.pdf"), "https://example.test/provas/n%C3%ADvel-1.pdf")
+        self.assertEqual(crawl_source.public_download_url("https://example.test/foo%20bar/nível.pdf?download=1&lang=pt#page"), "https://example.test/foo%20bar/n%C3%ADvel.pdf?download=1&lang=pt#page")
+        self.assertEqual(crawl_source.public_download_url("https://example.test/plain.pdf"), "https://example.test/plain.pdf")
+        self.assertEqual(crawl_source.public_download_url("https://example.test/provas/n%C3%ADvel-1.pdf"), "https://example.test/provas/n%C3%ADvel-1.pdf")
+        self.assertFalse(crawl_source.response_matches_extension("pdf", "text/html", b"<html>preview</html>"))
+        self.assertTrue(crawl_source.response_matches_extension("pdf", "application/pdf", b"%PDF-1.7\n"))
+
+        baao_page, container, paper = "https://www.bpho.org.uk/baao/", "https://www.bpho.org.uk/baao/Papers/R1/", "https://www.bpho.org.uk/baao/Papers/R1/BAAO-2024.pdf"
+        baao = SourceDefinition("baao_bpho_official", "BAAO", "baao", "official", 1, "static", [baao_page], extras={"default_context": {"record_seed_page": False, "follow_second_hop": True, "max_follow_depth": 1}})
+        rows = self.discover_rows(baao, {baao_page: response(baao_page, f"<a href='{container}'>Round 1 papers</a><a href='https://www.bpho.org.uk/Papers/R1/'>Physics</a>"), container: response(container, f"<h2>2024</h2><a href='{paper}'>BAAO Round 1 Problems</a>")})
+        self.assertIn(paper, rows)
+        self.assertNotIn("https://www.bpho.org.uk/Papers/R1/", rows)
+
+    def test_nzoaa_official_drive_papers_keep_year_and_reject_html_containers(self):
+        page = "https://www.nzoaa.com/past-papers-1"
+        question = "https://drive.google.com/file/d/questions/view"
+        marking = "https://drive.google.com/file/d/marking/view"
+        source = SourceDefinition("nzoaa_official", "NZOAA", "nzoaa", "official", 2, "static", [page], extras={"default_context": {"record_seed_page": False}})
+        rows = self.discover_rows(source, {page: response(page, f"<h2>2024 Past Paper</h2><a href='{question}'>Question Paper</a><a href='{marking}'>Markscheme</a><a href='/past-papers-1'>Past Papers</a><a href='https://ioaastrophysics.org/2024.pdf'>IOAA preparation</a>")})
+        self.assertEqual(set(rows), {question, marking})
+        self.assertEqual((rows[question]["year"], rows[question]["document_type"]), (2024, "tasks"))
+        self.assertEqual((rows[marking]["year"], rows[marking]["document_type"]), (2024, "marking"))
+
+    def test_nepal_sample_papers_are_tasks_with_unknown_year_not_eligibility_dates(self):
+        page = "https://www.nepalastronomicalsociety.org/projects/olympiad/"
+        junior, senior = "http://bit.ly/junior-paper", "http://bit.ly/senior-paper"
+        source = SourceDefinition("nepal_astronomy_naso_official", "NASO", "nepal_astronomy", "official", 2, "static", [page], extras={"default_context": {"record_seed_page": False}})
+        html = f"Students born after 2010 are Junior. <h2>Sample Papers</h2>Click here to download the past paper for Junior Category <a href='{junior}'>Click here</a> Click here to download the past paper for senior category <a href='{senior}'>Click here</a>"
+        rows = self.discover_rows(source, {page: response(page, html)})
+        self.assertEqual(set(rows), {junior, senior})
+        self.assertTrue(all(row["year"] is None and row["document_type"] == "tasks" and row["stage_or_round"] == "practice" for row in rows.values()))
+        self.assertEqual({row["round_detail"] for row in rows.values()}, {"sample-junior", "sample-senior"})
+
+    def test_thailand_form_cards_convert_explicit_buddhist_year_and_stay_discovery_only(self):
+        page = "https://www.posn.or.th/projects/academic-olympiad/ao/examination/"
+        source = SourceDefinition("thailand_astronomy_posn_official", "POSN", "thailand_astronomy", "official", 1, "static", [page], extras={"default_context": {"record_seed_page": False}})
+        html = '<div class="exam-item" data-exam-id="2682"><div><h3><span class="exam-title">ข้อสอบดาราศาสตร์ ปี 2560</span></h3><span class="exam-categories">ข้อสอบดาราศาสตร์โอลิมปิกวิชาการระดับชาติ</span></div></div></div>'
+        rows = self.discover_rows(source, {page: response(page, html)})
+        row = next(iter(rows.values()))
+        self.assertEqual((row["year"], row["document_type"], row["access_mode"]), (2017, "tasks", "discovery_only"))
+        self.assertIn("official_form_gated_download", row["notes"])
+
+    def test_cnao_and_iran_filters_keep_cnao_boundary_and_mirror_role(self):
+        cn = {"source_id": "china_cnao_beijing_planetarium_official", "olympiad_family": "china_cnao", "source_role": "official", "source_priority": 1, "url": "https://www.bjp.org.cn/qgzxstwzsjs/", "context": {}}
+        iran = {"source_id": "iran_astronomy_irysc_mirror", "olympiad_family": "iran_astronomy", "source_role": "mirror", "source_priority": 2, "url": "https://www.irysc.com/", "context": {}}
+        self.assertTrue(discover_sources.passes_source_specific_link_filter(cn, "2024 CNAO final questions", "https://www.bjp.org.cn/cnao-2024.pdf"))
+        self.assertFalse(discover_sources.passes_source_specific_link_filter(cn, "2024 provincial feeder", "https://www.bjp.org.cn/provincial-2024.pdf"))
+        self.assertFalse(discover_sources.passes_source_specific_link_filter(iran, "Astronomy Olympiad mock course", "https://www.irysc.com/mock.pdf"))
+        paper = discover_sources.build_candidate_entry(iran, href="https://www.irysc.com/iran-astronomy-olympiad-2024.pdf", link_text="Iran Astronomy Olympiad 2024 questions", page_title="", parent_page_url=iran["url"], parent_page_title="", context={})
+        self.assertEqual((paper["source_role"], paper["olympiad_family"]), ("mirror", "iran_astronomy"))
+
+    def test_iao_hosted_ioaa_papers_keep_the_existing_ioaa_family(self):
+        self.assertEqual(discover_sources.infer_family("iao", "https://fizmat.space/files/IOAA-2021.pdf"), "ioaa")
+        self.assertEqual(discover_sources.infer_family("iao", "https://www.issp.ac.ru/iao/2021/index.html"), "iao")
+        self.assertEqual(discover_sources.infer_family("caao", "IOAA preparation link"), "caao")
+
+    def test_caao_filename_metadata_is_task_paper_and_ioaa_is_excluded(self):
+        page, paper, ioaa = "https://caao.ca/past-contests/", "https://caao.ca/wp-content/uploads/2023/CAAO-2023-1.pdf", "https://caao.ca/wp-content/uploads/2023/IOAA-2023.pdf"
+        source = SourceDefinition("caao_official_past_contests", "CAAO", "caao", "official", 1, "static", [page], extras={"default_context": {"record_seed_page": False}})
+        rows = self.discover_rows(source, {page: response(page, f"<a href='{paper}'>2023</a><a href='{ioaa}'>IOAA 2023</a>")})
+        self.assertEqual((rows[paper]["document_type"], rows[paper]["stage_or_round"], rows[paper]["year"]), ("tasks", "national", 2023))
+        self.assertNotIn(ioaa, rows)
+
+    def test_bulgaria_and_brazil_official_filename_metadata(self):
+        bulgaria = {"source_id": "bulgaria_astronomy_official", "olympiad_family": "bulgaria_astronomy", "source_role": "official", "source_priority": 1, "url": "https://astro-olymp.org/", "context": {}}
+        brazil = {"source_id": "brazil_oba_official", "olympiad_family": "brazil_oba", "source_role": "official", "source_priority": 1, "url": "https://sistema.oba.org.br/", "context": {}}
+        task = discover_sources.build_candidate_entry(bulgaria, href="https://astro-olymp.org/wp-content/uploads/2026/05/26-III-78.pdf", link_text="", page_title="", parent_page_url=bulgaria["url"], parent_page_title="", context={})
+        answer = discover_sources.build_candidate_entry(bulgaria, href="https://astro-olymp.org/wp-content/uploads/2026/05/a26-III-78.pdf", link_text="", page_title="", parent_page_url=bulgaria["url"], parent_page_title="", context={})
+        prova = discover_sources.build_candidate_entry(brazil, href="https://sistema.oba.org.br/2000_prova_niv3_oba.pdf", link_text="", page_title="", parent_page_url=brazil["url"], parent_page_title="", context={})
+        gabarito = discover_sources.build_candidate_entry(brazil, href="https://sistema.oba.org.br/2000_gbniv3_oba.pdf", link_text="", page_title="", parent_page_url=brazil["url"], parent_page_title="", context={})
+        container = discover_sources.build_candidate_entry(brazil, href="https://sistema.oba.org.br/site/?p=conteudo&idcat=9&pag=conteudo&m=s", link_text="Provas e Gabaritos", page_title="", parent_page_url=brazil["url"], parent_page_title="", context={})
+        self.assertEqual((task["stage_or_round"], task["document_type"]), ("national", "tasks"))
+        self.assertEqual(answer["document_type"], "solutions")
+        self.assertEqual((prova["document_type"], prova["round_detail"]), ("tasks", "level-3"))
+        self.assertEqual(gabarito["document_type"], "solutions")
+        self.assertEqual(container["access_mode"], "discovery_only")
+        self.assertIn("official_archive_container", container["notes"])
+
+    def test_sri_lanka_lineages_and_language_variants_stay_separate(self):
+        senior = {"source_id": "sri_lanka_ipsl_official", "olympiad_family": "sri_lanka_astronomy", "source_role": "official", "source_priority": 1, "url": "https://ipsl.lk/astronomy-olympiad/", "context": {}}
+        junior = {**senior, "source_id": "sri_lanka_junior_ipsl_official", "olympiad_family": "sri_lanka_junior_astronomy"}
+        senior_paper = discover_sources.build_candidate_entry(senior, href="https://ipsl.lk/documents/astro/astro-test-2011_Sinhala.pdf", link_text="", page_title="", parent_page_url=senior["url"], parent_page_title="", context={})
+        junior_paper = discover_sources.build_candidate_entry(junior, href="https://ipsl.lk/documents/astro/SLJAO-test-2011_Tamil.pdf", link_text="", page_title="", parent_page_url=junior["url"], parent_page_title="", context={})
+        self.assertEqual((senior_paper["olympiad_family"], senior_paper["document_type"], senior_paper["language"]), ("sri_lanka_astronomy", "tasks", "si"))
+        self.assertEqual((junior_paper["olympiad_family"], junior_paper["document_type"], junior_paper["language"]), ("sri_lanka_junior_astronomy", "tasks", "ta"))
+
+    def test_croatia_azoo_search_is_astronomy_test_only_and_keeps_stage_context(self):
+        astronomy_post = "https://www.azoo.hr/natjecanja-i-smotre-arhiva/testovi-i-rjesenja-sa-skolske-razine-natjecanja-iz-astronomije-2024-2025/"
+        unrelated_post = "https://www.azoo.hr/natjecanja-i-smotre-arhiva/testovi-i-rjesenja-sa-skolske-razine-natjecanja-iz-biologije-2024-2025/"
+        links = discover_sources.croatia_azoo_search_links(json.dumps([
+            {"subtype": "natjecanja-i-smotre", "title": "Testovi i rješenja sa školske razine Natjecanja iz astronomije 2024./2025.", "url": astronomy_post},
+            {"subtype": "natjecanja-i-smotre", "title": "Testovi i rješenja sa školske razine Natjecanja iz biologije 2024./2025.", "url": unrelated_post},
+        ]))
+        self.assertEqual([link["href"] for link in links], [astronomy_post])
+        seed = {"source_id": "croatia_astronomy_azoo_official", "olympiad_family": "croatia_astronomy", "source_role": "official", "source_priority": 1, "url": astronomy_post, "context": {}}
+        task = discover_sources.build_candidate_entry(seed, href="https://www.azoo.hr/wp-content/uploads/2025/02/test.pdf", link_text="Test", page_title=links[0]["text"], parent_page_url=astronomy_post, parent_page_title=links[0]["text"], context={})
+        solution = discover_sources.build_candidate_entry(seed, href="https://www.azoo.hr/wp-content/uploads/2025/02/rjesenja.pdf", link_text="Rješenja", page_title=links[0]["text"], parent_page_url=astronomy_post, parent_page_title=links[0]["text"], context={})
+        self.assertEqual((task["stage_or_round"], task["document_type"], task["language"]), ("school", "tasks", "hr"))
+        self.assertEqual((solution["stage_or_round"], solution["document_type"]), ("school", "solutions"))
+
+    def test_terminal_failure_status_is_limited_to_durable_outcomes(self):
+        self.assertEqual(crawl_source.terminal_failure_status(urllib.error.HTTPError("https://example.test/a.pdf", 404, "missing", {}, None)), "http_404")
+        self.assertEqual(crawl_source.terminal_failure_status(urllib.error.HTTPError("https://example.test/a.pdf", 410, "gone", {}, None)), "http_410")
+        self.assertIsNone(crawl_source.terminal_failure_status(urllib.error.HTTPError("https://example.test/a.pdf", 503, "busy", {}, None)))
+        self.assertIsNone(crawl_source.terminal_failure_status(TimeoutError("slow")))
+
+    def test_slovenia_dmfa_archives_preserve_lineage_stage_and_combined_semantics(self):
+        source = {"source_id": "slovenia_astronomy_primary_dmfa_official", "olympiad_family": "slovenia_astronomy_primary", "source_role": "official", "source_priority": 1, "url": "https://www.dmfa.si/tekmovanja/AsOS/ArhivNalog.aspx", "context": {}}
+        row = discover_sources.build_candidate_entry(source, href="https://www.dmfa.si/Tekmovanja/GetPDF.ashx?src=AsOS_Drzavno_2024.pdf", link_text="AsOS_Drzavno_2024.pdf", page_title="Arhiv tekmovalnih nalog", parent_page_url=source["url"], parent_page_title="Arhiv tekmovalnih nalog", context={})
+        self.assertEqual((row["olympiad_family"], row["year"], row["stage_or_round"], row["language"]), ("slovenia_astronomy_primary", 2024, "state", "sl"))
+        self.assertEqual((row["document_type"], row["logical_document_types"], row["extension"]), ("solutions", ["tasks", "solutions"], "pdf"))
+
     def test_revision_suffixes_are_not_school_years_in_production_year_resolution(self):
         cases = {
             "usaaao_first_exam_sol_2025-1.pdf": 2025,
@@ -37,7 +210,25 @@ class SourceExpansionTests(TestCase):
         }
         for filename, expected in cases.items():
             self.assertEqual(discover_sources.usaaao_event_year(f"https://usaaao.org/wp-content/uploads/2025/09/{filename}", {}), expected)
-        self.assertIsNone(discover_sources.czech_school_year("usaaao_first_exam_sol_2025-1.pdf"))
+            self.assertIsNone(discover_sources.czech_school_year("usaaao_first_exam_sol_2025-1.pdf"))
+
+    def test_failed_source_refresh_retains_previous_candidate_snapshot(self):
+        page = "https://example.test/archive"
+        source = SourceDefinition("test_archive", "Test", "test_family", "official", 1, "static", [page], extras={"default_context": {"record_seed_page": False}})
+        previous = discover_sources.build_candidate_entry(
+            {"source_id": source.source_id, "olympiad_family": source.olympiad_family, "source_role": "official", "source_priority": 1, "context": {}},
+            href="https://example.test/2024-paper.pdf", link_text="2024 paper", page_title="Archive", parent_page_url=page, parent_page_title="Archive", context={},
+        )
+
+        class FailingClient:
+            def __init__(self, logger=None, dry_run=False): pass
+            def fetch(self, url): raise OSError("temporary DNS failure")
+
+        with TemporaryDirectory() as tmp, patch.object(discover_sources, "SOURCE_DEFINITIONS", [source]), patch.object(discover_sources, "HttpClient", FailingClient):
+            root = Path(tmp)
+            write_jsonl(root / "data/manifests/discovered_documents.jsonl", [previous])
+            self.assertEqual(discover_sources.discover_documents(root, {"test_family"}, False, None), 0)
+            self.assertEqual(load_jsonl(root / "data/manifests/discovered_documents.jsonl"), [previous])
 
     def discover_rows(self, source, pages):
         with TemporaryDirectory() as tmp, patch.object(discover_sources, "SOURCE_DEFINITIONS", [source]), patch.object(
@@ -111,7 +302,7 @@ class SourceExpansionTests(TestCase):
             for row in discovered:
                 raw = crawl_source.target_raw_path(root, row["source_id"], row["source_url"], row["extension"])
                 raw.parent.mkdir(parents=True, exist_ok=True)
-                raw.write_bytes(b"fixture PDF")
+                raw.write_bytes(b"%PDF-1.7\nfixture PDF")
             self.assertEqual(crawl_source.crawl_documents(root, None, False, None), 0)
             self.assertEqual(normalize_archive.normalize(root, None, False, None), 0)
             normalized = {row["filename_original"]: row for row in load_jsonl(root / "data/manifests/normalized_entries.jsonl")}

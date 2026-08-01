@@ -615,3 +615,12 @@ class BackfillPipelineTests(TestCase):
             self.assertEqual(downloaded[0]["status"], "existing")
             self.assertEqual(downloaded[0]["raw_path"], str(legacy_raw_path))
             self.assertEqual(downloaded[0]["content_type"], "application/pdf")
+            # A global resume replaces the candidate record instead of
+            # appending another copy of the same successful download, and a
+            # stale checkpoint cannot override refreshed discovery metadata.
+            write_jsonl(crawl_source.checkpoint_path(root), [{**downloaded[0], "olympiad_family": "stale_family"}])
+            with patch.object(crawl_source, "HttpClient", NoFetchHttpClient):
+                self.assertEqual(crawl_source.crawl_documents(root, families=None, dry_run=False, limit=None), 0)
+            resumed = load_jsonl(root / "data" / "manifests" / "download_manifest.jsonl")
+            self.assertEqual(len(resumed), 1)
+            self.assertEqual(resumed[0]["olympiad_family"], row["olympiad_family"])

@@ -14,6 +14,7 @@ GENERATED_MANIFEST_FILES = (
     "discovered_documents.jsonl",
     "discovery_coverage.csv",
     "download_manifest.jsonl",
+    "download_checkpoint.jsonl",
     "normalized_entries.jsonl",
     "relation_edges.jsonl",
 )

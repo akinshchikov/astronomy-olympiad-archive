@@ -3,6 +3,8 @@ from __future__ import annotations
 import hashlib
 import os
 import re
+import stat
+import zipfile
 from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
@@ -38,6 +40,63 @@ CONTAINER_SOURCE_IDS = {
     "vsosh_astroedu_archive",
 }
 DIRECT_FILE_EXTENSIONS = {"pdf", "doc", "docx", "zip"}
+MAX_CROATIA_ZIP_MEMBERS = 500
+MAX_CROATIA_ZIP_MEMBER_BYTES = 50 * 1024 * 1024
+MAX_CROATIA_ZIP_TOTAL_BYTES = 250 * 1024 * 1024
+
+
+def croatia_zip_member_rows(root: Path, rows: list[dict], logger) -> list[dict]:
+    """Expand AZOO ZIP containers locally, rejecting unsafe/non-document members."""
+    expanded: list[dict] = []
+    allowed = {".pdf", ".doc", ".docx"}
+    for row in rows:
+        raw_path = Path(str(row.get("raw_path", "")))
+        if row.get("source_id") != "croatia_astronomy_azoo_official" or raw_path.suffix.lower() != ".zip":
+            expanded.append(row)
+            continue
+        try:
+            with zipfile.ZipFile(raw_path) as archive:
+                total_bytes = 0
+                if len(archive.infolist()) > MAX_CROATIA_ZIP_MEMBERS:
+                    logger.warning("NORMALIZE croatia_zip_too_many_members url=%s", row["source_url"])
+                    continue
+                for member in archive.infolist():
+                    member_path = Path(member.filename)
+                    mode = member.external_attr >> 16
+                    if (
+                        member.is_dir()
+                        or member_path.is_absolute()
+                        or ".." in member_path.parts
+                        or stat.S_ISLNK(mode)
+                        or member_path.suffix.lower() not in allowed
+                        or member.file_size > MAX_CROATIA_ZIP_MEMBER_BYTES
+                    ):
+                        continue
+                    total_bytes += member.file_size
+                    if total_bytes > MAX_CROATIA_ZIP_TOTAL_BYTES:
+                        logger.warning("NORMALIZE croatia_zip_too_large url=%s", row["source_url"])
+                        break
+                    target = root / "data" / "raw" / row["source_id"] / "extracted" / hashlib.sha256(raw_path.read_bytes()).hexdigest()[:16] / member_path.name
+                    ensure_dir(target.parent)
+                    if not target.exists():
+                        target.write_bytes(archive.read(member))
+                    member_name = member_path.name.lower()
+                    member_type = "solutions" if any(token in member_name for token in ("rjesen", "rješen", "odgovor")) else "tasks"
+                    child = dict(row)
+                    child.update({
+                        "raw_path": str(target),
+                        "filename_original": member_path.name,
+                        "extension": member_path.suffix.lstrip(".").lower(),
+                        "source_title": member_path.name,
+                        "document_type": member_type,
+                        "logical_document_types": [member_type],
+                        "parent_container_url": row["source_url"],
+                        "notes": f"{row.get('notes', '')}; parent_container={row['source_url']}",
+                    })
+                    expanded.append(child)
+        except (OSError, zipfile.BadZipFile) as error:
+            logger.warning("NORMALIZE croatia_bad_zip url=%s error=%s", row["source_url"], error)
+    return expanded
 
 
 def sha256_of_file(path: Path) -> str:
@@ -311,6 +370,7 @@ def normalize(root: Path, families: set[str] | None, dry_run: bool, limit: int |
         download_manifest = [row for row in download_manifest if row["olympiad_family"] in families]
     if limit is not None:
         download_manifest = download_manifest[:limit]
+    download_manifest = croatia_zip_member_rows(root, download_manifest, logger)
 
     normalized_entries: list[dict] = []
     event_groups: dict[tuple[str, int | None, str], list[dict]] = defaultdict(list)

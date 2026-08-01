@@ -63,6 +63,7 @@ data/
     discovered_documents.jsonl
     discovery_coverage.csv
     download_manifest.jsonl        # local, not committed
+    download_checkpoint.jsonl      # local resumable-download state, not committed
     normalized_entries.jsonl       # local, not committed
     relation_edges.jsonl           # local, not committed
   indices/
@@ -167,6 +168,7 @@ Notes:
 - `python3 run_pipeline.py --clean` removes all generated local outputs first: `data/raw/`, `data/archive/`, `data/logs/`, generated manifests, and generated indices.
 - `python3 cleanup_outputs.py --families ...` removes only the selected family archive tree, matching raw source folders, and shared logs. It intentionally does not delete the shared `data/archive/objects/` store.
 - Focused cleanup also removes rows for the selected families from generated JSONL manifests, preventing stale records from being reused in a focused rebuild. It does not delete `data/archive/objects/`.
+- Download checkpoints reuse only a validated local binary; current discovery metadata remains authoritative when a crawl is resumed.
 - A focused run with `--families ...` is meant for local targeted refreshes. To rebuild the complete global manifests and indices again, run the pipeline without `--families`.
 
 ## First-priority source seeds
@@ -249,13 +251,15 @@ find data/archive -maxdepth 3 -type d -name 'owao' -print
 
 ## Snapshot
 
-Current tracked public snapshot refreshed on `2026-07-26`:
+Current tracked public snapshot refreshed on `2026-08-01`:
 
-- configured seed sources: `30`
-- discovered public documents: `3209`
-- olympiad index rows: `496`
-- unique public files in `files_index.csv`: `2598`
-- relation groups: `34`
+- configured seed sources: `53`
+- discovered public documents: `3768`
+- olympiad index rows: `687`
+- unique public files in `files_index.csv`: `3538`
+- relation groups: `592`
+
+Batch C adds bounded, source-specific coverage for 13 further families: Bangladesh BAO, Brazil OBA, Bulgaria, CAAO, Croatia, Macao, Nepal, Poland senior astronomy, three distinct Slovenia lineages, and Sri Lanka senior and junior. The durable [Batch C audit](data/audits/global_expansion_batch_c.csv) records every evaluated source, including official archives retained as discovery-only where robots rules, form gates, unavailable files, or limited public archives prevent safe ingestion.
 
 Priority families in the current public indices (recorded-year ranges; see the coverage report for document types, discovery-only records, prehistory, and not-held components):
 

@@ -353,7 +353,7 @@ def build(root: Path, families: set[str] | None) -> int:
             missing_years = sorted({row["year"] for row in missing_rows if row["year"] is not None})
             missing_by_doc = Counter(row["document_type"] for row in missing_rows)
 
-            handle.write(f"- Years found: {', '.join(map(str, years))}\n")
+            handle.write(f"- Years found: {', '.join(map(str, years)) or 'none'}\n")
             handle.write(f"- Years with tasks: {', '.join(map(str, tasks_years)) or 'none'}\n")
             handle.write(f"- Years with solutions: {', '.join(map(str, solutions_years)) or 'none'}\n")
             handle.write(f"- Years with mirror material: {', '.join(map(str, mirror_only)) or 'none'}\n")

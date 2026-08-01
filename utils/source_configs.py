@@ -163,7 +163,7 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
         strategy="static",
         seed_urls=["https://astroedu.ru/vos/problems"],
         notes="Глубокий архив задач и решений ВсОШ (1994–наст. время), регион и заключительный этапы.",
-        extras={"default_context": {"record_seed_page": False}},
+        extras={"default_context": {"record_seed_page": False, "follow_second_hop": True, "max_follow_depth": 1}},
     ),
     SourceDefinition(
         source_id="vsosh_moscow_team_year",
@@ -478,6 +478,55 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
         notes="Дополнительный mirror с отдельными PDF и ZIP.",
     ),
 ]
+
+# Batch C sources passed a normal, bounded live-source check.  Sources that
+# were unavailable, had invalid TLS, required login, or remain deferred are
+# deliberately kept in data/audits rather than being made crawl targets.
+BATCH_C_ACTIVE_SOURCES = (
+    ("olaa_official_archive", "OLAA: official exams archive", "olaa", "official", 1, "https://www.olaa-astro.org/p/pruebas_3.html", "Official OLAA exams and solutions; language and round variants are retained."),
+    ("poland_astronomy_planetarium_official", "Polish Astronomy Olympiad: Planetarium Śląskie archive", "poland_astronomy", "official", 1, "https://www.planetarium.edu.pl/olimpiada/archiwum.html", "Official senior archive; online coverage is partial relative to competition history."),
+    ("poland_astronomy_junior_official", "Polish Junior Astronomy Olympiad: official archive", "poland_astronomy_junior", "official", 1, "https://oaj.edu.pl/archiwum/", "Separate junior lineage; preserve stages I/II/III and practical/theory context."),
+    ("caao_official_past_contests", "Canadian Astronomy and Astrophysics Olympiad: past contests", "caao", "official", 1, "https://caao.ca/past-contests/", "Official Canadian archive; linked IOAA material is excluded."),
+    ("baao_bpho_official", "British Astronomy and Astrophysics Olympiad: BPhO", "baao", "official", 1, "https://www.bpho.org.uk/baao/", "Canonical public BPhO source reached during Batch C audit."),
+    ("singapore_astronomy_official", "Singapore Astronomy Olympiad: Astronomy.SG", "singapore_astronomy", "official", 1, "https://astronomy.sg/singapore-astronomy-olympiad/", "Only documents explicitly linked from this official page are followed."),
+    ("sri_lanka_ipsl_official", "Sri Lanka Astronomy Olympiad: IPSL", "sri_lanka_astronomy", "official", 1, "https://ipsl.lk/astronomy-olympiad/", "Senior lineage; translations remain language variants."),
+    ("sri_lanka_junior_ipsl_official", "Sri Lanka Junior Astronomy Olympiad: IPSL", "sri_lanka_junior_astronomy", "official", 1, "https://ipsl.lk/astronomy-olympiad/", "Separate junior lineage; translations remain language variants."),
+    ("bulgaria_astronomy_official", "Bulgarian Astronomy Olympiad: official archive", "bulgaria_astronomy", "official", 1, "https://astro-olymp.org/", "Official task corpus; press and results links are excluded."),
+    ("slovenia_astronomy_dmfa_official", "Slovenian Astronomy Competition: DMFA", "slovenia_astronomy", "official", 1, "https://www.dmfa.si/Tekmovanja/As/", "High-school lineage."),
+    ("slovenia_astronomy_primary_dmfa_official", "Slovenian Primary Astronomy Competition: DMFA", "slovenia_astronomy_primary", "official", 1, "https://www.dmfa.si/tekmovanja/AsOS/", "Separate primary-school lineage."),
+    ("slovenia_utrinek_dmfa_official", "Slovenian Utrinek Astronomy Competition: DMFA", "slovenia_utrinek", "official", 1, "https://www.dmfa.si/tekmovanja/AsOSU/", "Separate Utrinek lineage."),
+    ("croatia_astronomy_azoo_official", "Croatian Astronomy Competition: AZOO archive", "croatia_astronomy", "official", 1, "https://www.azoo.hr/natjecanja-i-smotre-arhiva/", "Official archive; ZIP containers are handled only in local generated storage."),
+    ("thailand_astronomy_posn_official", "Thailand Astronomy Olympiad: POSN", "thailand_astronomy", "official", 1, "https://www.posn.or.th/projects/academic-olympiad/ao/examination/", "Partial public corpus; form-gated files remain discovery-only."),
+    ("brazil_oba_official", "Brazilian Astronomy Olympiad: OBA", "brazil_oba", "official", 1, "https://sistema.oba.org.br/site/?idcat=9&m=s&p=conteudo&pag=conteudo", "Official provas/gabaritos; levels remain within the OBA family."),
+    ("nepal_astronomy_naso_official", "Nepal Astronomy Olympiad: NASO", "nepal_astronomy", "official", 2, "https://www.nepalastronomicalsociety.org/projects/olympiad/", "Partial public corpus only; announcements do not imply paper coverage."),
+    ("nzoaa_official", "New Zealand Olympiad on Astronomy and Astrophysics: past papers", "nzoaa", "official", 2, "https://www.nzoaa.com/past-papers-1", "Small official corpus; external preparation papers are excluded."),
+    ("israel_space_agency_official", "Israeli Astronomy Olympiad: Israel Space Agency", "israel_astronomy", "official", 2, "https://www.space.gov.il/community-projects/134724", "Authoritative event provenance; public materials are partial."),
+    ("bangladesh_bao_official", "Bangladesh Astronomy Olympiad", "bangladesh_bao", "official", 1, "https://www.astronomybangla.com/olympiad2026", "Separate BAO lineage."),
+    ("china_cnao_beijing_planetarium_official", "China National Astronomy Olympiad: Beijing Planetarium", "china_cnao", "official", 1, "https://www.bjp.org.cn/qgzxstwzsjs/", "CNAO only; provincial feeder material is excluded unless explicitly identified as CNAO."),
+    ("iran_astronomy_irysc_mirror", "Iranian Astronomy Olympiad: Irysc mirror", "iran_astronomy", "mirror", 2, "https://www.irysc.com/", "Mirror role is retained; mocks, courses, and preparation sets are excluded."),
+    ("malaysia_astronomy_myao_official", "Malaysia Astronomy Olympiad: MyAO", "malaysia_astronomy", "official", 2, "https://myao.my/", "Partial public corpus; paid archive and unrelated content are excluded."),
+    ("macao_astronomy_sepam_official", "Macao Astronomy Cup: SEPAM", "macao_astronomy", "official", 2, "https://sepam.org/2026-2nd-geg-astronomy-cup/", "Partial local-lineage corpus; CNAO preparation copies are excluded."),
+)
+
+SOURCE_DEFINITIONS.extend(
+    SourceDefinition(
+        source_id=source_id,
+        label=label,
+        olympiad_family=family,
+        source_role=role,
+        source_priority=priority,
+        strategy="static",
+        seed_urls={
+            "croatia_astronomy_azoo_official": [seed_url, "https://www.azoo.hr/wp-json/wp/v2/search?search=astronomija&per_page=100"],
+            "slovenia_astronomy_dmfa_official": ["https://www.dmfa.si/Tekmovanja/As/ArhivNalog.aspx"],
+            "slovenia_astronomy_primary_dmfa_official": ["https://www.dmfa.si/tekmovanja/AsOS/ArhivNalog.aspx"],
+            "slovenia_utrinek_dmfa_official": ["https://www.dmfa.si/tekmovanja/AsOSU/ArhivNalog.aspx"],
+        }.get(source_id, [seed_url]),
+        notes=notes,
+        extras={"default_context": {"record_seed_page": False, **({"follow_second_hop": True, "max_follow_depth": 1} if source_id == "croatia_astronomy_azoo_official" else {}), **({"follow_second_hop": True, "max_follow_depth": 2} if source_id == "thailand_astronomy_posn_official" else {})}},
+    )
+    for source_id, label, family, role, priority, seed_url, notes in BATCH_C_ACTIVE_SOURCES
+)
 
 
 def _seed_context_for_url(source: SourceDefinition, url: str, extra_context: dict | None = None) -> dict:

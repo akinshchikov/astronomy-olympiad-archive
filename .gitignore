@@ -20,5 +20,6 @@ data/logs/
 data/manual/
 
 data/manifests/download_manifest.jsonl
+data/manifests/download_checkpoint.jsonl
 data/manifests/normalized_entries.jsonl
 data/manifests/relation_edges.jsonl

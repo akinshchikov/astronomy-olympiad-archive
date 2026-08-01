@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import unicodedata
 from pathlib import Path
@@ -91,10 +92,12 @@ def load_jsonl(path: Path) -> list[dict]:
 
 def write_jsonl(path: Path, rows: Iterable[dict]) -> None:
     ensure_dir(path.parent)
-    with path.open("w", encoding="utf-8") as handle:
+    temporary = path.with_name(f".{path.name}.tmp")
+    with temporary.open("w", encoding="utf-8") as handle:
         for row in rows:
             handle.write(json.dumps(row, ensure_ascii=False, sort_keys=True))
             handle.write("\n")
+    os.replace(temporary, path)
 
 
 def write_json(path: Path, payload: object) -> None:
@@ -106,4 +109,3 @@ def write_json(path: Path, payload: object) -> None:
 
 def normalize_whitespace(text: str) -> str:
     return re.sub(r"\s+", " ", text).strip()
-

@@ -187,3 +187,239 @@
 - Undownloaded document types: solutions=4, tasks=2
 - Gaps: none observed inside valid competition range
 
+## olaa
+
+- Years found: none
+- Years with tasks: none
+- Years with solutions: none
+- Years with mirror material: none
+- Relation groups summary: none
+- Low-confidence years: none
+- Discovery-only / undownloaded years: none
+- Undownloaded document types: info=26, solutions=17, tasks=20
+- Gaps: none observed inside valid competition range
+
+## poland_astronomy
+
+- Years found: 2027
+- Years with tasks: none
+- Years with solutions: none
+- Years with mirror material: none
+- Relation groups summary: possible_duplicate=1, source_variant=3
+- Low-confidence years: none
+- Discovery-only / undownloaded years: none
+- Undownloaded document types: none
+- Gaps: none observed inside valid competition range
+
+## poland_astronomy_junior
+
+- Years found: 2025, 2026
+- Years with tasks: none
+- Years with solutions: none
+- Years with mirror material: none
+- Relation groups summary: none
+- Low-confidence years: none
+- Discovery-only / undownloaded years: none
+- Undownloaded document types: none
+- Gaps: none observed inside valid competition range
+
+## caao
+
+- Years found: 2017, 2018, 2019, 2020, 2021, 2022, 2023
+- Years with tasks: 2017, 2018, 2019, 2020, 2021, 2022, 2023
+- Years with solutions: none
+- Years with mirror material: none
+- Relation groups summary: none
+- Low-confidence years: none
+- Discovery-only / undownloaded years: none
+- Undownloaded document types: none
+- Gaps: none observed inside valid competition range
+
+## baao
+
+- Years found: none
+- Years with tasks: none
+- Years with solutions: none
+- Years with mirror material: none
+- Relation groups summary: none
+- Low-confidence years: none
+- Discovery-only / undownloaded years: none
+- Undownloaded document types: none
+- Gaps: none observed inside valid competition range
+
+## singapore_astronomy
+
+- No materials discovered yet.
+
+## sri_lanka_astronomy
+
+- Years found: 2007, 2008, 2009, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019, 2022, 2023, 2024
+- Years with tasks: 2007, 2008, 2009, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019, 2022, 2023, 2024
+- Years with solutions: 2011
+- Years with mirror material: none
+- Relation groups summary: translated_version=18
+- Low-confidence years: none
+- Discovery-only / undownloaded years: none
+- Undownloaded document types: none
+- Gaps: 2010, 2014, 2020, 2021
+
+## sri_lanka_junior_astronomy
+
+- Years found: 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2022, 2023, 2024
+- Years with tasks: 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2022, 2023, 2024
+- Years with solutions: none
+- Years with mirror material: none
+- Relation groups summary: translated_version=23
+- Low-confidence years: none
+- Discovery-only / undownloaded years: none
+- Undownloaded document types: none
+- Gaps: 2020, 2021
+
+## bulgaria_astronomy
+
+- Years found: 1998, 2025, 2026
+- Years with tasks: 1998, 2025, 2026
+- Years with solutions: 2026
+- Years with mirror material: none
+- Relation groups summary: possible_duplicate=1, source_variant=27
+- Low-confidence years: none
+- Discovery-only / undownloaded years: none
+- Undownloaded document types: none
+- Gaps: 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024
+
+## slovenia_astronomy
+
+- Years found: 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026
+- Years with tasks: 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026
+- Years with solutions: 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026
+- Years with mirror material: none
+- Relation groups summary: none
+- Low-confidence years: none
+- Discovery-only / undownloaded years: none
+- Undownloaded document types: none
+- Gaps: none observed inside valid competition range
+
+## slovenia_astronomy_primary
+
+- Years found: 2022, 2023, 2024, 2025, 2026
+- Years with tasks: 2022, 2023, 2024, 2025, 2026
+- Years with solutions: 2022, 2023, 2024, 2025, 2026
+- Years with mirror material: none
+- Relation groups summary: none
+- Low-confidence years: none
+- Discovery-only / undownloaded years: none
+- Undownloaded document types: none
+- Gaps: none observed inside valid competition range
+
+## slovenia_utrinek
+
+- Years found: 2022, 2023, 2024, 2025, 2026
+- Years with tasks: 2022, 2023, 2024, 2025, 2026
+- Years with solutions: 2022, 2023, 2024, 2025, 2026
+- Years with mirror material: none
+- Relation groups summary: none
+- Low-confidence years: none
+- Discovery-only / undownloaded years: none
+- Undownloaded document types: none
+- Gaps: none observed inside valid competition range
+
+## croatia_astronomy
+
+- Years found: 2008, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026
+- Years with tasks: 2008, 2011, 2012, 2013, 2016, 2017, 2018, 2019, 2020, 2021, 2022
+- Years with solutions: 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026
+- Years with mirror material: none
+- Relation groups summary: possible_duplicate=5, reformatted_version=1, source_variant=555
+- Low-confidence years: none
+- Discovery-only / undownloaded years: 2008, 2011, 2012, 2013, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026
+- Undownloaded document types: solutions=25, tasks=4
+- Gaps: 2009, 2010, 2014
+
+## thailand_astronomy
+
+- Years found: 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025
+- Years with tasks: 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025
+- Years with solutions: none
+- Years with mirror material: none
+- Relation groups summary: none
+- Low-confidence years: none
+- Discovery-only / undownloaded years: 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025
+- Undownloaded document types: tasks=19
+- Gaps: none observed inside valid competition range
+
+## brazil_oba
+
+- Years found: 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024
+- Years with tasks: 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024
+- Years with solutions: 1998, 1999, 2000, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024
+- Years with mirror material: none
+- Relation groups summary: exact_duplicate=2, possible_duplicate=18, reformatted_version=1, source_variant=196
+- Low-confidence years: none
+- Discovery-only / undownloaded years: none
+- Undownloaded document types: tasks=1
+- Gaps: none observed inside valid competition range
+
+## nepal_astronomy
+
+- Years found: none
+- Years with tasks: none
+- Years with solutions: none
+- Years with mirror material: none
+- Relation groups summary: source_variant=2
+- Low-confidence years: none
+- Discovery-only / undownloaded years: none
+- Undownloaded document types: none
+- Gaps: none observed inside valid competition range
+
+## nzoaa
+
+- Years found: 2024
+- Years with tasks: 2024
+- Years with solutions: none
+- Years with mirror material: none
+- Relation groups summary: none
+- Low-confidence years: none
+- Discovery-only / undownloaded years: 2024
+- Undownloaded document types: marking=1, tasks=1
+- Gaps: none observed inside valid competition range
+
+## israel_astronomy
+
+- No materials discovered yet.
+
+## bangladesh_bao
+
+- Years found: 2024
+- Years with tasks: 2024
+- Years with solutions: none
+- Years with mirror material: none
+- Relation groups summary: source_variant=10
+- Low-confidence years: none
+- Discovery-only / undownloaded years: none
+- Undownloaded document types: none
+- Gaps: none observed inside valid competition range
+
+## china_cnao
+
+- No materials discovered yet.
+
+## iran_astronomy
+
+- No materials discovered yet.
+
+## malaysia_astronomy
+
+- No materials discovered yet.
+
+## macao_astronomy
+
+- Years found: 2024, 2025
+- Years with tasks: 2024, 2025
+- Years with solutions: 2024, 2025
+- Years with mirror material: none
+- Relation groups summary: none
+- Low-confidence years: none
+- Discovery-only / undownloaded years: none
+- Undownloaded document types: none
+- Gaps: none observed inside valid competition range
+

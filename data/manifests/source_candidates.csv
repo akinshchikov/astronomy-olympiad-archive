@@ -29,3 +29,26 @@ ioaa_past_olympiads,IOAA: past olympiads index,ioaa,official,2,1,Официал�
 iao_eaae_index,IAO: индекс EAAE со ссылками на годы,iao,archive,2,1,Исторический обзор со ссылками на официальные страницы IAO.
 iao_astroarena_mirror,IAO: mirror Astroarena,iao,mirror,2,1,Подробный mirror с PDF по годам и турам.
 iao_fizmat_mirror,IAO: mirror Fizmat,iao,mirror,3,1,Дополнительный mirror с отдельными PDF и ZIP.
+olaa_official_archive,OLAA: official exams archive,olaa,official,1,1,Official OLAA exams and solutions; language and round variants are retained.
+poland_astronomy_planetarium_official,Polish Astronomy Olympiad: Planetarium Śląskie archive,poland_astronomy,official,1,1,Official senior archive; online coverage is partial relative to competition history.
+poland_astronomy_junior_official,Polish Junior Astronomy Olympiad: official archive,poland_astronomy_junior,official,1,1,Separate junior lineage; preserve stages I/II/III and practical/theory context.
+caao_official_past_contests,Canadian Astronomy and Astrophysics Olympiad: past contests,caao,official,1,1,Official Canadian archive; linked IOAA material is excluded.
+baao_bpho_official,British Astronomy and Astrophysics Olympiad: BPhO,baao,official,1,1,Canonical public BPhO source reached during Batch C audit.
+singapore_astronomy_official,Singapore Astronomy Olympiad: Astronomy.SG,singapore_astronomy,official,1,1,Only documents explicitly linked from this official page are followed.
+sri_lanka_ipsl_official,Sri Lanka Astronomy Olympiad: IPSL,sri_lanka_astronomy,official,1,1,Senior lineage; translations remain language variants.
+sri_lanka_junior_ipsl_official,Sri Lanka Junior Astronomy Olympiad: IPSL,sri_lanka_junior_astronomy,official,1,1,Separate junior lineage; translations remain language variants.
+bulgaria_astronomy_official,Bulgarian Astronomy Olympiad: official archive,bulgaria_astronomy,official,1,1,Official task corpus; press and results links are excluded.
+slovenia_astronomy_dmfa_official,Slovenian Astronomy Competition: DMFA,slovenia_astronomy,official,1,1,High-school lineage.
+slovenia_astronomy_primary_dmfa_official,Slovenian Primary Astronomy Competition: DMFA,slovenia_astronomy_primary,official,1,1,Separate primary-school lineage.
+slovenia_utrinek_dmfa_official,Slovenian Utrinek Astronomy Competition: DMFA,slovenia_utrinek,official,1,1,Separate Utrinek lineage.
+croatia_astronomy_azoo_official,Croatian Astronomy Competition: AZOO archive,croatia_astronomy,official,1,2,Official archive; ZIP containers are handled only in local generated storage.
+thailand_astronomy_posn_official,Thailand Astronomy Olympiad: POSN,thailand_astronomy,official,1,1,Partial public corpus; form-gated files remain discovery-only.
+brazil_oba_official,Brazilian Astronomy Olympiad: OBA,brazil_oba,official,1,1,Official provas/gabaritos; levels remain within the OBA family.
+nepal_astronomy_naso_official,Nepal Astronomy Olympiad: NASO,nepal_astronomy,official,2,1,Partial public corpus only; announcements do not imply paper coverage.
+nzoaa_official,New Zealand Olympiad on Astronomy and Astrophysics: past papers,nzoaa,official,2,1,Small official corpus; external preparation papers are excluded.
+israel_space_agency_official,Israeli Astronomy Olympiad: Israel Space Agency,israel_astronomy,official,2,1,Authoritative event provenance; public materials are partial.
+bangladesh_bao_official,Bangladesh Astronomy Olympiad,bangladesh_bao,official,1,1,Separate BAO lineage.
+china_cnao_beijing_planetarium_official,China National Astronomy Olympiad: Beijing Planetarium,china_cnao,official,1,1,CNAO only; provincial feeder material is excluded unless explicitly identified as CNAO.
+iran_astronomy_irysc_mirror,Iranian Astronomy Olympiad: Irysc mirror,iran_astronomy,mirror,2,1,"Mirror role is retained; mocks, courses, and preparation sets are excluded."
+malaysia_astronomy_myao_official,Malaysia Astronomy Olympiad: MyAO,malaysia_astronomy,official,2,1,Partial public corpus; paid archive and unrelated content are excluded.
+macao_astronomy_sepam_official,Macao Astronomy Cup: SEPAM,macao_astronomy,official,2,1,Partial local-lineage corpus; CNAO preparation copies are excluded.

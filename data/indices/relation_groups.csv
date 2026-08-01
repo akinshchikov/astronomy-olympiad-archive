@@ -1,35 +1,593 @@
 relation_group_id,olympiad_family,year,stage_or_round,document_type,num_variants,canonical_filename,relation_summary
-rg_0001,czech_astronomy,2020,regional,solutions,4,2020--czech-astronomy--regional--solutions--cs--reseni-zobrazit-application-mb--official.pdf,"possible_duplicate:5, source_variant:1"
-rg_0002,czech_astronomy,2021,final,solutions,6,2021--czech-astronomy--final--solutions--cs--reseni-zobrazit-application-mb--official.pdf,"possible_duplicate:11, source_variant:4"
-rg_0003,czech_astronomy,2021,regional,solutions,4,2021--czech-astronomy--regional--solutions--cs--reseni-zobrazit-application-kb--official-v4.pdf,"possible_duplicate:3, source_variant:3"
-rg_0004,czech_astronomy,2021,school,solutions,4,2021--czech-astronomy--school--solutions--cs--reseni-zobrazit-application-mb--official-v2.pdf,"possible_duplicate:5, source_variant:1"
-rg_0005,czech_astronomy,2022,final,solutions,6,2022--czech-astronomy--final--solutions--cs--data-analysis--official-v2.pdf,"possible_duplicate:9, source_variant:6"
-rg_0006,czech_astronomy,2022,regional,solutions,4,2022--czech-astronomy--regional--solutions--cs--reseni-zobrazit-application-mb--official-v2.pdf,"possible_duplicate:4, source_variant:2"
-rg_0007,czech_astronomy,2023,final,solutions,6,2023--czech-astronomy--final--solutions--cs--data-analysis--official-v2.pdf,"possible_duplicate:12, source_variant:3"
-rg_0008,czech_astronomy,2023,regional,solutions,4,2023--czech-astronomy--regional--solutions--cs--reseni-zobrazit-application-kb--official-v4.pdf,source_variant:6
-rg_0009,czech_astronomy,2023,school,solutions,4,2023--czech-astronomy--school--solutions--cs--reseni-zobrazit-application-mb--official.pdf,"possible_duplicate:5, source_variant:1"
-rg_0010,czech_astronomy,2024,final,solutions,6,2024--czech-astronomy--final--solutions--cs--theory--official.pdf,"possible_duplicate:14, source_variant:1"
-rg_0011,czech_astronomy,2024,regional,solutions,4,2024--czech-astronomy--regional--solutions--cs--reseni-zobrazit-application-mb--official.pdf,"possible_duplicate:4, source_variant:2"
-rg_0012,czech_astronomy,2024,school,solutions,4,2024--czech-astronomy--school--solutions--cs--reseni-zobrazit-application-mb--official.pdf,"possible_duplicate:4, source_variant:2"
-rg_0013,czech_astronomy,2025,final,solutions,6,2025--czech-astronomy--final--solutions--cs--reseni-zobrazit-application-mb--official.pdf,"possible_duplicate:13, source_variant:1"
-rg_0014,czech_astronomy,2025,regional,solutions,4,2025--czech-astronomy--regional--solutions--cs--reseni-zobrazit-application-mb--official.pdf,"possible_duplicate:2, source_variant:4"
-rg_0015,czech_astronomy,2025,school,solutions,4,2025--czech-astronomy--school--solutions--cs--reseni-zobrazit-application-mb--official.pdf,"possible_duplicate:4, source_variant:2"
-rg_0016,inao,2009,national,solutions,2,2009--inao--national--solutions--en--questions--official-v2.pdf,source_variant:1
-rg_0017,inao,2009,national,tasks,2,2009--inao--national--tasks--en--questions--official-v2.pdf,source_variant:1
-rg_0018,inao,2010,national,solutions,2,2010--inao--national--solutions--en--questions--official-v2.pdf,source_variant:1
-rg_0019,inao,2010,national,tasks,2,2010--inao--national--tasks--en--questions--official-v2.pdf,source_variant:1
-rg_0020,inao,2019,national,tasks,2,2019--inao--national--tasks--en--questions--official.pdf,translated_version:1
-rg_0021,inao,2020,national,tasks,2,2020--inao--national--tasks--en--questions--official.pdf,translated_version:1
-rg_0022,inao,2021,national,tasks,2,2021--inao--national--tasks--en--questions--official.pdf,translated_version:1
-rg_0023,inao,2022,national,tasks,2,2022--inao--national--tasks--en--questions--official.pdf,translated_version:1
-rg_0024,inao,2023,national,tasks,2,2023--inao--national--tasks--en--questions--official.pdf,translated_version:1
-rg_0025,inao,2024,national,solutions,2,2024--inao--national--solutions--en--questions--official.pdf,possible_duplicate:1
-rg_0026,inao,2024,national,tasks,2,2024--inao--national--tasks--hi--questions--official.pdf,translated_version:1
-rg_0027,inao,2025,national,solutions,2,2025--inao--national--solutions--en--questions--official.pdf,possible_duplicate:1
-rg_0028,inao,2025,national,tasks,2,2025--inao--national--tasks--en--questions--official.pdf,translated_version:1
-rg_0029,inao,2026,national,tasks,2,2026--inao--national--tasks--hi--questions--official.pdf,translated_version:1
-rg_0030,usaaao,2020,national,solutions,2,2020--usaaao--national--solutions--en--theory--official.pdf,source_variant:1
-rg_0031,usaaao,2020,national,tasks,2,2020--usaaao--national--tasks--en--theory--exam--version-2--official.pdf,source_variant:1
-rg_0032,usaaao,2026,selection,info,2,2026--usaaao--selection--info--en--theory--official.pdf,source_variant:1
-rg_0033,usaaao,2026,selection,solutions,3,2026--usaaao--selection--solutions--en--practical--official-v2.pdf,possible_duplicate:3
-rg_0034,usaaao,2026,selection,tasks,2,2026--usaaao--selection--tasks--en--theory--exam--official.pdf,source_variant:1
+rg_0001,bangladesh_bao,2024,national,tasks,10,2024--bangladesh-bao--national--tasks--en--questions--official.pdf,"possible_duplicate:1, source_variant:44"
+rg_0002,brazil_oba,,national,tasks,11,unknown-year--brazil-oba--national--tasks--pt--prova-nivel-da-vii--official-v4.pdf,"possible_duplicate:18, source_variant:37"
+rg_0003,brazil_oba,1998,national,solutions,2,1998--brazil-oba--national--solutions--pt--gbniv2-1oba--official.pdf,source_variant:1
+rg_0004,brazil_oba,1998,national,tasks,2,1998--brazil-oba--national--tasks--pt--i-oba-n2--official.pdf,source_variant:1
+rg_0005,brazil_oba,1999,national,solutions,3,1999--brazil-oba--national--solutions--pt--1999gb-niv3-2oba--official.pdf,source_variant:3
+rg_0006,brazil_oba,1999,national,tasks,3,1999--brazil-oba--national--tasks--pt--prova-niv3-ii-oba--official.pdf,source_variant:3
+rg_0007,brazil_oba,2000,national,solutions,3,2000--brazil-oba--national--solutions--pt--gbniv3-3oba--official.pdf,source_variant:3
+rg_0008,brazil_oba,2000,national,tasks,3,2000--brazil-oba--national--tasks--pt--prova-niv-iii-oba--official-v2.pdf,source_variant:3
+rg_0009,brazil_oba,2001,national,tasks,6,2001--brazil-oba--national--tasks--pt--prova-niv-iv-oba--official-v3.pdf,"possible_duplicate:9, source_variant:6"
+rg_0010,brazil_oba,2002,national,tasks,6,2002--brazil-oba--national--tasks--pt--vobapn3vf6p--official.pdf,"possible_duplicate:2, source_variant:13"
+rg_0011,brazil_oba,2003,national,tasks,4,2003--brazil-oba--national--tasks--pt--2003gab-n3-6oba--official.pdf,"reformatted_version:3, source_variant:3"
+rg_0012,brazil_oba,2004,national,tasks,4,2004--brazil-oba--national--tasks--pt--gab-n4-7oba--official.pdf,source_variant:6
+rg_0013,brazil_oba,2005,national,tasks,4,2005--brazil-oba--national--tasks--pt--gab-n4-oba--official.pdf,source_variant:6
+rg_0014,brazil_oba,2006,national,tasks,8,2006--brazil-oba--national--tasks--pt--prova-nivel-da-ix--official-v4.pdf,"possible_duplicate:14, source_variant:14"
+rg_0015,brazil_oba,2007,national,tasks,8,2007--brazil-oba--national--tasks--pt--gab-n4-x-oba--official.pdf,"possible_duplicate:17, source_variant:10"
+rg_0016,brazil_oba,2008,national,solutions,4,2008--brazil-oba--national--solutions--pt--gabarito-com-questoes-nivel--official-v4.pdf,"possible_duplicate:4, source_variant:2"
+rg_0017,brazil_oba,2008,national,tasks,4,2008--brazil-oba--national--tasks--pt--prova-nivel-da-xi--official-v4.pdf,"possible_duplicate:4, source_variant:2"
+rg_0018,brazil_oba,2009,national,solutions,4,2009--brazil-oba--national--solutions--pt--gabarito-da-prova-nivel--official-v4.pdf,"possible_duplicate:3, source_variant:3"
+rg_0019,brazil_oba,2009,national,tasks,4,2009--brazil-oba--national--tasks--pt--prova-nivel-da-xii--official-v3.pdf,"possible_duplicate:3, source_variant:3"
+rg_0020,brazil_oba,2010,national,solutions,4,2010--brazil-oba--national--solutions--pt--gabarito-prova-nivel-da--official-v4.pdf,source_variant:6
+rg_0021,brazil_oba,2010,national,tasks,4,2010--brazil-oba--national--tasks--pt--prova-nivel-da-xiii--official-v4.pdf,source_variant:6
+rg_0022,brazil_oba,2011,national,solutions,6,2011--brazil-oba--national--solutions--pt--gabarito-da-prova-nivel--official-v2.pdf,"possible_duplicate:9, source_variant:6"
+rg_0023,brazil_oba,2011,national,tasks,5,2011--brazil-oba--national--tasks--pt--carta-circular-das-provas--official.pdf,"possible_duplicate:4, source_variant:6"
+rg_0024,brazil_oba,2012,national,solutions,5,2012--brazil-oba--national--solutions--pt--gabarito-prova-nivel-da--official-v4.pdf,"possible_duplicate:6, source_variant:4"
+rg_0025,brazil_oba,2012,national,tasks,5,2012--brazil-oba--national--tasks--pt--carta-circular-das-provas--official.pdf,"possible_duplicate:6, source_variant:4"
+rg_0026,brazil_oba,2013,national,solutions,5,2013--brazil-oba--national--solutions--pt--gabarito-prova-nivel-da--official.pdf,"possible_duplicate:4, source_variant:6"
+rg_0027,brazil_oba,2013,national,tasks,5,2013--brazil-oba--national--tasks--pt--carta-circular-das-provas--official.pdf,"possible_duplicate:3, source_variant:7"
+rg_0028,brazil_oba,2014,national,solutions,6,2014--brazil-oba--national--solutions--pt--prova-nivel-da-xvii--official-v2.pdf,"possible_duplicate:9, source_variant:6"
+rg_0029,brazil_oba,2014,national,tasks,5,2014--brazil-oba--national--tasks--pt--carta-circular-das-provas--official.pdf,"possible_duplicate:4, source_variant:6"
+rg_0030,brazil_oba,2015,national,solutions,4,2015--brazil-oba--national--solutions--pt--gabarito-prova-nivel-da--official-v2.pdf,"possible_duplicate:1, source_variant:5"
+rg_0031,brazil_oba,2015,national,tasks,5,2015--brazil-oba--national--tasks--pt--carta-circular-das-provas--official.pdf,"possible_duplicate:4, source_variant:6"
+rg_0032,brazil_oba,2016,national,solutions,4,2016--brazil-oba--national--solutions--pt--prova-nivel-da-xix--official-v4.pdf,"possible_duplicate:4, source_variant:2"
+rg_0033,brazil_oba,2016,national,tasks,5,2016--brazil-oba--national--tasks--pt--prova-nivel-da-xix--official-v3.pdf,"possible_duplicate:2, source_variant:8"
+rg_0034,brazil_oba,2017,national,solutions,5,2017--brazil-oba--national--solutions--pt--prova-nivel-da-xx--official-v3.pdf,"possible_duplicate:4, source_variant:6"
+rg_0035,brazil_oba,2017,national,tasks,5,2017--brazil-oba--national--tasks--pt--carta-circular-das-provas--official.pdf,"possible_duplicate:4, source_variant:6"
+rg_0036,brazil_oba,2018,national,solutions,4,2018--brazil-oba--national--solutions--pt--gabarito-nivel-com-cartas--official-v4.pdf,source_variant:6
+rg_0037,brazil_oba,2018,national,tasks,4,2018--brazil-oba--national--tasks--pt--prova-nivel-com-carta--official-v4.pdf,source_variant:6
+rg_0038,brazil_oba,2019,national,solutions,4,2019--brazil-oba--national--solutions--pt--oba2019-carta-e-gabarito--official.pdf,"possible_duplicate:3, source_variant:3"
+rg_0039,brazil_oba,2019,national,tasks,4,2019--brazil-oba--national--tasks--pt--oba2019-carta-e-prova--official-v4.pdf,source_variant:6
+rg_0040,brazil_oba,2020,national,solutions,5,2020--brazil-oba--national--solutions--pt--prova-nivel-da-oba--official-v3.pdf,"exact_duplicate:1, possible_duplicate:5, source_variant:4"
+rg_0041,brazil_oba,2020,national,tasks,3,2020--brazil-oba--national--tasks--pt--prova-nivel-da-oba--official-v3.pdf,"possible_duplicate:2, source_variant:1"
+rg_0042,brazil_oba,2021,national,solutions,4,2021--brazil-oba--national--solutions--pt--gabarito-da-prova-nivel--official-v2.pdf,source_variant:6
+rg_0043,brazil_oba,2021,national,tasks,4,2021--brazil-oba--national--tasks--pt--prova-nivel-da-oba--official-v2.pdf,source_variant:6
+rg_0044,brazil_oba,2022,national,solutions,4,2022--brazil-oba--national--solutions--pt--gabarito-da-prova-nivel--official-v2.pdf,"possible_duplicate:3, source_variant:3"
+rg_0045,brazil_oba,2022,national,tasks,4,2022--brazil-oba--national--tasks--pt--prova-nivel-da-oba--official-v2.pdf,"possible_duplicate:2, source_variant:4"
+rg_0046,brazil_oba,2023,national,solutions,4,2023--brazil-oba--national--solutions--pt--prova-nivel-da-oba--official-v4.pdf,"possible_duplicate:4, source_variant:2"
+rg_0047,brazil_oba,2023,national,tasks,4,2023--brazil-oba--national--tasks--pt--prova-nivel-da-oba--official-v3.pdf,"possible_duplicate:3, source_variant:3"
+rg_0048,brazil_oba,2024,national,solutions,4,2024--brazil-oba--national--solutions--pt--prova-nivel-da-oba--official-v4.pdf,"possible_duplicate:4, source_variant:2"
+rg_0049,brazil_oba,2024,national,tasks,4,2024--brazil-oba--national--tasks--pt--prova-nivel-da-oba--official-v4.pdf,"possible_duplicate:4, source_variant:2"
+rg_0050,bulgaria_astronomy,2025,municipal,tasks,4,2025--bulgaria-astronomy--municipal--tasks--bg--i--official.pdf,"possible_duplicate:3, source_variant:3"
+rg_0051,bulgaria_astronomy,2026,municipal,solutions,4,2026--bulgaria-astronomy--municipal--solutions--bg--a26-i--official.pdf,source_variant:6
+rg_0052,bulgaria_astronomy,2026,national,solutions,3,2026--bulgaria-astronomy--national--solutions--bg--a26-iii--official-v3.pdf,source_variant:3
+rg_0053,bulgaria_astronomy,2026,national,tasks,3,2026--bulgaria-astronomy--national--tasks--bg--iii--official.pdf,"possible_duplicate:1, source_variant:2"
+rg_0054,bulgaria_astronomy,2026,regional,solutions,4,2026--bulgaria-astronomy--regional--solutions--bg--a26-ii--official-v4.pdf,"possible_duplicate:1, source_variant:5"
+rg_0055,bulgaria_astronomy,2026,regional,tasks,4,2026--bulgaria-astronomy--regional--tasks--bg--ii--official-v4.pdf,"possible_duplicate:2, source_variant:4"
+rg_0056,bulgaria_astronomy,2026,unknown,solutions,3,2026--bulgaria-astronomy--unknown--solutions--bg--sol-2den--official.pdf,source_variant:3
+rg_0057,bulgaria_astronomy,2026,unknown,tasks,3,2026--bulgaria-astronomy--unknown--tasks--bg--test--official.pdf,source_variant:3
+rg_0058,croatia_astronomy,2008,state,tasks,5,2008--croatia-astronomy--state--tasks--hr--zupanijsko--official.pdf,"possible_duplicate:3, reformatted_version:4, source_variant:3"
+rg_0059,croatia_astronomy,2012,county,tasks,16,2012--croatia-astronomy--county--tasks--hr--vi-razred-rjeenja-aupanijsko--official.pdf,"possible_duplicate:77, source_variant:43"
+rg_0060,croatia_astronomy,2012,county,solutions,2,2012--croatia-astronomy--county--solutions--hr--rjesenja-4razred--official.pdf,possible_duplicate:1
+rg_0061,croatia_astronomy,2012,school,solutions,4,2012--croatia-astronomy--school--solutions--hr--rjesenja-4razred--official.pdf,source_variant:6
+rg_0062,croatia_astronomy,2012,school,tasks,14,2012--croatia-astronomy--school--tasks--hr--skolsko-r-sred-pit--official.pdf,"possible_duplicate:36, source_variant:55"
+rg_0063,croatia_astronomy,2013,county,tasks,15,2013--croatia-astronomy--county--tasks--hr--raz-rjeenja-aupanijsko--official.pdf,"possible_duplicate:22, source_variant:83"
+rg_0064,croatia_astronomy,2013,school,tasks,15,2013--croatia-astronomy--school--tasks--hr--kolsko-razred-zadaci--official-v2.pdf,"possible_duplicate:31, reformatted_version:14, source_variant:60"
+rg_0065,croatia_astronomy,2013,school,solutions,2,2013--croatia-astronomy--school--solutions--hr--kolsko-razred-rjesenja--official.pdf,possible_duplicate:1
+rg_0066,croatia_astronomy,2016,county,tasks,8,2016--croatia-astronomy--county--tasks--hr--r-pitanja-i-zadaci--official-v6.pdf,source_variant:28
+rg_0067,croatia_astronomy,2016,county,solutions,8,2016--croatia-astronomy--county--solutions--hr--r-rjesenja-astronomija-zupanijsko--official-v6.pdf,source_variant:28
+rg_0068,croatia_astronomy,2016,school,solutions,7,2016--croatia-astronomy--school--solutions--hr--r-rjesenja-astronomija-skolsko--official-v4.pdf,source_variant:21
+rg_0069,croatia_astronomy,2016,school,tasks,9,2016--croatia-astronomy--school--tasks--hr--r-pitanja-i-zadaci--official-v5.pdf,source_variant:36
+rg_0070,croatia_astronomy,2017,county,tasks,16,2017--croatia-astronomy--county--tasks--hr--razred-rjeenja-astronomija-oupanijsko--official-v4.pdf,"possible_duplicate:2, source_variant:118"
+rg_0071,croatia_astronomy,2017,school,solutions,4,2017--croatia-astronomy--school--solutions--hr--razred-rjesenja-astronomija-skolsko--official-v4.pdf,source_variant:6
+rg_0072,croatia_astronomy,2017,school,tasks,12,2017--croatia-astronomy--school--tasks--hr--razred-rjeenja-astronomija-kolsko--official-v3.pdf,"possible_duplicate:7, source_variant:59"
+rg_0073,croatia_astronomy,2017,state,tasks,8,2017--croatia-astronomy--state--tasks--hr--venera-bbanjanin-i-munterhofer--official.pdf,"possible_duplicate:22, source_variant:6"
+rg_0074,croatia_astronomy,2018,unknown,tasks,26,2018--croatia-astronomy--unknown--tasks--hr--ispit-r-zup--official-v4.pdf,"possible_duplicate:96, source_variant:229"
+rg_0075,croatia_astronomy,2018,unknown,solutions,22,2018--croatia-astronomy--unknown--solutions--hr--rjesenje-sk--official-v7.pdf,"possible_duplicate:60, source_variant:171"
+rg_0076,croatia_astronomy,2019,county,tasks,8,2019--croatia-astronomy--county--tasks--hr--ispit-zup--official.pdf,"possible_duplicate:1, source_variant:27"
+rg_0077,croatia_astronomy,2019,county,solutions,8,2019--croatia-astronomy--county--solutions--hr--rjesenja-zup--official.pdf,"possible_duplicate:3, source_variant:25"
+rg_0078,croatia_astronomy,2019,school,tasks,12,2019--croatia-astronomy--school--tasks--hr--rjeenja-sk--official.pdf,"possible_duplicate:10, source_variant:56"
+rg_0079,croatia_astronomy,2019,school,solutions,4,2019--croatia-astronomy--school--solutions--hr--rjesenja-sk--official.pdf,"possible_duplicate:1, source_variant:5"
+rg_0080,croatia_astronomy,2019,state,tasks,8,2019--croatia-astronomy--state--tasks--hr--r-ispit-drz--official-v5.pdf,"possible_duplicate:6, source_variant:22"
+rg_0081,croatia_astronomy,2019,state,solutions,8,2019--croatia-astronomy--state--solutions--hr--r-rjesenje-drz--official.pdf,"possible_duplicate:2, source_variant:26"
+rg_0082,croatia_astronomy,2020,school,tasks,16,2020--croatia-astronomy--school--tasks--hr--r-ispit-zup--official.pdf,"possible_duplicate:38, source_variant:82"
+rg_0083,croatia_astronomy,2020,school,solutions,16,2020--croatia-astronomy--school--solutions--hr--r-rjesenja-zup--official.pdf,"possible_duplicate:38, source_variant:82"
+rg_0084,croatia_astronomy,2021,county,tasks,8,2021--croatia-astronomy--county--tasks--hr--zu-5ros-ispit--official.pdf,"possible_duplicate:7, source_variant:21"
+rg_0085,croatia_astronomy,2021,county,solutions,8,2021--croatia-astronomy--county--solutions--hr--zu-5ros-rjesenja--official.pdf,"possible_duplicate:7, source_variant:21"
+rg_0086,croatia_astronomy,2021,school,tasks,8,2021--croatia-astronomy--school--tasks--hr--sk-2rss-ispit--official.pdf,"possible_duplicate:6, source_variant:22"
+rg_0087,croatia_astronomy,2021,school,solutions,8,2021--croatia-astronomy--school--solutions--hr--sk-2rss-rjesenja--official.pdf,source_variant:28
+rg_0088,croatia_astronomy,2021,state,tasks,8,2021--croatia-astronomy--state--tasks--hr--dr-ros-ispit--official.pdf,source_variant:28
+rg_0089,croatia_astronomy,2021,state,solutions,8,2021--croatia-astronomy--state--solutions--hr--dr-7ros-rjesenja--official.pdf,"possible_duplicate:3, source_variant:25"
+rg_0090,croatia_astronomy,2022,county,tasks,8,2022--croatia-astronomy--county--tasks--hr--zupanijsko-8ros-ispit--official.pdf,"possible_duplicate:2, source_variant:26"
+rg_0091,croatia_astronomy,2022,county,solutions,8,2022--croatia-astronomy--county--solutions--hr--zupanijsko-8ros-rjesenja--official.pdf,source_variant:28
+rg_0092,croatia_astronomy,2022,school,tasks,8,2022--croatia-astronomy--school--tasks--hr--skolsko-4rss-ispit--official.pdf,source_variant:28
+rg_0093,croatia_astronomy,2022,school,solutions,8,2022--croatia-astronomy--school--solutions--hr--skolsko-4rss-rjesenja--official.pdf,source_variant:28
+rg_0094,croatia_astronomy,2022,state,solutions,8,2022--croatia-astronomy--state--solutions--hr--drzavno-8ros-rjesenja--official.pdf,"possible_duplicate:2, source_variant:26"
+rg_0095,croatia_astronomy,2022,state,tasks,8,2022--croatia-astronomy--state--tasks--hr--drzavno-8ros-ispit--official.pdf,"possible_duplicate:2, source_variant:26"
+rg_0096,croatia_astronomy,2023,unknown,solutions,48,2023--croatia-astronomy--unknown--solutions--hr--astrozu-3rss-rjesenja--official.pdf,"possible_duplicate:631, source_variant:497"
+rg_0097,croatia_astronomy,2024,unknown,solutions,48,2024--croatia-astronomy--unknown--solutions--hr--astro24-zu-8ros-rjesenja--official.pdf,"possible_duplicate:630, source_variant:498"
+rg_0098,croatia_astronomy,2025,county,solutions,16,2025--croatia-astronomy--county--solutions--hr--astro25-zu-1rss-rjesenja--official.pdf,"possible_duplicate:71, source_variant:49"
+rg_0099,croatia_astronomy,2025,school,solutions,16,2025--croatia-astronomy--school--solutions--hr--astro25-sk-7ros-rjesenja--official.pdf,"possible_duplicate:66, source_variant:54"
+rg_0100,croatia_astronomy,2025,state,solutions,16,2025--croatia-astronomy--state--solutions--hr--astro25-dr-5ros-rjesenja--official.pdf,"possible_duplicate:66, source_variant:54"
+rg_0101,croatia_astronomy,2026,county,solutions,16,2026--croatia-astronomy--county--solutions--hr--astro26-zu-4rss-rjesenja--official.pdf,"possible_duplicate:74, source_variant:46"
+rg_0102,croatia_astronomy,2026,school,solutions,16,2026--croatia-astronomy--school--solutions--hr--astro26-sk-6ros-rjesenja--official.pdf,"possible_duplicate:64, source_variant:56"
+rg_0103,croatia_astronomy,2026,state,solutions,16,2026--croatia-astronomy--state--solutions--hr--astro26-dn-4rss-rjesenja--official.pdf,"possible_duplicate:79, source_variant:41"
+rg_0104,czech_astronomy,2020,regional,solutions,4,2020--czech-astronomy--regional--solutions--cs--reseni-zobrazit-application-mb--official.pdf,"possible_duplicate:5, source_variant:1"
+rg_0105,czech_astronomy,2021,final,solutions,6,2021--czech-astronomy--final--solutions--cs--reseni-zobrazit-application-mb--official.pdf,"possible_duplicate:11, source_variant:4"
+rg_0106,czech_astronomy,2021,regional,solutions,4,2021--czech-astronomy--regional--solutions--cs--reseni-zobrazit-application-kb--official-v4.pdf,"possible_duplicate:3, source_variant:3"
+rg_0107,czech_astronomy,2021,school,solutions,4,2021--czech-astronomy--school--solutions--cs--reseni-zobrazit-application-mb--official-v2.pdf,"possible_duplicate:5, source_variant:1"
+rg_0108,czech_astronomy,2022,final,solutions,6,2022--czech-astronomy--final--solutions--cs--data-analysis--official-v2.pdf,"possible_duplicate:9, source_variant:6"
+rg_0109,czech_astronomy,2022,regional,solutions,4,2022--czech-astronomy--regional--solutions--cs--reseni-zobrazit-application-mb--official-v2.pdf,"possible_duplicate:4, source_variant:2"
+rg_0110,czech_astronomy,2023,final,solutions,6,2023--czech-astronomy--final--solutions--cs--data-analysis--official-v2.pdf,"possible_duplicate:12, source_variant:3"
+rg_0111,czech_astronomy,2023,regional,solutions,4,2023--czech-astronomy--regional--solutions--cs--reseni-zobrazit-application-kb--official-v4.pdf,source_variant:6
+rg_0112,czech_astronomy,2023,school,solutions,4,2023--czech-astronomy--school--solutions--cs--reseni-zobrazit-application-mb--official.pdf,"possible_duplicate:5, source_variant:1"
+rg_0113,czech_astronomy,2024,final,solutions,6,2024--czech-astronomy--final--solutions--cs--theory--official.pdf,"possible_duplicate:14, source_variant:1"
+rg_0114,czech_astronomy,2024,regional,solutions,4,2024--czech-astronomy--regional--solutions--cs--reseni-zobrazit-application-mb--official.pdf,"possible_duplicate:4, source_variant:2"
+rg_0115,czech_astronomy,2024,school,solutions,4,2024--czech-astronomy--school--solutions--cs--reseni-zobrazit-application-mb--official.pdf,"possible_duplicate:4, source_variant:2"
+rg_0116,czech_astronomy,2025,final,solutions,6,2025--czech-astronomy--final--solutions--cs--reseni-zobrazit-application-mb--official.pdf,"possible_duplicate:13, source_variant:1"
+rg_0117,czech_astronomy,2025,regional,solutions,4,2025--czech-astronomy--regional--solutions--cs--reseni-zobrazit-application-mb--official.pdf,"possible_duplicate:2, source_variant:4"
+rg_0118,czech_astronomy,2025,school,solutions,4,2025--czech-astronomy--school--solutions--cs--reseni-zobrazit-application-mb--official.pdf,"possible_duplicate:4, source_variant:2"
+rg_0119,iao,1996,observational,info,2,1996--iao--observational--info--en--telescope--info-page--archive.html,source_variant:1
+rg_0120,iao,1996,unknown,info,7,1996--iao--unknown--info--en--info-page--archive.html,possible_duplicate:13
+rg_0121,iao,1997,unknown,info,23,1997--iao--unknown--info--en--info-page--archive-v7.html,"exact_duplicate:1, possible_duplicate:75, reformatted_version:22, source_variant:11"
+rg_0122,iao,1998,unknown,info,3,1998--iao--unknown--info--en--info-page--archive.html,exact_duplicate:1
+rg_0123,iao,2005,unknown,regulations,25,2005--iao--unknown--regulations--en--regulations--info-page--archive.html,exact_duplicate:300
+rg_0124,iao,1997,unknown,tasks,3,1997--iao--unknown--tasks--en--tasks-page--archive.html,"possible_duplicate:1, reformatted_version:2"
+rg_0125,iao,1998,observational,tasks,2,1998--iao--observational--tasks--en--telescope--tasks-page--archive.html,reformatted_version:1
+rg_0126,iao,1998,theoretical,tasks,2,1998--iao--theoretical--tasks--en--data-analysis--problem-sheet--mirror.pdf,possible_duplicate:1
+rg_0127,iao,1998,unknown,tasks,3,1998--iao--unknown--tasks--en--tasks-page--archive-v3.html,possible_duplicate:2
+rg_0128,iao,1999,theoretical,tasks,2,1999--iao--theoretical--tasks--en--data-analysis--problem-sheet--mirror.pdf,source_variant:1
+rg_0129,iao,1999,unknown,info,2,1999--iao--unknown--info--en--info-page--mirror.html,exact_duplicate:1
+rg_0130,iao,1999,unknown,tasks,4,1999--iao--unknown--tasks--en--tasks-page--archive-v3.html,"possible_duplicate:3, reformatted_version:3"
+rg_0131,iao,2000,theoretical,tasks,2,2000--iao--theoretical--tasks--en--theory--problem-sheet--mirror.pdf,source_variant:1
+rg_0132,iao,2000,unknown,info,2,2000--iao--unknown--info--en--info-page--mirror.html,exact_duplicate:1
+rg_0133,iao,2003,observational,solutions,2,2003--iao--observational--solutions--en--observational--archive-combined-v2.doc,source_variant:1
+rg_0134,iao,2003,observational,tasks,2,2003--iao--observational--tasks--en--observational--archive-v2.doc,source_variant:1
+rg_0135,iao,2003,theoretical,solutions,3,2003--iao--theoretical--solutions--en--theory--archive-combined.doc,"reformatted_version:2, source_variant:1"
+rg_0136,iao,2003,theoretical,tasks,3,2003--iao--theoretical--tasks--en--theory--archive.doc,"possible_duplicate:1, reformatted_version:2"
+rg_0137,iao,2003,unknown,info,2,2003--iao--unknown--info--en--info-page--mirror.html,exact_duplicate:1
+rg_0138,iao,2004,unknown,info,2,2004--iao--unknown--info--en--info-page--mirror.html,exact_duplicate:1
+rg_0139,iao,2006,team,info,24,2006--iao--team--info--en--team--archive.doc,"exact_duplicate:2, possible_duplicate:105, reformatted_version:23, source_variant:26"
+rg_0140,iao,2006,team,tasks,3,2006--iao--team--tasks--en--team--questions--tasks-page--archive.html,exact_duplicate:3
+rg_0141,iao,2006,theoretical,tasks,2,2006--iao--theoretical--tasks--en--data-analysis--problem-sheet--mirror.pdf,source_variant:1
+rg_0142,iao,2006,unknown,info,26,2006--iao--unknown--info--en--info-page--archive-v16.html,"exact_duplicate:3, possible_duplicate:138, source_variant:56"
+rg_0143,iao,2006,unknown,regulations,8,2006--iao--unknown--regulations--en--info-page--archive-v2.html,"exact_duplicate:4, possible_duplicate:11"
+rg_0144,iao,2010,unknown,regulations,2,2010--iao--unknown--regulations--en--regulations--info-page--archive.html,exact_duplicate:1
+rg_0145,iao,2011,unknown,regulations,5,2011--iao--unknown--regulations--en--regulations--info-page--archive.html,exact_duplicate:10
+rg_0146,iao,1996,unknown,regulations,3,1996--iao--unknown--regulations--en--regulations--info-page--archive.html,exact_duplicate:3
+rg_0147,iao,2006,unknown,tasks,3,2006--iao--unknown--tasks--en--tasks-page--archive.html,exact_duplicate:1
+rg_0148,iao,2007,theoretical,solutions,2,2007--iao--theoretical--solutions--en--theory--solution-sheet--mirror.pdf,source_variant:1
+rg_0149,iao,2007,theoretical,tasks,2,2007--iao--theoretical--tasks--en--data-analysis--problem-sheet--mirror.pdf,possible_duplicate:1
+rg_0150,iao,2009,theoretical,solutions,2,2009--iao--theoretical--solutions--en--theory--solution-sheet--mirror.pdf,possible_duplicate:1
+rg_0151,iao,2009,theoretical,tasks,2,2009--iao--theoretical--tasks--en--theory--problem-sheet--mirror.pdf,source_variant:1
+rg_0152,iao,2010,theoretical,solutions,2,2010--iao--theoretical--solutions--en--theory--solution-sheet--mirror.pdf,possible_duplicate:1
+rg_0153,iao,2010,theoretical,tasks,2,2010--iao--theoretical--tasks--en--data-analysis--problem-sheet--mirror.pdf,source_variant:1
+rg_0154,iao,2011,theoretical,tasks,2,2011--iao--theoretical--tasks--en--data-analysis--problem-sheet--mirror.pdf,source_variant:1
+rg_0155,iao,2012,theoretical,solutions,2,2012--iao--theoretical--solutions--en--data-analysis--solution-sheet--mirror.pdf,possible_duplicate:1
+rg_0156,iao,2012,theoretical,tasks,2,2012--iao--theoretical--tasks--en--data-analysis--problem-sheet--mirror.pdf,source_variant:1
+rg_0157,iao,2013,theoretical,solutions,2,2013--iao--theoretical--solutions--en--theory--solution-sheet--mirror.pdf,possible_duplicate:1
+rg_0158,iao,2013,theoretical,tasks,2,2013--iao--theoretical--tasks--en--data-analysis--problem-sheet--mirror.pdf,source_variant:1
+rg_0159,iao,2014,theoretical,tasks,2,2014--iao--theoretical--tasks--en--theory--problem-sheet--mirror.pdf,source_variant:1
+rg_0160,iao,2015,theoretical,tasks,2,2015--iao--theoretical--tasks--en--theory--problem-sheet--mirror.pdf,possible_duplicate:1
+rg_0161,iao,2016,theoretical,solutions,2,2016--iao--theoretical--solutions--en--theory--solution-sheet--mirror.pdf,source_variant:1
+rg_0162,iao,2016,theoretical,tasks,2,2016--iao--theoretical--tasks--en--theory--problem-sheet--mirror.pdf,source_variant:1
+rg_0163,iao,2017,theoretical,solutions,2,2017--iao--theoretical--solutions--en--theory--solution-sheet--mirror.pdf,possible_duplicate:1
+rg_0164,iao,2017,theoretical,tasks,2,2017--iao--theoretical--tasks--en--theory--problem-sheet--mirror.pdf,possible_duplicate:1
+rg_0165,iao,2018,theoretical,tasks,2,2018--iao--theoretical--tasks--en--theory--problem-sheet--mirror.pdf,source_variant:1
+rg_0166,iao,2019,theoretical,tasks,2,2019--iao--theoretical--tasks--en--data-analysis--problem-sheet--mirror.pdf,possible_duplicate:1
+rg_0167,iao,2021,theoretical,solutions,2,2021--iao--theoretical--solutions--en--data-analysis--solution-sheet--mirror.pdf,source_variant:1
+rg_0168,iao,2021,theoretical,tasks,2,2021--iao--theoretical--tasks--en--theory--problem-sheet--mirror.pdf,source_variant:1
+rg_0169,inao,2009,national,solutions,2,2009--inao--national--solutions--en--questions--official-v2.pdf,source_variant:1
+rg_0170,inao,2009,national,tasks,2,2009--inao--national--tasks--en--questions--official-v2.pdf,source_variant:1
+rg_0171,inao,2010,national,solutions,2,2010--inao--national--solutions--en--questions--official-v2.pdf,source_variant:1
+rg_0172,inao,2010,national,tasks,2,2010--inao--national--tasks--en--questions--official-v2.pdf,source_variant:1
+rg_0173,inao,2019,national,tasks,2,2019--inao--national--tasks--en--questions--official.pdf,translated_version:1
+rg_0174,inao,2020,national,tasks,2,2020--inao--national--tasks--en--questions--official.pdf,translated_version:1
+rg_0175,inao,2021,national,tasks,2,2021--inao--national--tasks--en--questions--official.pdf,translated_version:1
+rg_0176,inao,2022,national,tasks,2,2022--inao--national--tasks--en--questions--official.pdf,translated_version:1
+rg_0177,inao,2023,national,tasks,2,2023--inao--national--tasks--en--questions--official.pdf,translated_version:1
+rg_0178,inao,2024,national,solutions,2,2024--inao--national--solutions--en--questions--official.pdf,possible_duplicate:1
+rg_0179,inao,2024,national,tasks,2,2024--inao--national--tasks--hi--questions--official.pdf,translated_version:1
+rg_0180,inao,2025,national,solutions,2,2025--inao--national--solutions--en--questions--official.pdf,possible_duplicate:1
+rg_0181,inao,2025,national,tasks,2,2025--inao--national--tasks--en--questions--official.pdf,translated_version:1
+rg_0182,inao,2026,national,tasks,2,2026--inao--national--tasks--hi--questions--official.pdf,translated_version:1
+rg_0183,ioaa,2007,theoretical,solutions,2,2007--ioaa--theoretical--solutions--en--theory--official-combined.pdf,partial_overlap:1
+rg_0184,ioaa,2007,theoretical,tasks,2,2007--ioaa--theoretical--tasks--en--theory--official.pdf,possible_duplicate:1
+rg_0185,ioaa,2008,theoretical,solutions,2,2008--ioaa--theoretical--solutions--en--theory--official-combined-v2.pdf,partial_overlap:1
+rg_0186,ioaa,2008,theoretical,tasks,3,2008--ioaa--theoretical--tasks--en--data-analysis--official.pdf,possible_duplicate:3
+rg_0187,ioaa,2009,theoretical,solutions,3,2009--ioaa--theoretical--solutions--en--theory--official-combined-v2.pdf,source_variant:3
+rg_0188,ioaa,2009,theoretical,tasks,4,2009--ioaa--theoretical--tasks--en--theory--official-v2.pdf,"possible_duplicate:3, source_variant:3"
+rg_0189,ioaa,2010,theoretical,tasks,3,2010--ioaa--theoretical--tasks--en--data-analysis--official.pdf,"partial_overlap:2, source_variant:1"
+rg_0190,ioaa,2011,observational,tasks,2,2011--ioaa--observational--tasks--en--observational--night--official.pdf,possible_duplicate:1
+rg_0191,ioaa,2011,theoretical,tasks,3,2011--ioaa--theoretical--tasks--en--data-analysis--official.pdf,"possible_duplicate:2, source_variant:1"
+rg_0192,ioaa,2012,theoretical,tasks,3,2012--ioaa--theoretical--tasks--en--theory--official.pdf,"possible_duplicate:2, source_variant:1"
+rg_0193,ioaa,2012,unknown,solutions,2,2012--ioaa--unknown--solutions--en--only--mirror.pdf,partial_overlap:1
+rg_0194,ioaa,2013,observational,tasks,2,2013--ioaa--observational--tasks--en--test--night--official.pdf,source_variant:1
+rg_0195,ioaa,2013,team,tasks,2,2013--ioaa--team--tasks--en--team--questions--official.pdf,source_variant:1
+rg_0196,ioaa,2013,theoretical,solutions,2,2013--ioaa--theoretical--solutions--en--theory--official-combined-v2.pdf,partial_overlap:1
+rg_0197,ioaa,2014,observational,tasks,2,2014--ioaa--observational--tasks--en--observational--official-v2.pdf,possible_duplicate:1
+rg_0198,ioaa,2014,theoretical,solutions,2,2014--ioaa--theoretical--solutions--en--theory--official-combined-v2.pdf,source_variant:1
+rg_0199,ioaa,2014,theoretical,tasks,2,2014--ioaa--theoretical--tasks--en--theory--official.pdf,possible_duplicate:1
+rg_0200,ioaa,2015,theoretical,solutions,4,2015--ioaa--theoretical--solutions--en--theory--official-combined-v3.pdf,"exact_duplicate:1, partial_overlap:2, source_variant:3"
+rg_0201,ioaa,2015,theoretical,tasks,5,2015--ioaa--theoretical--tasks--en--theory--official.pdf,"possible_duplicate:2, source_variant:3"
+rg_0202,ioaa,2016,theoretical,solutions,2,2016--ioaa--theoretical--solutions--en--theory--official-combined.pdf,source_variant:1
+rg_0203,ioaa,2016,unknown,solutions,2,2016--ioaa--unknown--solutions--en--data-analysis--mirror-combined.pdf,source_variant:1
+rg_0204,ioaa,2017,observational,tasks,2,2017--ioaa--observational--tasks--en--observational--official-v2.pdf,source_variant:1
+rg_0205,ioaa,2017,theoretical,solutions,2,2017--ioaa--theoretical--solutions--en--theory--official-combined.pdf,partial_overlap:1
+rg_0206,ioaa,2017,theoretical,tasks,2,2017--ioaa--theoretical--tasks--en--theory--official-v2.pdf,source_variant:1
+rg_0207,ioaa,2017,unknown,solutions,2,2017--ioaa--unknown--solutions--en--data-analysis--mirror-combined.pdf,source_variant:1
+rg_0208,ioaa,2018,observational,tasks,2,2018--ioaa--observational--tasks--en--observational--official.pdf,possible_duplicate:1
+rg_0209,ioaa,2018,theoretical,solutions,2,2018--ioaa--theoretical--solutions--en--theory--official-combined.pdf,source_variant:1
+rg_0210,ioaa,2018,theoretical,tasks,2,2018--ioaa--theoretical--tasks--en--theory--official.pdf,source_variant:1
+rg_0211,ioaa,2018,unknown,solutions,2,2018--ioaa--unknown--solutions--en--data-analysis--mirror-combined.pdf,source_variant:1
+rg_0212,ioaa,2019,observational,solutions,2,2019--ioaa--observational--solutions--en--observational--official-combined-v2.pdf,partial_overlap:1
+rg_0213,ioaa,2019,observational,tasks,2,2019--ioaa--observational--tasks--en--observational--official-v2.pdf,source_variant:1
+rg_0214,ioaa,2019,theoretical,solutions,4,2019--ioaa--theoretical--solutions--en--theory--official-combined-v3.pdf,"exact_duplicate:1, partial_overlap:4, source_variant:1"
+rg_0215,ioaa,2019,theoretical,tasks,2,2019--ioaa--theoretical--tasks--en--theory--official-v2.pdf,source_variant:1
+rg_0216,ioaa,2021,observational,info,2,2021--ioaa--observational--info--en--planetarium--mirror.pdf,possible_duplicate:1
+rg_0217,ioaa,2021,observational,solutions,2,2021--ioaa--observational--solutions--en--planetarium--exam--official-combined.pdf,source_variant:1
+rg_0218,ioaa,2021,observational,tasks,4,2021--ioaa--observational--tasks--en--observational--exam--official.pdf,"possible_duplicate:3, source_variant:3"
+rg_0219,ioaa,2021,theoretical,info,2,2021--ioaa--theoretical--info--en--theory--mirror.pdf,possible_duplicate:1
+rg_0220,ioaa,2021,theoretical,solutions,3,2021--ioaa--theoretical--solutions--en--theory--official-combined.pdf,"partial_overlap:2, source_variant:1"
+rg_0221,ioaa,2021,theoretical,tasks,4,2021--ioaa--theoretical--tasks--en--theory--official.pdf,"possible_duplicate:3, source_variant:3"
+rg_0222,ioaa,2021,unknown,info,8,2021--ioaa--unknown--info--en--th-eng--mirror.pdf,"possible_duplicate:13, source_variant:14"
+rg_0223,ioaa,2022,observational,tasks,3,2022--ioaa--observational--tasks--en--observational--official.pdf,"possible_duplicate:2, source_variant:1"
+rg_0224,ioaa,2022,theoretical,tasks,2,2022--ioaa--theoretical--tasks--en--theory--official-v2.pdf,source_variant:1
+rg_0225,ioaa,2023,observational,solutions,2,2023--ioaa--observational--solutions--en--observational--questions--official-combined.pdf,partial_overlap:1
+rg_0226,ioaa,2023,theoretical,solutions,4,2023--ioaa--theoretical--solutions--en--data-analysis--questions--official-combined.pdf,"partial_overlap:2, source_variant:4"
+rg_0227,ioaa,2024,observational,tasks,2,2024--ioaa--observational--tasks--en--observational--official.pdf,possible_duplicate:1
+rg_0228,ioaa,2024,theoretical,marking,2,2024--ioaa--theoretical--marking--en--theory--official-combined.pdf,partial_overlap:1
+rg_0229,ioaa,2024,theoretical,solutions,2,2024--ioaa--theoretical--solutions--en--theory--official-combined.pdf,source_variant:1
+rg_0230,ioaa,2024,theoretical,tasks,2,2024--ioaa--theoretical--tasks--en--theory--official.pdf,possible_duplicate:1
+rg_0231,ioaa,2025,observational,solutions,5,2025--ioaa--observational--solutions--en--sky-map--official-combined.pdf,"partial_overlap:7, source_variant:3"
+rg_0232,ioaa,2025,observational,tasks,6,2025--ioaa--observational--tasks--en--telescope--questions--official.pdf,"possible_duplicate:6, source_variant:9"
+rg_0233,ioaa,2025,team,solutions,2,2025--ioaa--team--solutions--en--team--official-combined.pdf,partial_overlap:1
+rg_0234,ioaa,2025,team,tasks,2,2025--ioaa--team--tasks--en--team--official.pdf,possible_duplicate:1
+rg_0235,ioaa,2025,theoretical,solutions,2,2025--ioaa--theoretical--solutions--en--theory--official-combined.pdf,partial_overlap:1
+rg_0236,ioaa,2025,theoretical,tasks,2,2025--ioaa--theoretical--tasks--en--theory--questions--official.pdf,possible_duplicate:1
+rg_0237,ioaa,2025,unknown,solutions,7,2025--ioaa--unknown--solutions--en--data-analysis--official-combined.pdf,"partial_overlap:13, source_variant:8"
+rg_0238,ioaa,2025,unknown,tasks,7,2025--ioaa--unknown--tasks--en--data-analysis--questions--official.pdf,"possible_duplicate:10, source_variant:11"
+rg_0239,mao,2010,final,solutions,5,2010--mao--final--solutions--ru--grade-10-11--archive-combined-v2.pdf,"partial_overlap:6, source_variant:4"
+rg_0240,mao,2010,final,tasks,5,2010--mao--final--tasks--ru--grade-5-7--archive.pdf,"possible_duplicate:3, source_variant:7"
+rg_0241,mao,2010,qualifying,solutions,2,2010--mao--qualifying--solutions--ru--grade-10-11--selection--archive-combined.pdf,source_variant:1
+rg_0242,mao,2010,qualifying,tasks,2,2010--mao--qualifying--tasks--ru--grade-5-9--selection--archive.pdf,source_variant:1
+rg_0243,mao,2011,qualifying,tasks,4,2011--mao--qualifying--tasks--ru--grade-4--selection--archive.pdf,source_variant:6
+rg_0244,mao,2011,final,solutions,4,2011--mao--final--solutions--ru--grade-8-9--archive-combined.pdf,source_variant:6
+rg_0245,mao,2012,final,solutions,3,2012--mao--final--solutions--ru--grade-8-9--archive-combined.pdf,source_variant:3
+rg_0246,mao,2011,final,tasks,4,2011--mao--final--tasks--ru--grade-10--archive.pdf,source_variant:6
+rg_0247,mao,2012,final,tasks,3,2012--mao--final--tasks--ru--grade-10-11--archive.pdf,source_variant:3
+rg_0248,mao,2012,qualifying,solutions,9,2012--mao--qualifying--solutions--ru--grade-9-11--selection--archive-combined.pdf,"partial_overlap:3, source_variant:33"
+rg_0249,mao,2012,qualifying,tasks,9,2012--mao--qualifying--tasks--ru--grade-5-6--selection--archive.pdf,"possible_duplicate:4, source_variant:32"
+rg_0250,mao,2014,final,solutions,4,2014--mao--final--solutions--ru--grade-10-11--archive-combined.pdf,source_variant:6
+rg_0251,mao,2014,final,tasks,4,2014--mao--final--tasks--ru--grade-6-7--archive.pdf,source_variant:6
+rg_0252,mao,2015,observational,tasks,2,2015--mao--observational--tasks--ru--grade-10-11--practical--archive.pdf,source_variant:1
+rg_0253,mao,2015,qualifying,solutions,7,2015--mao--qualifying--solutions--ru--grade-11--distance--archive-combined.pdf,source_variant:21
+rg_0254,mao,2015,qualifying,tasks,7,2015--mao--qualifying--tasks--ru--grade-11--distance--archive.pdf,source_variant:21
+rg_0255,mao,2015,theoretical,solutions,4,2015--mao--theoretical--solutions--ru--grade-10-11--theory--archive-combined.pdf,"partial_overlap:3, source_variant:3"
+rg_0256,mao,2015,theoretical,tasks,4,2015--mao--theoretical--tasks--ru--grade-6-7--theory--archive.pdf,"possible_duplicate:2, source_variant:4"
+rg_0257,mao,2016,observational,solutions,3,2016--mao--observational--solutions--ru--grade-8-11--practical--official-combined.pdf,"partial_overlap:2, source_variant:1"
+rg_0258,mao,2016,observational,tasks,4,2016--mao--observational--tasks--ru--grade-10-11--practical--official.pdf,"possible_duplicate:4, source_variant:2"
+rg_0259,mao,2016,qualifying,solutions,2,2016--mao--qualifying--solutions--ru--grade-8-11--selection--archive-combined.pdf,source_variant:1
+rg_0260,mao,2016,qualifying,tasks,2,2016--mao--qualifying--tasks--ru--grade-8-11--selection--archive.pdf,source_variant:1
+rg_0261,mao,2016,theoretical,solutions,8,2016--mao--theoretical--solutions--ru--grade-10-11--theory--official-combined.pdf,"partial_overlap:15, source_variant:13"
+rg_0262,mao,2016,theoretical,tasks,8,2016--mao--theoretical--tasks--ru--grade-6-7--theory--official.pdf,"possible_duplicate:14, source_variant:12"
+rg_0263,mao,2017,distant,solutions,2,2017--mao--distant--solutions--ru--grade-10-11--selection--official-combined.pdf,source_variant:1
+rg_0264,mao,2017,distant,tasks,2,2017--mao--distant--tasks--ru--grade-10-11--selection--official.pdf,source_variant:1
+rg_0265,mao,2017,observational,solutions,3,2017--mao--observational--solutions--ru--grade-10-11--observational--official-combined.pdf,"partial_overlap:2, source_variant:1"
+rg_0266,mao,2017,qualifying,solutions,4,2017--mao--qualifying--solutions--ru--grade-10-11--selection--archive-combined.pdf,source_variant:6
+rg_0267,mao,2017,qualifying,tasks,4,2017--mao--qualifying--tasks--ru--grade-10-11--selection--archive.pdf,source_variant:6
+rg_0268,mao,2017,theoretical,solutions,8,2017--mao--theoretical--solutions--ru--grade-10-11--official-combined.pdf,"partial_overlap:17, source_variant:11"
+rg_0269,mao,2017,theoretical,tasks,8,2017--mao--theoretical--tasks--ru--grade-6-7--official.pdf,"possible_duplicate:7, source_variant:9"
+rg_0270,mao,2018,observational,solutions,3,2018--mao--observational--solutions--ru--grade-8-11--observational--official-combined.pdf,partial_overlap:3
+rg_0271,mao,2018,observational,tasks,2,2018--mao--observational--tasks--ru--grade-8-11--observational--official.pdf,possible_duplicate:1
+rg_0272,mao,2018,qualifying,solutions,8,2018--mao--qualifying--solutions--ru--grade-8-9--archive-combined.pdf,source_variant:28
+rg_0273,mao,2018,qualifying,tasks,8,2018--mao--qualifying--tasks--ru--grade-6-7--archive.pdf,source_variant:28
+rg_0274,mao,2018,theoretical,marking,4,2018--mao--theoretical--marking--ru--grade-10-11--official-combined.pdf,"partial_overlap:1, source_variant:5"
+rg_0275,mao,2018,theoretical,solutions,4,2018--mao--theoretical--solutions--ru--grade-10-11--theory--archive-combined.pdf,source_variant:6
+rg_0276,mao,2018,theoretical,tasks,8,2018--mao--theoretical--tasks--ru--grade-10-11--official.pdf,"possible_duplicate:10, source_variant:10"
+rg_0277,mao,2019,distant,tasks,2,2019--mao--distant--tasks--ru--grade-5-11--official-v2.pdf,source_variant:1
+rg_0278,mao,2019,observational,tasks,4,2019--mao--observational--tasks--ru--grade-8-11--official.pdf,"possible_duplicate:3, source_variant:3"
+rg_0279,mao,2019,qualifying,solutions,8,2019--mao--qualifying--solutions--ru--grade-10-11--archive-combined.pdf,"partial_overlap:16, source_variant:12"
+rg_0280,mao,2019,qualifying,tasks,8,2019--mao--qualifying--tasks--ru--grade-10-11--archive.pdf,"possible_duplicate:16, source_variant:12"
+rg_0281,mao,2019,theoretical,solutions,8,2019--mao--theoretical--solutions--ru--grade-10-11--theory--official-combined.pdf,"partial_overlap:18, source_variant:10"
+rg_0282,mao,2019,theoretical,tasks,8,2019--mao--theoretical--tasks--ru--grade-10-11--theory--official.pdf,"possible_duplicate:12, source_variant:8"
+rg_0283,mao,2020,distant,tasks,2,2020--mao--distant--tasks--ru--grade-5-11--official-v2.pdf,possible_duplicate:1
+rg_0284,mao,2020,observational,tasks,3,2020--mao--observational--tasks--ru--grade-8-11--official.pdf,possible_duplicate:2
+rg_0285,mao,2020,qualifying,solutions,8,2020--mao--qualifying--solutions--ru--grade-10-11--selection--archive-combined.pdf,"partial_overlap:16, source_variant:12"
+rg_0286,mao,2020,qualifying,tasks,8,2020--mao--qualifying--tasks--ru--grade-8-9--selection--archive.pdf,"possible_duplicate:16, source_variant:12"
+rg_0287,mao,2020,theoretical,solutions,4,2020--mao--theoretical--solutions--ru--grade-10-11--theory--archive-combined.pdf,"partial_overlap:1, source_variant:5"
+rg_0288,mao,2020,theoretical,tasks,12,2020--mao--theoretical--tasks--ru--grade-10-11--official-v2.pdf,"possible_duplicate:21, source_variant:20"
+rg_0289,mao,2021,distant,tasks,2,2021--mao--distant--tasks--ru--grade-5-11--official.pdf,possible_duplicate:1
+rg_0290,mao,2021,observational,solutions,5,2021--mao--observational--solutions--ru--grade-10-11--official-combined.pdf,"exact_duplicate:2, partial_overlap:6, source_variant:2"
+rg_0291,mao,2021,observational,tasks,5,2021--mao--observational--tasks--ru--grade-10-11--official.pdf,"exact_duplicate:2, possible_duplicate:4, source_variant:2"
+rg_0292,mao,2021,qualifying,solutions,8,2021--mao--qualifying--solutions--ru--grade-10-11--selection--archive-combined.pdf,source_variant:28
+rg_0293,mao,2021,qualifying,tasks,8,2021--mao--qualifying--tasks--ru--grade-10-11--selection--archive.pdf,"possible_duplicate:5, source_variant:23"
+rg_0294,mao,2021,theoretical,solutions,4,2021--mao--theoretical--solutions--ru--grade-8-9--theory--archive-combined.pdf,"partial_overlap:1, source_variant:5"
+rg_0295,mao,2021,theoretical,tasks,12,2021--mao--theoretical--tasks--ru--grade-10-11--official.pdf,"possible_duplicate:27, source_variant:21"
+rg_0296,mao,2022,distant,tasks,3,2022--mao--distant--tasks--ru--grade-5-11--official.pdf,"possible_duplicate:1, source_variant:2"
+rg_0297,mao,2022,observational,solutions,3,2022--mao--observational--solutions--ru--grade-8-11--observational--official-combined.pdf,"partial_overlap:2, source_variant:1"
+rg_0298,mao,2022,observational,tasks,4,2022--mao--observational--tasks--ru--grade-10-11--observational--official.pdf,"possible_duplicate:4, source_variant:2"
+rg_0299,mao,2022,qualifying,solutions,8,2022--mao--qualifying--solutions--ru--grade-10-11--selection--round-2--archive-combined.pdf,"partial_overlap:5, source_variant:23"
+rg_0300,mao,2022,qualifying,tasks,8,2022--mao--qualifying--tasks--ru--grade-10-11--selection--round-2--archive.pdf,"possible_duplicate:5, source_variant:23"
+rg_0301,mao,2022,theoretical,solutions,18,2022--mao--theoretical--solutions--ru--grade-7--theory--official-combined.pdf,"exact_duplicate:7, partial_overlap:96, source_variant:50"
+rg_0302,mao,2022,theoretical,tasks,13,2022--mao--theoretical--tasks--ru--grade-10--theory--official.pdf,"exact_duplicate:2, possible_duplicate:27, source_variant:28"
+rg_0303,mao,2023,distant,tasks,5,2023--mao--distant--tasks--ru--grade-10-11--official.pdf,"possible_duplicate:6, source_variant:3"
+rg_0304,mao,2023,observational,solutions,2,2023--mao--observational--solutions--ru--grade-8-11--official-combined.pdf,exact_duplicate:1
+rg_0305,mao,2023,observational,tasks,2,2023--mao--observational--tasks--ru--grade-8-11--official.pdf,exact_duplicate:1
+rg_0306,mao,2023,qualifying,solutions,8,2023--mao--qualifying--solutions--ru--grade-10-11--selection--round-1--archive-combined.pdf,"partial_overlap:17, source_variant:11"
+rg_0307,mao,2023,qualifying,tasks,8,2023--mao--qualifying--tasks--ru--grade-10-11--selection--round-1--archive.pdf,"possible_duplicate:18, source_variant:10"
+rg_0308,mao,2023,theoretical,solutions,14,2023--mao--theoretical--solutions--ru--grade-10--theory--official-combined.pdf,"exact_duplicate:7, partial_overlap:42, source_variant:42"
+rg_0309,mao,2023,theoretical,tasks,19,2023--mao--theoretical--tasks--ru--grade-7--theory--official.pdf,"exact_duplicate:7, possible_duplicate:69, source_variant:52"
+rg_0310,mao,2024,distant,tasks,16,2024--mao--distant--tasks--ru--grade-10-11--official.pdf,"possible_duplicate:86, source_variant:30"
+rg_0311,mao,2024,observational,solutions,6,2024--mao--observational--solutions--ru--grade-10-11--official-combined.pdf,"exact_duplicate:2, partial_overlap:10, source_variant:3"
+rg_0312,mao,2024,observational,tasks,6,2024--mao--observational--tasks--ru--grade-8-9--official-v2.pdf,"exact_duplicate:2, possible_duplicate:8, source_variant:5"
+rg_0313,mao,2024,qualifying,solutions,8,2024--mao--qualifying--solutions--ru--grade-10-11--selection--round-1--archive-combined.pdf,"partial_overlap:3, source_variant:25"
+rg_0314,mao,2024,qualifying,tasks,8,2024--mao--qualifying--tasks--ru--grade-10-11--selection--round-1--archive.pdf,"possible_duplicate:3, source_variant:25"
+rg_0315,mao,2024,theoretical,solutions,19,2024--mao--theoretical--solutions--ru--grade-11--theory--official-combined-v2.pdf,"exact_duplicate:7, partial_overlap:104, source_variant:60"
+rg_0316,mao,2024,theoretical,tasks,19,2024--mao--theoretical--tasks--ru--grade-11--theory--official-v2.pdf,"exact_duplicate:7, possible_duplicate:73, source_variant:61"
+rg_0317,mao,2025,distant,tasks,8,2025--mao--distant--tasks--ru--grade-10-11--official.pdf,"possible_duplicate:8, source_variant:20"
+rg_0318,mao,2025,observational,solutions,4,2025--mao--observational--solutions--ru--grade-10-11--official-combined.pdf,"exact_duplicate:2, partial_overlap:2, source_variant:2"
+rg_0319,mao,2025,observational,tasks,4,2025--mao--observational--tasks--ru--grade-10-11--official.pdf,"exact_duplicate:2, possible_duplicate:2, source_variant:2"
+rg_0320,mao,2025,qualifying,solutions,8,2025--mao--qualifying--solutions--ru--grade-10-11--selection--round-1--archive-combined.pdf,"partial_overlap:2, source_variant:26"
+rg_0321,mao,2025,qualifying,tasks,8,2025--mao--qualifying--tasks--ru--grade-10-11--selection--round-2--archive.pdf,"possible_duplicate:2, source_variant:26"
+rg_0322,mao,2025,theoretical,solutions,9,2025--mao--theoretical--solutions--ru--grade-8--theory--official-combined.pdf,"exact_duplicate:4, partial_overlap:16, source_variant:16"
+rg_0323,mao,2025,theoretical,tasks,5,2025--mao--theoretical--tasks--ru--grade-10--theory--archive.pdf,source_variant:10
+rg_0324,mao,2026,distant,tasks,4,2026--mao--distant--tasks--ru--grade-10-11--official.pdf,"possible_duplicate:1, source_variant:5"
+rg_0325,mao,2026,observational,solutions,2,2026--mao--observational--solutions--ru--grade-10-11--observational--archive-combined.pdf,source_variant:1
+rg_0326,mao,2026,observational,tasks,2,2026--mao--observational--tasks--ru--grade-8-9--observational--archive.pdf,source_variant:1
+rg_0327,mao,2026,qualifying,solutions,5,2026--mao--qualifying--solutions--ru--grade-10-11--selection--archive-combined.pdf,source_variant:10
+rg_0328,mao,2026,qualifying,tasks,5,2026--mao--qualifying--tasks--ru--grade-10-11--selection--archive.pdf,"possible_duplicate:1, source_variant:9"
+rg_0329,mao,2026,theoretical,solutions,6,2026--mao--theoretical--solutions--ru--grade-7--theory--official-combined.pdf,"partial_overlap:5, source_variant:10"
+rg_0330,mao,2026,theoretical,tasks,10,2026--mao--theoretical--tasks--ru--grade-10--theory--official.pdf,"possible_duplicate:21, source_variant:20"
+rg_0331,nepal_astronomy,,practice,tasks,2,unknown-year--nepal-astronomy--practice--tasks--en--junior--official.pdf,source_variant:1
+rg_0332,poland_astronomy,,national,tasks,4,unknown-year--poland-astronomy--national--tasks--pl--planetarium--official-v3.pdf,"possible_duplicate:3, source_variant:3"
+rg_0333,russia_team_qual,2016,theoretical,tasks,4,2016--russia-team-qual--theoretical--tasks--ru--q16-summer-t--official.pdf,"possible_duplicate:5, source_variant:1"
+rg_0334,russia_team_qual,2017,theoretical,tasks,4,2017--russia-team-qual--theoretical--tasks--ru--q17-winter-d--official.pdf,"possible_duplicate:5, source_variant:1"
+rg_0335,russia_team_qual,2018,theoretical,tasks,4,2018--russia-team-qual--theoretical--tasks--ru--q18-winter-d--official.pdf,"possible_duplicate:3, source_variant:3"
+rg_0336,russia_team_qual,2019,theoretical,tasks,4,2019--russia-team-qual--theoretical--tasks--ru--q19-summer-d--official.pdf,"possible_duplicate:3, source_variant:3"
+rg_0337,russia_team_qual,2021,theoretical,tasks,6,2021--russia-team-qual--theoretical--tasks--ru--q21s3d--official.pdf,"possible_duplicate:11, source_variant:4"
+rg_0338,russia_team_qual,2022,theoretical,tasks,6,2022--russia-team-qual--theoretical--tasks--ru--q22s2d--official.pdf,"possible_duplicate:12, source_variant:3"
+rg_0339,russia_team_qual,2023,theoretical,tasks,10,2023--russia-team-qual--theoretical--tasks--ru--q23s2d-files--official.zip,"possible_duplicate:14, reformatted_version:21, source_variant:10"
+rg_0340,russia_team_qual,2024,theoretical,tasks,11,2024--russia-team-qual--theoretical--tasks--ru--q24s2d-files--official.zip,"possible_duplicate:26, reformatted_version:24, source_variant:5"
+rg_0341,russia_team_qual,2025,theoretical,tasks,11,2025--russia-team-qual--theoretical--tasks--ru--q25s2d-files--official.zip,"possible_duplicate:21, reformatted_version:24, source_variant:10"
+rg_0342,russia_team_qual,2026,theoretical,tasks,7,2026--russia-team-qual--theoretical--tasks--ru--q26s1d-files--official.zip,"possible_duplicate:7, reformatted_version:10, source_variant:4"
+rg_0343,spbao,2010,observational,tasks,4,2010--spbao--observational--tasks--ru--grade-10--observational--archive.pdf,possible_duplicate:6
+rg_0344,spbao,2010,theoretical,solutions,5,2010--spbao--theoretical--solutions--ru--grade-11--theory--archive-combined.pdf,"partial_overlap:4, source_variant:6"
+rg_0345,spbao,2010,theoretical,tasks,5,2010--spbao--theoretical--tasks--ru--grade-10--theory--archive.pdf,source_variant:10
+rg_0346,spbao,2010,unknown,solutions,5,2010--spbao--unknown--solutions--ru--grade-9--rayon--archive-combined.pdf,source_variant:10
+rg_0347,spbao,2010,unknown,tasks,5,2010--spbao--unknown--tasks--ru--grade-7-8--rayon--archive.pdf,source_variant:10
+rg_0348,spbao,2011,observational,solutions,5,2011--spbao--observational--solutions--ru--grade-7-8--observational--archive-combined.pdf,source_variant:10
+rg_0349,spbao,2011,observational,tasks,5,2011--spbao--observational--tasks--ru--grade-7-8--observational--archive.pdf,source_variant:10
+rg_0350,spbao,2011,qualifying,solutions,10,2011--spbao--qualifying--solutions--ru--grade-10--archive-combined-v2.pdf,source_variant:45
+rg_0351,spbao,2011,qualifying,tasks,10,2011--spbao--qualifying--tasks--ru--grade-7--archive.pdf,"possible_duplicate:1, source_variant:44"
+rg_0352,spbao,2011,theoretical,solutions,5,2011--spbao--theoretical--solutions--ru--grade-11--theory--archive-combined.pdf,"partial_overlap:4, source_variant:6"
+rg_0353,spbao,2011,theoretical,tasks,5,2011--spbao--theoretical--tasks--ru--grade-10--theory--archive.pdf,source_variant:10
+rg_0354,spbao,2014,observational,tasks,5,2014--spbao--observational--tasks--ru--grade-11--practical--archive.pdf,"possible_duplicate:6, source_variant:4"
+rg_0355,spbao,2014,qualifying,tasks,10,2014--spbao--qualifying--tasks--ru--grade-11--selection--archive.pdf,"possible_duplicate:4, source_variant:41"
+rg_0356,spbao,2014,theoretical,tasks,5,2014--spbao--theoretical--tasks--ru--grade-11--theory--archive.pdf,source_variant:10
+rg_0357,spbao,2015,qualifying,solutions,5,2015--spbao--qualifying--solutions--ru--grade-5-6--archive-combined.pdf,"partial_overlap:3, source_variant:7"
+rg_0358,spbao,2015,qualifying,tasks,5,2015--spbao--qualifying--tasks--ru--grade-11--archive.pdf,source_variant:10
+rg_0359,spbao,2015,theoretical,solutions,5,2015--spbao--theoretical--solutions--ru--grade-10--theory--archive-combined.pdf,source_variant:10
+rg_0360,spbao,2015,theoretical,tasks,4,2015--spbao--theoretical--tasks--ru--grade-11--theory--archive.pdf,source_variant:6
+rg_0361,spbao,2015,unknown,solutions,5,2015--spbao--unknown--solutions--ru--grade-7--archive-combined.pdf,"partial_overlap:3, source_variant:7"
+rg_0362,spbao,2015,unknown,tasks,6,2015--spbao--unknown--tasks--ru--grade-7--archive.pdf,"possible_duplicate:9, source_variant:6"
+rg_0363,spbao,2016,observational,solutions,5,2016--spbao--observational--solutions--ru--grade-10--practical--archive-combined.pdf,source_variant:10
+rg_0364,spbao,2016,observational,tasks,5,2016--spbao--observational--tasks--ru--grade-10--practical--archive.pdf,source_variant:10
+rg_0365,spbao,2016,qualifying,solutions,5,2016--spbao--qualifying--solutions--ru--grade-10--selection--archive-combined.pdf,source_variant:10
+rg_0366,spbao,2016,qualifying,tasks,5,2016--spbao--qualifying--tasks--ru--grade-11--selection--archive.pdf,source_variant:10
+rg_0367,spbao,2016,theoretical,solutions,5,2016--spbao--theoretical--solutions--ru--grade-7-8--theory--archive-combined.pdf,source_variant:10
+rg_0368,spbao,2016,theoretical,tasks,5,2016--spbao--theoretical--tasks--ru--grade-10--theory--archive.pdf,source_variant:10
+rg_0369,spbao,2017,observational,solutions,5,2017--spbao--observational--solutions--ru--grade-10--observational--archive-combined.pdf,source_variant:10
+rg_0370,spbao,2017,observational,tasks,5,2017--spbao--observational--tasks--ru--grade-11--observational--archive.pdf,source_variant:10
+rg_0371,spbao,2017,qualifying,solutions,5,2017--spbao--qualifying--solutions--ru--grade-11--selection--archive-combined.pdf,source_variant:10
+rg_0372,spbao,2017,qualifying,tasks,5,2017--spbao--qualifying--tasks--ru--grade-11--selection--archive.pdf,source_variant:10
+rg_0373,spbao,2017,theoretical,solutions,5,2017--spbao--theoretical--solutions--ru--grade-10--theory--archive-combined.pdf,source_variant:10
+rg_0374,spbao,2017,theoretical,tasks,5,2017--spbao--theoretical--tasks--ru--grade-10--theory--archive.pdf,source_variant:10
+rg_0375,spbao,2018,observational,solutions,5,2018--spbao--observational--solutions--ru--grade-11--practical--archive-combined.pdf,"partial_overlap:4, source_variant:6"
+rg_0376,spbao,2018,observational,tasks,5,2018--spbao--observational--tasks--ru--grade-11--practical--archive.pdf,"possible_duplicate:1, source_variant:9"
+rg_0377,spbao,2018,qualifying,solutions,5,2018--spbao--qualifying--solutions--ru--grade-10--selection--archive-combined.pdf,source_variant:10
+rg_0378,spbao,2018,qualifying,tasks,5,2018--spbao--qualifying--tasks--ru--grade-11--selection--archive.pdf,source_variant:10
+rg_0379,spbao,2018,theoretical,solutions,5,2018--spbao--theoretical--solutions--ru--grade-11--theory--archive-combined.pdf,source_variant:10
+rg_0380,spbao,2018,theoretical,tasks,5,2018--spbao--theoretical--tasks--ru--grade-11--theory--archive.pdf,source_variant:10
+rg_0381,spbao,2019,observational,solutions,5,2019--spbao--observational--solutions--ru--grade-9--practical--archive-combined.pdf,"partial_overlap:4, source_variant:6"
+rg_0382,spbao,2019,observational,tasks,5,2019--spbao--observational--tasks--ru--grade-9--practical--archive.pdf,"possible_duplicate:4, source_variant:6"
+rg_0383,spbao,2019,qualifying,solutions,5,2019--spbao--qualifying--solutions--ru--grade-9--selection--archive-combined.pdf,source_variant:10
+rg_0384,spbao,2019,qualifying,tasks,5,2019--spbao--qualifying--tasks--ru--grade-11--selection--archive.pdf,source_variant:10
+rg_0385,spbao,2019,theoretical,solutions,5,2019--spbao--theoretical--solutions--ru--grade-10--theory--archive-combined.pdf,source_variant:10
+rg_0386,spbao,2019,theoretical,tasks,5,2019--spbao--theoretical--tasks--ru--grade-11--theory--archive.pdf,source_variant:10
+rg_0387,spbao,2020,final,tasks,5,2020--spbao--final--tasks--ru--grade-9--school--practical--official-combined.pdf,"partial_overlap:8, source_variant:2"
+rg_0388,spbao,2020,observational,solutions,5,2020--spbao--observational--solutions--ru--grade-10--practical--archive-combined.pdf,"partial_overlap:3, source_variant:7"
+rg_0389,spbao,2020,observational,tasks,5,2020--spbao--observational--tasks--ru--grade-11--practical--archive.pdf,"possible_duplicate:5, source_variant:5"
+rg_0390,spbao,2020,qualifying,solutions,5,2020--spbao--qualifying--solutions--ru--grade-9--selection--archive-combined.pdf,source_variant:10
+rg_0391,spbao,2020,qualifying,tasks,5,2020--spbao--qualifying--tasks--ru--grade-11--selection--archive.pdf,source_variant:10
+rg_0392,spbao,2020,theoretical,solutions,5,2020--spbao--theoretical--solutions--ru--grade-11--theory--archive-combined.pdf,source_variant:10
+rg_0393,spbao,2020,theoretical,tasks,5,2020--spbao--theoretical--tasks--ru--grade-11--theory--archive.pdf,source_variant:10
+rg_0394,spbao,2021,final,tasks,10,2021--spbao--final--tasks--ru--grade-10--school--practical--official-combined.pdf,"partial_overlap:32, source_variant:13"
+rg_0395,spbao,2021,observational,solutions,5,2021--spbao--observational--solutions--ru--grade-10--practical--archive-combined.pdf,source_variant:10
+rg_0396,spbao,2021,observational,tasks,5,2021--spbao--observational--tasks--ru--grade-7-8--practical--archive.pdf,source_variant:10
+rg_0397,spbao,2021,qualifying,solutions,5,2021--spbao--qualifying--solutions--ru--grade-10--selection--archive-combined.pdf,source_variant:10
+rg_0398,spbao,2021,qualifying,tasks,10,2021--spbao--qualifying--tasks--ru--grade-9--school--official-combined.pdf,"partial_overlap:25, possible_duplicate:4, source_variant:16"
+rg_0399,spbao,2021,regional,tasks,4,2021--spbao--regional--tasks--ru--grade-10--school--official-combined.pdf,source_variant:6
+rg_0400,spbao,2021,theoretical,solutions,5,2021--spbao--theoretical--solutions--ru--grade-7-8--theory--archive-combined.pdf,source_variant:10
+rg_0401,spbao,2021,theoretical,tasks,5,2021--spbao--theoretical--tasks--ru--grade-11--theory--archive.pdf,source_variant:10
+rg_0402,spbao,2022,final,tasks,10,2022--spbao--final--tasks--ru--grade-9--school--practical--official-combined.pdf,"partial_overlap:24, source_variant:21"
+rg_0403,spbao,2022,qualifying,tasks,5,2022--spbao--qualifying--tasks--ru--grade-11--school--official-combined.pdf,source_variant:10
+rg_0404,spbao,2022,regional,tasks,4,2022--spbao--regional--tasks--ru--grade-10--school--official-combined.pdf,source_variant:6
+rg_0405,spbao,2023,final,solutions,5,2023--spbao--final--solutions--ru--grade-9--school--theory--official-annotated-combined.pdf,annotated_version:10
+rg_0406,spbao,2023,final,tasks,5,2023--spbao--final--tasks--ru--grade-7-8--school--practical--official-combined.pdf,"partial_overlap:8, source_variant:2"
+rg_0407,spbao,2023,observational,solutions,5,2023--spbao--observational--solutions--ru--grade-11--practical--archive-combined.pdf,"partial_overlap:4, source_variant:6"
+rg_0408,spbao,2023,observational,tasks,5,2023--spbao--observational--tasks--ru--grade-11--practical--archive.pdf,"possible_duplicate:2, source_variant:8"
+rg_0409,spbao,2023,qualifying,tasks,10,2023--spbao--qualifying--tasks--ru--grade-10--school--official-combined.pdf,"partial_overlap:27, source_variant:18"
+rg_0410,spbao,2023,regional,solutions,10,2023--spbao--regional--solutions--ru--grade-9--school--official-v2.pdf,"possible_duplicate:13, source_variant:32"
+rg_0411,spbao,2023,theoretical,solutions,5,2023--spbao--theoretical--solutions--ru--grade-9--theory--archive-combined.pdf,source_variant:10
+rg_0412,spbao,2023,theoretical,tasks,5,2023--spbao--theoretical--tasks--ru--grade-11--theory--archive.pdf,source_variant:10
+rg_0413,spbao,2024,final,tasks,10,2024--spbao--final--tasks--ru--grade-11--school--practical--official-combined.pdf,"partial_overlap:25, source_variant:20"
+rg_0414,spbao,2024,observational,solutions,6,2024--spbao--observational--solutions--ru--grade-7-8--practical--archive-combined.pdf,"exact_duplicate:1, partial_overlap:5, source_variant:9"
+rg_0415,spbao,2024,observational,tasks,6,2024--spbao--observational--tasks--ru--grade-7-8--practical--archive.pdf,"exact_duplicate:1, possible_duplicate:6, source_variant:8"
+rg_0416,spbao,2024,qualifying,tasks,11,2024--spbao--qualifying--tasks--ru--grade-7-8--school--official-combined.pdf,"exact_duplicate:1, partial_overlap:30, source_variant:24"
+rg_0417,spbao,2024,theoretical,solutions,6,2024--spbao--theoretical--solutions--ru--grade-11--theory--archive-combined.pdf,"exact_duplicate:1, source_variant:14"
+rg_0418,spbao,2024,theoretical,tasks,6,2024--spbao--theoretical--tasks--ru--grade-11--theory--archive.pdf,"exact_duplicate:1, source_variant:14"
+rg_0419,spbao,2025,final,tasks,10,2025--spbao--final--tasks--ru--grade-7-8--school--practical--official-combined.pdf,"partial_overlap:33, source_variant:12"
+rg_0420,spbao,2025,qualifying,tasks,5,2025--spbao--qualifying--tasks--ru--grade-11--school--official-combined.pdf,source_variant:10
+rg_0421,spbao,2026,final,tasks,5,2026--spbao--final--tasks--ru--grade-11--school--theory--official-combined.pdf,"partial_overlap:2, source_variant:8"
+rg_0422,spbao,2026,qualifying,tasks,5,2026--spbao--qualifying--tasks--ru--grade-9--school--official-combined.pdf,"partial_overlap:3, source_variant:7"
+rg_0423,sri_lanka_astronomy,2011,national,tasks,2,2011--sri-lanka-astronomy--national--tasks--si--test--official.pdf,translated_version:1
+rg_0424,sri_lanka_astronomy,2012,national,tasks,2,2012--sri-lanka-astronomy--national--tasks--ta--test--official.pdf,translated_version:1
+rg_0425,sri_lanka_astronomy,2015,national,tasks,2,2015--sri-lanka-astronomy--national--tasks--si--test--official.pdf,translated_version:1
+rg_0426,sri_lanka_astronomy,2016,national,tasks,2,2016--sri-lanka-astronomy--national--tasks--si--test--official.pdf,translated_version:1
+rg_0427,sri_lanka_astronomy,2017,national,tasks,2,2017--sri-lanka-astronomy--national--tasks--si--test--official.pdf,translated_version:1
+rg_0428,sri_lanka_astronomy,2018,national,tasks,2,2018--sri-lanka-astronomy--national--tasks--si--test--official.pdf,translated_version:1
+rg_0429,sri_lanka_astronomy,2019,national,tasks,3,2019--sri-lanka-astronomy--national--tasks--si--test--official.pdf,translated_version:3
+rg_0430,sri_lanka_astronomy,2022,national,tasks,3,2022--sri-lanka-astronomy--national--tasks--si--test--official.pdf,translated_version:3
+rg_0431,sri_lanka_junior_astronomy,2011,national,tasks,2,2011--sri-lanka-junior-astronomy--national--tasks--ta--test--official.pdf,translated_version:1
+rg_0432,sri_lanka_junior_astronomy,2012,national,tasks,3,2012--sri-lanka-junior-astronomy--national--tasks--si--test--official.pdf,translated_version:3
+rg_0433,sri_lanka_junior_astronomy,2013,national,tasks,2,2013--sri-lanka-junior-astronomy--national--tasks--ta--test--official.pdf,translated_version:1
+rg_0434,sri_lanka_junior_astronomy,2014,national,tasks,2,2014--sri-lanka-junior-astronomy--national--tasks--ta--test--official.pdf,translated_version:1
+rg_0435,sri_lanka_junior_astronomy,2015,national,tasks,2,2015--sri-lanka-junior-astronomy--national--tasks--si--test--official.pdf,translated_version:1
+rg_0436,sri_lanka_junior_astronomy,2016,national,tasks,2,2016--sri-lanka-junior-astronomy--national--tasks--ta--test--official.pdf,translated_version:1
+rg_0437,sri_lanka_junior_astronomy,2017,national,tasks,2,2017--sri-lanka-junior-astronomy--national--tasks--si--test--official.pdf,translated_version:1
+rg_0438,sri_lanka_junior_astronomy,2018,national,tasks,2,2018--sri-lanka-junior-astronomy--national--tasks--si--test--official.pdf,translated_version:1
+rg_0439,sri_lanka_junior_astronomy,2019,national,tasks,3,2019--sri-lanka-junior-astronomy--national--tasks--en--test--results--official.pdf,translated_version:3
+rg_0440,sri_lanka_junior_astronomy,2022,national,tasks,3,2022--sri-lanka-junior-astronomy--national--tasks--si--test--official.pdf,translated_version:3
+rg_0441,struve,2022,regional,solutions,2,2022--struve--regional--solutions--ru--reg-sol--official-combined.pdf,exact_duplicate:1
+rg_0442,struve,2022,regional,tasks,4,2022--struve--regional--tasks--ru--reg-prob--official.pdf,"exact_duplicate:2, possible_duplicate:2, source_variant:2"
+rg_0443,struve,2023,regional,solutions,4,2023--struve--regional--solutions--ru--reg-sol--official-combined.pdf,"partial_overlap:5, source_variant:1"
+rg_0444,struve,2023,regional,tasks,6,2023--struve--regional--tasks--ru--prob-t--official-v2.pdf,"possible_duplicate:2, source_variant:5"
+rg_0445,struve,2024,regional,solutions,4,2024--struve--regional--solutions--ru--sol-t--official-combined.pdf,"partial_overlap:5, source_variant:1"
+rg_0446,struve,2024,regional,tasks,6,2024--struve--regional--tasks--ru--prob-t--official-v2.pdf,"possible_duplicate:8, source_variant:3"
+rg_0447,struve,2025,regional,solutions,4,2025--struve--regional--solutions--ru--sol-t--official-combined.pdf,"partial_overlap:5, source_variant:1"
+rg_0448,struve,2025,regional,tasks,6,2025--struve--regional--tasks--ru--prob-t--official.pdf,"exact_duplicate:2, possible_duplicate:6, source_variant:3"
+rg_0449,struve,2026,regional,solutions,4,2026--struve--regional--solutions--ru--reg-sol-book--official.pdf,"partial_overlap:3, possible_duplicate:1, source_variant:2"
+rg_0450,struve,2026,regional,tasks,6,2026--struve--regional--tasks--ru--prob-t--official.pdf,"possible_duplicate:7, source_variant:4"
+rg_0451,usaaao,2020,national,solutions,2,2020--usaaao--national--solutions--en--theory--official.pdf,source_variant:1
+rg_0452,usaaao,2020,national,tasks,2,2020--usaaao--national--tasks--en--theory--exam--version-2--official.pdf,source_variant:1
+rg_0453,usaaao,2026,selection,info,2,2026--usaaao--selection--info--en--theory--official.pdf,source_variant:1
+rg_0454,usaaao,2026,selection,solutions,3,2026--usaaao--selection--solutions--en--practical--official-v2.pdf,possible_duplicate:3
+rg_0455,usaaao,2026,selection,tasks,2,2026--usaaao--selection--tasks--en--theory--exam--official.pdf,source_variant:1
+rg_0456,vsosh_astronomy,1994,final,solutions,4,1994--vsosh-astronomy--final--solutions--en--theory--archive-combined.pdf,"partial_overlap:2, source_variant:4"
+rg_0457,vsosh_astronomy,1994,final,tasks,2,1994--vsosh-astronomy--final--tasks--ru--theory--archive.pdf,source_variant:1
+rg_0458,vsosh_astronomy,1995,final,solutions,2,1995--vsosh-astronomy--final--solutions--en--grade-10--theory--archive-combined.pdf,source_variant:1
+rg_0459,vsosh_astronomy,1995,final,tasks,3,1995--vsosh-astronomy--final--tasks--en--theory--archive.pdf,"source_variant:1, translated_version:2"
+rg_0460,vsosh_astronomy,1995,regional,solutions,3,1995--vsosh-astronomy--regional--solutions--en--vos-reg-sol--archive-combined.pdf,source_variant:3
+rg_0461,vsosh_astronomy,1996,final,solutions,3,1996--vsosh-astronomy--final--solutions--en--theory--archive-combined-v2.pdf,source_variant:3
+rg_0462,vsosh_astronomy,1996,final,tasks,4,1996--vsosh-astronomy--final--tasks--ru--practical--archive.pdf,"source_variant:3, translated_version:3"
+rg_0463,vsosh_astronomy,1997,final,solutions,4,1997--vsosh-astronomy--final--solutions--en--theory--archive-combined.pdf,"source_variant:3, translated_version:3"
+rg_0464,vsosh_astronomy,1997,final,tasks,4,1997--vsosh-astronomy--final--tasks--en--theory--archive-v2.pdf,"source_variant:3, translated_version:3"
+rg_0465,vsosh_astronomy,1998,final,solutions,4,1998--vsosh-astronomy--final--solutions--en--theory--archive-combined-v2.pdf,"source_variant:3, translated_version:3"
+rg_0466,vsosh_astronomy,1998,final,tasks,5,1998--vsosh-astronomy--final--tasks--en--theory--archive-v2.pdf,source_variant:10
+rg_0467,vsosh_astronomy,1999,final,solutions,3,1999--vsosh-astronomy--final--solutions--en--theory--archive-combined-v2.pdf,source_variant:3
+rg_0468,vsosh_astronomy,1999,final,tasks,5,1999--vsosh-astronomy--final--tasks--en--practical--archive.pdf,"possible_duplicate:6, source_variant:4"
+rg_0469,vsosh_astronomy,2000,final,tasks,5,2000--vsosh-astronomy--final--tasks--en--grade-10--practical--archive.pdf,"exact_duplicate:3, source_variant:7"
+rg_0470,vsosh_astronomy,2001,final,solutions,4,2001--vsosh-astronomy--final--solutions--en--theory--archive-combined-v2.pdf,source_variant:6
+rg_0471,vsosh_astronomy,2001,final,tasks,5,2001--vsosh-astronomy--final--tasks--ru--practical--archive.pdf,"source_variant:6, translated_version:4"
+rg_0472,vsosh_astronomy,2002,final,solutions,8,2002--vsosh-astronomy--final--solutions--en--theory--archive-combined-v2.pdf,"partial_overlap:3, source_variant:25"
+rg_0473,vsosh_astronomy,2002,final,tasks,8,2002--vsosh-astronomy--final--tasks--en--theory--archive-v4.pdf,"possible_duplicate:4, source_variant:24"
+rg_0474,vsosh_astronomy,2003,final,solutions,5,2003--vsosh-astronomy--final--solutions--en--theory--archive-combined-v2.pdf,"partial_overlap:1, source_variant:9"
+rg_0475,vsosh_astronomy,2003,final,tasks,7,2003--vsosh-astronomy--final--tasks--en--practical--archive.pdf,"possible_duplicate:2, source_variant:19"
+rg_0476,vsosh_astronomy,2004,final,solutions,4,2004--vsosh-astronomy--final--solutions--en--theory--archive-combined-v2.pdf,source_variant:6
+rg_0477,vsosh_astronomy,2004,final,tasks,5,2004--vsosh-astronomy--final--tasks--en--practical--archive.pdf,"exact_duplicate:1, source_variant:9"
+rg_0478,vsosh_astronomy,2005,final,solutions,2,2005--vsosh-astronomy--final--solutions--ru--theory--archive-combined.pdf,partial_overlap:1
+rg_0479,vsosh_astronomy,2005,final,tasks,6,2005--vsosh-astronomy--final--tasks--en--practical--archive.pdf,"possible_duplicate:3, source_variant:12"
+rg_0480,vsosh_astronomy,2006,final,solutions,2,2006--vsosh-astronomy--final--solutions--ru--practical--archive-combined.pdf,source_variant:1
+rg_0481,vsosh_astronomy,2006,final,tasks,6,2006--vsosh-astronomy--final--tasks--en--practical--archive-v3.pdf,"possible_duplicate:7, source_variant:8"
+rg_0482,vsosh_astronomy,2006,regional,solutions,3,2006--vsosh-astronomy--regional--solutions--en--vos-reg-sol--archive-combined-v2.pdf,source_variant:3
+rg_0483,vsosh_astronomy,2006,regional,tasks,3,2006--vsosh-astronomy--regional--tasks--en--vos-reg-prob--archive-v3.pdf,"possible_duplicate:1, source_variant:2"
+rg_0484,vsosh_astronomy,2007,final,solutions,2,2007--vsosh-astronomy--final--solutions--ru--theory--archive-combined.pdf,source_variant:1
+rg_0485,vsosh_astronomy,2007,final,tasks,6,2007--vsosh-astronomy--final--tasks--en--practical--archive-v3.pdf,"possible_duplicate:9, source_variant:6"
+rg_0486,vsosh_astronomy,2007,regional,solutions,3,2007--vsosh-astronomy--regional--solutions--en--vos-reg-sol--archive-combined-v3.pdf,source_variant:3
+rg_0487,vsosh_astronomy,2007,regional,tasks,3,2007--vsosh-astronomy--regional--tasks--en--vos-reg-prob--archive-v3.pdf,source_variant:3
+rg_0488,vsosh_astronomy,2008,final,solutions,2,2008--vsosh-astronomy--final--solutions--ru--practical--archive-combined.pdf,source_variant:1
+rg_0489,vsosh_astronomy,2008,final,tasks,6,2008--vsosh-astronomy--final--tasks--en--practical--archive.pdf,"possible_duplicate:10, source_variant:5"
+rg_0490,vsosh_astronomy,2008,regional,solutions,3,2008--vsosh-astronomy--regional--solutions--en--vos-reg-sol--archive-combined-v3.pdf,source_variant:3
+rg_0491,vsosh_astronomy,2009,final,solutions,2,2009--vsosh-astronomy--final--solutions--ru--practical--archive-combined.pdf,source_variant:1
+rg_0492,vsosh_astronomy,2009,final,tasks,6,2009--vsosh-astronomy--final--tasks--en--practical--archive-v2.pdf,"possible_duplicate:9, source_variant:6"
+rg_0493,vsosh_astronomy,2010,final,solutions,8,2010--vsosh-astronomy--final--solutions--ru--practical--archive-combined.pdf,"partial_overlap:12, source_variant:16"
+rg_0494,vsosh_astronomy,2010,final,tasks,12,2010--vsosh-astronomy--final--tasks--en--practical--archive-v3.pdf,"possible_duplicate:12, source_variant:18, translated_version:36"
+rg_0495,vsosh_astronomy,2010,regional,solutions,4,2010--vsosh-astronomy--regional--solutions--ru--vos-reg-sol--archive-combined.pdf,"partial_overlap:3, source_variant:3"
+rg_0496,vsosh_astronomy,2010,regional,tasks,3,2010--vsosh-astronomy--regional--tasks--ru--grade-9--mirror.pdf,source_variant:3
+rg_0497,vsosh_astronomy,2011,final,solutions,8,2011--vsosh-astronomy--final--solutions--ru--practical--archive-combined.pdf,"partial_overlap:16, source_variant:12"
+rg_0498,vsosh_astronomy,2011,final,tasks,12,2011--vsosh-astronomy--final--tasks--en--practical--archive-v3.pdf,"possible_duplicate:20, source_variant:10, translated_version:36"
+rg_0499,vsosh_astronomy,2011,regional,solutions,6,2011--vsosh-astronomy--regional--solutions--en--vos-reg-sol--archive-combined-v2.pdf,"source_variant:6, translated_version:9"
+rg_0500,vsosh_astronomy,2011,regional,tasks,6,2011--vsosh-astronomy--regional--tasks--en--vos-reg-prob--archive-v2.pdf,"source_variant:6, translated_version:9"
+rg_0501,vsosh_astronomy,2012,final,solutions,8,2012--vsosh-astronomy--final--solutions--ru--practical--archive-combined.pdf,"partial_overlap:17, source_variant:11"
+rg_0502,vsosh_astronomy,2012,final,tasks,12,2012--vsosh-astronomy--final--tasks--en--practical--archive-v2.pdf,"possible_duplicate:20, source_variant:10, translated_version:36"
+rg_0503,vsosh_astronomy,2012,regional,solutions,6,2012--vsosh-astronomy--regional--solutions--en--vos-reg-sol--archive-combined.pdf,"partial_overlap:1, source_variant:5, translated_version:9"
+rg_0504,vsosh_astronomy,2012,regional,tasks,6,2012--vsosh-astronomy--regional--tasks--en--vos-reg-prob--archive.pdf,"possible_duplicate:2, source_variant:4, translated_version:9"
+rg_0505,vsosh_astronomy,2013,final,solutions,8,2013--vsosh-astronomy--final--solutions--ru--practical--archive-combined.pdf,"partial_overlap:21, source_variant:7"
+rg_0506,vsosh_astronomy,2013,final,tasks,12,2013--vsosh-astronomy--final--tasks--en--practical--archive-v3.pdf,"possible_duplicate:19, source_variant:11, translated_version:36"
+rg_0507,vsosh_astronomy,2013,qualifying,solutions,4,2013--vsosh-astronomy--qualifying--solutions--ru--grade-11--municipal--mirror-combined.pdf,source_variant:6
+rg_0508,vsosh_astronomy,2013,qualifying,tasks,4,2013--vsosh-astronomy--qualifying--tasks--ru--grade-9--municipal--mirror.pdf,source_variant:6
+rg_0509,vsosh_astronomy,2013,regional,solutions,4,2013--vsosh-astronomy--regional--solutions--ru--vos-reg-sol--archive-combined.pdf,"partial_overlap:3, source_variant:3"
+rg_0510,vsosh_astronomy,2013,regional,tasks,6,2013--vsosh-astronomy--regional--tasks--en--vos-reg-prob--archive-v2.pdf,"source_variant:6, translated_version:9"
+rg_0511,vsosh_astronomy,2013,unknown,solutions,4,2013--vsosh-astronomy--unknown--solutions--ru--grade-7-8--school--mirror-combined.pdf,source_variant:6
+rg_0512,vsosh_astronomy,2013,unknown,tasks,4,2013--vsosh-astronomy--unknown--tasks--ru--grade-11--school--mirror.pdf,source_variant:6
+rg_0513,vsosh_astronomy,2014,final,solutions,2,2014--vsosh-astronomy--final--solutions--ru--practical--archive-combined.pdf,source_variant:1
+rg_0514,vsosh_astronomy,2014,final,tasks,6,2014--vsosh-astronomy--final--tasks--en--practical--archive.pdf,"possible_duplicate:9, source_variant:6"
+rg_0515,vsosh_astronomy,2014,qualifying,tasks,5,2014--vsosh-astronomy--qualifying--tasks--ru--grade-11--school--mirror.pdf,source_variant:10
+rg_0516,vsosh_astronomy,2014,regional,solutions,6,2014--vsosh-astronomy--regional--solutions--en--vos-reg-sol--archive-combined.pdf,"exact_duplicate:3, source_variant:6, translated_version:6"
+rg_0517,vsosh_astronomy,2014,regional,tasks,6,2014--vsosh-astronomy--regional--tasks--en--vos-reg-prob--archive-v2.pdf,"source_variant:6, translated_version:9"
+rg_0518,vsosh_astronomy,2014,unknown,solutions,4,2014--vsosh-astronomy--unknown--solutions--ru--grade-11--mirror-combined.pdf,source_variant:6
+rg_0519,vsosh_astronomy,2014,unknown,tasks,4,2014--vsosh-astronomy--unknown--tasks--ru--grade-9--mirror.pdf,source_variant:6
+rg_0520,vsosh_astronomy,2015,final,solutions,8,2015--vsosh-astronomy--final--solutions--ru--practical--archive-combined.pdf,"partial_overlap:16, source_variant:12"
+rg_0521,vsosh_astronomy,2015,final,tasks,12,2015--vsosh-astronomy--final--tasks--en--practical--archive-v2.pdf,"possible_duplicate:13, source_variant:17, translated_version:36"
+rg_0522,vsosh_astronomy,2015,qualifying,solutions,3,2015--vsosh-astronomy--qualifying--solutions--ru--grade-10-11--school--mirror-combined.pdf,source_variant:3
+rg_0523,vsosh_astronomy,2015,qualifying,tasks,3,2015--vsosh-astronomy--qualifying--tasks--ru--grade-8-9--school--mirror.pdf,source_variant:3
+rg_0524,vsosh_astronomy,2015,regional,solutions,6,2015--vsosh-astronomy--regional--solutions--en--vos-reg-sol--archive-combined-v2.pdf,"exact_duplicate:3, source_variant:6, translated_version:6"
+rg_0525,vsosh_astronomy,2015,regional,tasks,6,2015--vsosh-astronomy--regional--tasks--en--vos-reg-prob--archive-v3.pdf,"source_variant:6, translated_version:9"
+rg_0526,vsosh_astronomy,2015,unknown,solutions,4,2015--vsosh-astronomy--unknown--solutions--ru--grade-7-8--mirror-combined.pdf,source_variant:6
+rg_0527,vsosh_astronomy,2015,unknown,tasks,4,2015--vsosh-astronomy--unknown--tasks--ru--grade-10--mirror.pdf,source_variant:6
+rg_0528,vsosh_astronomy,2016,final,solutions,10,2016--vsosh-astronomy--final--solutions--ru--practical--archive-combined.pdf,"partial_overlap:32, source_variant:13"
+rg_0529,vsosh_astronomy,2016,final,tasks,18,2016--vsosh-astronomy--final--tasks--en--test--archive-v2.pdf,"possible_duplicate:52, source_variant:20, translated_version:81"
+rg_0530,vsosh_astronomy,2016,qualifying,solutions,9,2016--vsosh-astronomy--qualifying--solutions--ru--grade-8-9--municipal--mirror-combined.pdf,"partial_overlap:10, source_variant:26"
+rg_0531,vsosh_astronomy,2016,qualifying,tasks,9,2016--vsosh-astronomy--qualifying--tasks--ru--grade-8-9--municipal--mirror.pdf,"possible_duplicate:10, source_variant:26"
+rg_0532,vsosh_astronomy,2016,regional,solutions,6,2016--vsosh-astronomy--regional--solutions--en--vos-reg-sol--archive-combined-v2.pdf,"exact_duplicate:3, source_variant:6, translated_version:6"
+rg_0533,vsosh_astronomy,2016,regional,tasks,6,2016--vsosh-astronomy--regional--tasks--en--vos-reg-prob--archive.pdf,"possible_duplicate:1, source_variant:5, translated_version:9"
+rg_0534,vsosh_astronomy,2017,final,solutions,12,2017--vsosh-astronomy--final--solutions--ru--practical--archive-combined.pdf,"partial_overlap:27, source_variant:39"
+rg_0535,vsosh_astronomy,2017,final,tasks,18,2017--vsosh-astronomy--final--tasks--en--test--archive.pdf,"possible_duplicate:41, source_variant:31, translated_version:81"
+rg_0536,vsosh_astronomy,2017,qualifying,solutions,8,2017--vsosh-astronomy--qualifying--solutions--ru--grade-8-9--school--mirror-combined.pdf,source_variant:28
+rg_0537,vsosh_astronomy,2017,qualifying,tasks,11,2017--vsosh-astronomy--qualifying--tasks--ru--grade-7--municipal--mirror.pdf,"possible_duplicate:21, source_variant:34"
+rg_0538,vsosh_astronomy,2017,regional,solutions,4,2017--vsosh-astronomy--regional--solutions--ru--vos-reg-sol--archive-combined.pdf,"partial_overlap:3, source_variant:3"
+rg_0539,vsosh_astronomy,2017,regional,tasks,6,2017--vsosh-astronomy--regional--tasks--en--vos-reg-prob--archive-v2.pdf,"source_variant:6, translated_version:9"
+rg_0540,vsosh_astronomy,2018,final,solutions,11,2018--vsosh-astronomy--final--solutions--ru--practical--archive-combined.pdf,"partial_overlap:36, source_variant:19"
+rg_0541,vsosh_astronomy,2018,final,tasks,18,2018--vsosh-astronomy--final--tasks--en--practical--archive-v3.pdf,"possible_duplicate:50, source_variant:22, translated_version:81"
+rg_0542,vsosh_astronomy,2018,qualifying,solutions,8,2018--vsosh-astronomy--qualifying--solutions--ru--grade-6-7--school--mirror-combined.pdf,source_variant:28
+rg_0543,vsosh_astronomy,2018,qualifying,tasks,8,2018--vsosh-astronomy--qualifying--tasks--ru--grade-6-7--school--mirror.pdf,"possible_duplicate:4, source_variant:24"
+rg_0544,vsosh_astronomy,2018,regional,solutions,4,2018--vsosh-astronomy--regional--solutions--ru--vos-reg-sol--archive-combined.pdf,"partial_overlap:3, source_variant:3"
+rg_0545,vsosh_astronomy,2018,regional,tasks,6,2018--vsosh-astronomy--regional--tasks--en--vos-reg-prob--archive-v3.pdf,"source_variant:6, translated_version:9"
+rg_0546,vsosh_astronomy,2019,final,solutions,16,2019--vsosh-astronomy--final--solutions--en--practical--archive-combined-v3.pdf,"partial_overlap:36, source_variant:24, translated_version:60"
+rg_0547,vsosh_astronomy,2019,final,tasks,16,2019--vsosh-astronomy--final--tasks--en--practical--archive-v2.pdf,"exact_duplicate:1, possible_duplicate:27, source_variant:23, translated_version:60"
+rg_0548,vsosh_astronomy,2019,qualifying,solutions,9,2019--vsosh-astronomy--qualifying--solutions--ru--grade-11--municipal--mirror-combined.pdf,source_variant:36
+rg_0549,vsosh_astronomy,2019,qualifying,tasks,9,2019--vsosh-astronomy--qualifying--tasks--ru--grade-10--municipal--mirror.pdf,"possible_duplicate:20, source_variant:16"
+rg_0550,vsosh_astronomy,2019,regional,solutions,4,2019--vsosh-astronomy--regional--solutions--ru--vos-reg-sol--archive-combined.pdf,"partial_overlap:3, source_variant:3"
+rg_0551,vsosh_astronomy,2019,regional,tasks,6,2019--vsosh-astronomy--regional--tasks--en--vos-reg-prob--archive-v2.pdf,"source_variant:6, translated_version:9"
+rg_0552,vsosh_astronomy,2020,qualifying,solutions,7,2020--vsosh-astronomy--qualifying--solutions--ru--grade-10-11--school--mirror-combined.pdf,"partial_overlap:4, source_variant:17"
+rg_0553,vsosh_astronomy,2020,qualifying,tasks,7,2020--vsosh-astronomy--qualifying--tasks--ru--grade-10-11--school--mirror.pdf,source_variant:21
+rg_0554,vsosh_astronomy,2020,regional,solutions,6,2020--vsosh-astronomy--regional--solutions--en--vos-reg-sol--archive-combined-v3.pdf,"exact_duplicate:3, source_variant:6, translated_version:6"
+rg_0555,vsosh_astronomy,2020,regional,tasks,6,2020--vsosh-astronomy--regional--tasks--en--vos-reg-prob--archive.pdf,"source_variant:6, translated_version:9"
+rg_0556,vsosh_astronomy,2021,final,solutions,9,2021--vsosh-astronomy--final--solutions--en--theory--archive-combined.pdf,"partial_overlap:5, source_variant:13, translated_version:18"
+rg_0557,vsosh_astronomy,2021,final,tasks,5,2021--vsosh-astronomy--final--tasks--ru--grade-10-11--test--mirror.pdf,"possible_duplicate:1, source_variant:9"
+rg_0558,vsosh_astronomy,2021,qualifying,solutions,12,2021--vsosh-astronomy--qualifying--solutions--ru--grade-11--municipal--mirror-combined.pdf,"partial_overlap:26, source_variant:40"
+rg_0559,vsosh_astronomy,2021,qualifying,tasks,16,2021--vsosh-astronomy--qualifying--tasks--ru--grade-10--municipal--mirror-v2.pdf,"possible_duplicate:59, source_variant:61"
+rg_0560,vsosh_astronomy,2021,regional,solutions,2,2021--vsosh-astronomy--regional--solutions--ru--vos-reg-sol--archive-combined.pdf,exact_duplicate:1
+rg_0561,vsosh_astronomy,2021,regional,tasks,7,2021--vsosh-astronomy--regional--tasks--en--vos-reg-prob--archive-v2.pdf,"source_variant:9, translated_version:12"
+rg_0562,vsosh_astronomy,2022,final,solutions,6,2022--vsosh-astronomy--final--solutions--en--theory--archive-combined-v2.pdf,"partial_overlap:2, source_variant:4, translated_version:9"
+rg_0563,vsosh_astronomy,2022,final,tasks,9,2022--vsosh-astronomy--final--tasks--en--theory--archive-v2.pdf,"exact_duplicate:1, possible_duplicate:8, source_variant:9, translated_version:18"
+rg_0564,vsosh_astronomy,2022,qualifying,solutions,12,2022--vsosh-astronomy--qualifying--solutions--ru--grade-9-10--invitational--mirror-combined.pdf,"partial_overlap:8, source_variant:58"
+rg_0565,vsosh_astronomy,2022,qualifying,tasks,12,2022--vsosh-astronomy--qualifying--tasks--ru--grade-9-10--invitational--mirror.pdf,"possible_duplicate:11, source_variant:55"
+rg_0566,vsosh_astronomy,2022,regional,solutions,3,2022--vsosh-astronomy--regional--solutions--ru--vos-reg-sol--archive-combined.pdf,"partial_overlap:2, source_variant:1"
+rg_0567,vsosh_astronomy,2022,regional,tasks,8,2022--vsosh-astronomy--regional--tasks--en--vos-reg-prob--archive-v2.pdf,"exact_duplicate:3, source_variant:13, translated_version:12"
+rg_0568,vsosh_astronomy,2023,final,solutions,15,2023--vsosh-astronomy--final--solutions--ru--test--archive-combined.pdf,"partial_overlap:15, source_variant:36, translated_version:54"
+rg_0569,vsosh_astronomy,2023,final,tasks,16,2023--vsosh-astronomy--final--tasks--en--practical--archive-v3.pdf,"possible_duplicate:32, source_variant:24, translated_version:64"
+rg_0570,vsosh_astronomy,2023,qualifying,solutions,13,2023--vsosh-astronomy--qualifying--solutions--ru--grade-8-9--school--mirror-combined.pdf,"partial_overlap:19, source_variant:59"
+rg_0571,vsosh_astronomy,2023,qualifying,tasks,13,2023--vsosh-astronomy--qualifying--tasks--ru--grade-7-8--invitational--mirror.pdf,"possible_duplicate:27, source_variant:51"
+rg_0572,vsosh_astronomy,2023,regional,reference_data,2,2023--vsosh-astronomy--regional--reference-data--ru--grade-9-11--reference-data--mirror.pdf,source_variant:1
+rg_0573,vsosh_astronomy,2023,regional,solutions,8,2023--vsosh-astronomy--regional--solutions--en--vos-reg-sol--archive-combined.pdf,"partial_overlap:2, source_variant:11, translated_version:15"
+rg_0574,vsosh_astronomy,2023,regional,tasks,8,2023--vsosh-astronomy--regional--tasks--en--vos-reg-prob--archive-v2.pdf,"exact_duplicate:3, source_variant:13, translated_version:12"
+rg_0575,vsosh_astronomy,2024,final,solutions,16,2024--vsosh-astronomy--final--solutions--en--test--archive-combined.pdf,"partial_overlap:17, source_variant:39, translated_version:64"
+rg_0576,vsosh_astronomy,2024,final,tasks,16,2024--vsosh-astronomy--final--tasks--en--test--archive.pdf,"possible_duplicate:31, source_variant:25, translated_version:64"
+rg_0577,vsosh_astronomy,2024,qualifying,solutions,14,2024--vsosh-astronomy--qualifying--solutions--ru--grade-7-8--invitational--mirror-combined.pdf,"partial_overlap:1, source_variant:90"
+rg_0578,vsosh_astronomy,2024,qualifying,tasks,14,2024--vsosh-astronomy--qualifying--tasks--ru--grade-7-8--invitational--mirror.pdf,"possible_duplicate:48, source_variant:43"
+rg_0579,vsosh_astronomy,2024,regional,solutions,8,2024--vsosh-astronomy--regional--solutions--en--vos-reg-sol--archive-combined-v2.pdf,"source_variant:13, translated_version:15"
+rg_0580,vsosh_astronomy,2024,regional,tasks,8,2024--vsosh-astronomy--regional--tasks--en--vos-reg-prob--archive-v2.pdf,"possible_duplicate:1, source_variant:12, translated_version:15"
+rg_0581,vsosh_astronomy,2025,final,solutions,14,2025--vsosh-astronomy--final--solutions--ru--test--archive-combined.pdf,"exact_duplicate:6, partial_overlap:33, source_variant:10, translated_version:42"
+rg_0582,vsosh_astronomy,2025,final,tasks,14,2025--vsosh-astronomy--final--tasks--ru--test--archive.pdf,"possible_duplicate:23, source_variant:14, translated_version:48"
+rg_0583,vsosh_astronomy,2025,qualifying,solutions,14,2025--vsosh-astronomy--qualifying--solutions--ru--grade-11--municipal--mirror-combined.pdf,"partial_overlap:48, source_variant:43"
+rg_0584,vsosh_astronomy,2025,qualifying,tasks,14,2025--vsosh-astronomy--qualifying--tasks--ru--grade-11--municipal--mirror.pdf,"possible_duplicate:42, source_variant:49"
+rg_0585,vsosh_astronomy,2025,regional,solutions,8,2025--vsosh-astronomy--regional--solutions--en--vos-reg-sol--archive-combined.pdf,"partial_overlap:1, source_variant:12, translated_version:15"
+rg_0586,vsosh_astronomy,2025,regional,tasks,8,2025--vsosh-astronomy--regional--tasks--en--vos-reg-prob--archive-v3.pdf,"source_variant:13, translated_version:15"
+rg_0587,vsosh_astronomy,2026,final,solutions,18,2026--vsosh-astronomy--final--solutions--en--test--archive-combined-v3.pdf,"partial_overlap:35, source_variant:37, translated_version:81"
+rg_0588,vsosh_astronomy,2026,final,tasks,18,2026--vsosh-astronomy--final--tasks--en--test--archive-v3.pdf,"exact_duplicate:8, possible_duplicate:49, source_variant:23, translated_version:73"
+rg_0589,vsosh_astronomy,2026,qualifying,solutions,15,2026--vsosh-astronomy--qualifying--solutions--ru--grade-4--invitational--mirror-combined.pdf,"partial_overlap:33, source_variant:72"
+rg_0590,vsosh_astronomy,2026,qualifying,tasks,15,2026--vsosh-astronomy--qualifying--tasks--ru--grade-8--school--mirror.pdf,"possible_duplicate:19, source_variant:86"
+rg_0591,vsosh_astronomy,2026,regional,solutions,9,2026--vsosh-astronomy--regional--solutions--en--day-2--archive-combined-v3.pdf,"partial_overlap:9, source_variant:9, translated_version:18"
+rg_0592,vsosh_astronomy,2026,regional,tasks,9,2026--vsosh-astronomy--regional--tasks--en--day-2--archive-v3.pdf,"possible_duplicate:10, source_variant:8, translated_version:18"

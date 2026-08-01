@@ -29,6 +29,29 @@ PRIORITY_FAMILIES = [
     "inao",
     "czech_astronomy",
     "gecaa",
+    "olaa",
+    "poland_astronomy",
+    "poland_astronomy_junior",
+    "caao",
+    "baao",
+    "singapore_astronomy",
+    "sri_lanka_astronomy",
+    "sri_lanka_junior_astronomy",
+    "bulgaria_astronomy",
+    "slovenia_astronomy",
+    "slovenia_astronomy_primary",
+    "slovenia_utrinek",
+    "croatia_astronomy",
+    "thailand_astronomy",
+    "brazil_oba",
+    "nepal_astronomy",
+    "nzoaa",
+    "israel_astronomy",
+    "bangladesh_bao",
+    "china_cnao",
+    "iran_astronomy",
+    "malaysia_astronomy",
+    "macao_astronomy",
 ]
 
 TASK_TOKENS = ("task", "tasks", "problem", "problems", "question", "questions", "задани", "задач")
@@ -134,6 +157,13 @@ def infer_year(raw_text: str) -> int | None:
         return int(year_match.group(1))
 
     return None
+
+
+def thai_buddhist_year_to_gregorian(year: int, *, explicit_buddhist_era: bool) -> int:
+    """Convert a Thai Buddhist Era year only when its context says it is BE."""
+    if explicit_buddhist_era and 2400 <= year <= 2700:
+        return year - 543
+    return year
 
 
 def infer_language(*texts: str) -> str:

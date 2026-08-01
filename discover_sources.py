@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import csv
 import hashlib
+import json
 import re
 import sys
 from html.parser import HTMLParser
@@ -11,7 +12,7 @@ from pathlib import Path
 from urllib.parse import urljoin
 
 from utils.cli import build_common_parser
-from utils.fs_utils import ensure_dir, normalize_whitespace, write_jsonl
+from utils.fs_utils import ensure_dir, load_jsonl, normalize_whitespace, write_jsonl
 from utils.html_utils import extract_links, extract_title, html_to_text
 from utils.http_utils import HttpClient
 from utils.logging_utils import configure_logger
@@ -27,6 +28,7 @@ from utils.metadata import (
     infer_variant_tag,
     infer_year,
     source_domain,
+    thai_buddhist_year_to_gregorian,
 )
 from utils.source_configs import SOURCE_DEFINITIONS, iter_seed_requests
 
@@ -50,6 +52,52 @@ INAO_SOURCE_IDS = {"inao_hbcse_past_papers", "inao_hbcse_current"}
 CZECH_SOURCE_ID = "czech_astronomy_official"
 GECAA_SOURCE_IDS = {"gecaa_ioaa_archive", "gecaa_official_archive"}
 IOAA_CORE_SOURCE_IDS = {"ioaa_problems", "ioaa_proceedings", "ioaa_past_olympiads"}
+BATCH_C_SOURCE_IDS = {
+    "olaa_official_archive", "poland_astronomy_planetarium_official", "poland_astronomy_junior_official",
+    "caao_official_past_contests", "baao_bpho_official", "singapore_astronomy_official",
+    "sri_lanka_ipsl_official", "sri_lanka_junior_ipsl_official", "bulgaria_astronomy_official",
+    "slovenia_astronomy_dmfa_official", "slovenia_astronomy_primary_dmfa_official", "slovenia_utrinek_dmfa_official",
+    "croatia_astronomy_azoo_official", "thailand_astronomy_posn_official", "brazil_oba_official",
+    "nepal_astronomy_naso_official", "nzoaa_official", "israel_space_agency_official",
+    "bangladesh_bao_official", "china_cnao_beijing_planetarium_official", "iran_astronomy_irysc_mirror",
+    "malaysia_astronomy_myao_official", "macao_astronomy_sepam_official",
+}
+RESULT_OR_PROMOTION_TOKENS = re.compile(r"result|winner|award|press|news|gallery|photo|video|registration|course|mock|preparation|training|paid", re.I)
+
+
+def batch_c_page_link(source_id: str, href: str) -> bool:
+    """Return whether an explicitly whitelisted Batch C archive link is HTML."""
+    path = decoded_url_path(href).lower()
+    if source_id == "baao_bpho_official":
+        return path.startswith("/baao/papers/") or bool(re.fullmatch(r"/baao/(?:round-[12]|astro-challenge|junior-astro-challenge)/?", path))
+    if source_id == "poland_astronomy_junior_official":
+        return "/archiwum/" in path or "/i-olimpiada-astronomiczna-juniorow" in path
+    if source_id == "croatia_astronomy_azoo_official":
+        return path.startswith("/natjecanja-i-smotre-arhiva/")
+    if source_id == "thailand_astronomy_posn_official":
+        return bool(re.fullmatch(r"/projects/academic-olympiad/ao/examination/(?:page/[1-3]/)?", path))
+    return False
+
+
+def croatia_azoo_search_links(payload: str) -> list[dict]:
+    """Select only astronomy test/solution posts from AZOO's public search API."""
+    try:
+        entries = json.loads(payload)
+    except json.JSONDecodeError:
+        return []
+    links = []
+    for entry in entries if isinstance(entries, list) else []:
+        title = normalize_whitespace(str(entry.get("title", "")))
+        href = str(entry.get("url", ""))
+        lowered = title.lower()
+        if (
+            entry.get("subtype") == "natjecanja-i-smotre"
+            and "astronom" in lowered
+            and any(token in lowered for token in ("test", "zadat", "rješen", "rjesen"))
+            and href.startswith("https://www.azoo.hr/natjecanja-i-smotre-arhiva/")
+        ):
+            links.append({"href": href, "text": title, "context": {}, "context_text": title})
+    return links
 SKIP_SEED_PAGE_SOURCE_IDS = {STRUVE_SOURCE_ID, STRUVE_ASTROEDU_SOURCE_ID, "mao_official_archive"}
 CURRENT_YEAR = datetime.now().year
 SERBIA_ARCHIVE_PATTERNS = (
@@ -515,6 +563,52 @@ def contextual_archive_links(raw_html: str, base_url: str, source_id: str) -> li
     return result
 
 
+def nzoaa_page_links(raw_html: str, base_url: str) -> list[dict]:
+    """Keep NZOAA's labelled first-party paper links with their nearby year."""
+    result: list[dict] = []
+    anchor_re = re.compile(r"<a\b[^>]*href=(['\"])(.*?)\1[^>]*>(.*?)</a>", re.I | re.S)
+    for match in anchor_re.finditer(raw_html):
+        href = urljoin(base_url, match.group(2).strip())
+        text = html_to_text(match.group(3)).strip()
+        if not passes_source_specific_link_filter({"source_id": "nzoaa_official"}, text, href):
+            continue
+        years = re.findall(r"(?<!\d)(20\d{2})(?!\d)", html_to_text(raw_html[max(0, match.start() - 5000):match.start()]))
+        context = {"year": int(years[-1])} if years else {}
+        result.append({"href": href, "text": text, "context": context, "context_text": text})
+    return result
+
+
+def nepal_naso_page_links(raw_html: str, base_url: str) -> list[dict]:
+    """Select only NASO's explicitly labelled junior/senior sample papers."""
+    result: list[dict] = []
+    anchor_re = re.compile(r"<a\b[^>]*href=(['\"])(.*?)\1[^>]*>(.*?)</a>", re.I | re.S)
+    for match in anchor_re.finditer(raw_html):
+        href, text = urljoin(base_url, match.group(2).strip()), html_to_text(match.group(3)).strip()
+        before = html_to_text(raw_html[max(0, match.start() - 1200):match.start()])
+        if source_domain(href) != "bit.ly" or "sample papers" not in before.lower() or "past paper" not in f"{before} {text}".lower():
+            continue
+        recent = f"{before[-350:]} {text}".lower()
+        category = "junior" if recent.rfind("junior") > recent.rfind("senior") else "senior" if "senior" in recent else "unknown"
+        # The surrounding eligibility text includes birth years; it is not an
+        # event date and must never be inferred as the paper year.
+        result.append({"href": href, "text": f"{category} category sample paper", "context": {"round_detail": f"sample-{category}"}, "context_text": f"NAO sample paper {category}"})
+    return result
+
+
+def thailand_form_gated_links(raw_html: str, base_url: str) -> list[dict]:
+    """Represent visible POSN astronomy exam cards without submitting their form."""
+    result: list[dict] = []
+    item_re = re.compile(r'<div class="exam-item" data-exam-id="(?P<id>\d+)">(?P<body>.*?)</div>\s*</div>\s*</div>', re.S)
+    for match in item_re.finditer(raw_html):
+        body = html_to_text(match.group("body"))
+        if "ดาราศาสตร์" not in body:
+            continue
+        year_match = re.search(r"ปี\s*(2[45]\d{2})", body)
+        label = normalize_whitespace(body)
+        result.append({"href": f"{base_url}#exam-{match.group('id')}", "text": label, "context": {"year": int(year_match.group(1))} if year_match else {}, "context_text": label})
+    return result
+
+
 def passes_source_specific_link_filter(seed: dict, link_text: str, href: str) -> bool:
     source_id = source_id_of(seed)
     combined = f"{link_text} {href}".lower()
@@ -546,11 +640,111 @@ def passes_source_specific_link_filter(seed: dict, link_text: str, href: str) ->
         return "/f/detail/" in href or infer_extension(href) == "pdf" or bool(re.search(r"/archiv/\d+-rocnik-20\d{2}-(?:\d{2}|20\d{2})/?$", href))
     if source_id in GECAA_SOURCE_IDS:
         return infer_extension(href) == "pdf" and not bool(re.search(r"circular|regulation|result", combined)) and bool(re.search(r"theor|data[_ -]*analysis|observation|student[_ -]*user[_ -]*guide|team[_ -]*competition|moon|pixie", combined))
+    if source_id in BATCH_C_SOURCE_IDS:
+        if source_id == "bangladesh_bao_official":
+            return (
+                source_domain(href) == "www.astronomybangla.com"
+                and decoded_url_path(href).lower().startswith("/media/question-papers/")
+                and infer_extension(href) == "pdf"
+                and "question paper" in combined
+            )
+        if source_id == "macao_astronomy_sepam_official":
+            # The official local page also hosts regulations, seat lists and
+            # results.  Only explicitly labelled local preliminary papers are
+            # corpus documents; CNAO material never enters this family.
+            return (
+                source_domain(href) == "sepam.org"
+                and infer_extension(href) == "pdf"
+                and "cnao" not in combined
+                and "预赛" in f"{link_text} {href}"
+                and "试题" in f"{link_text} {href}"
+            )
+        if source_id == "israel_space_agency_official":
+            return infer_extension(href) == "pdf" and bool(re.search(r"astronom|olympiad|competition|תחרו", combined, re.I))
+        if source_id == "nzoaa_official":
+            return source_domain(href) == "drive.google.com" and bool(re.search(r"question|paper|marking|markscheme|solution|answer", combined, re.I))
+        slovenia_prefixes = {
+            "slovenia_astronomy_dmfa_official": "as_",
+            "slovenia_astronomy_primary_dmfa_official": "asos_",
+            "slovenia_utrinek_dmfa_official": "asosu_",
+        }
+        if source_id in slovenia_prefixes:
+            return "getpdf.ashx?src=" in href.lower() and f"src={slovenia_prefixes[source_id]}" in href.lower()
+        if source_id == "croatia_astronomy_azoo_official":
+            path = decoded_url_path(href).lower()
+            if infer_extension(href) in DIRECT_FILE_EXTENSIONS:
+                return path.startswith(("/wp-content/uploads/", "/app/uploads/"))
+            return path.startswith("/natjecanja-i-smotre-arhiva/") and "astronom" in combined and any(
+                token in combined for token in ("test", "zadat", "rješen", "rjesen")
+            )
+        if source_id in {"sri_lanka_ipsl_official", "sri_lanka_junior_ipsl_official"}:
+            path = decoded_url_path(href).lower()
+            name = decoded_filename(href).lower()
+            if not path.startswith("/documents/astro/") or infer_extension(href) != "pdf":
+                return False
+            is_junior = "sljao" in name
+            return is_junior if source_id == "sri_lanka_junior_ipsl_official" else not is_junior
+        if source_id == "baao_bpho_official" and not decoded_url_path(href).lower().startswith("/baao/"):
+            return False
+        if source_id == "olaa_official_archive" and source_domain(href) == "drive.google.com":
+            return True
+        if batch_c_page_link(source_id, href):
+            return True
+        if infer_extension(href) not in DIRECT_FILE_EXTENSIONS:
+            return False
+        if RESULT_OR_PROMOTION_TOKENS.search(combined):
+            return False
+        if source_id == "caao_official_past_contests" and "ioaa" in combined:
+            return False
+        if source_id == "china_cnao_beijing_planetarium_official" and re.search(r"provinc|省|市赛|选拔", combined, re.I):
+            return False
+        if source_id == "macao_astronomy_sepam_official" and "cnao" in combined:
+            return False
+        if source_id == "singapore_astronomy_official" and source_domain(href) not in {"astronomy.sg", "drive.google.com", "docs.google.com"}:
+            return False
+        return True
     return True
 
 
 def should_record_seed_link(seed: dict, link_text: str, href: str) -> bool:
     source_id = source_id_of(seed)
+    if source_id == "nzoaa_official":
+        # The past-papers page also links to itself and general site navigation.
+        # Only a labelled official paper/marking Drive link is corpus evidence.
+        return passes_source_specific_link_filter(seed, link_text, href)
+    if source_id == "nepal_astronomy_naso_official":
+        return source_domain(href) == "bit.ly" and "sample paper" in link_text.lower()
+    if source_id == "bangladesh_bao_official":
+        return passes_source_specific_link_filter(seed, link_text, href)
+    if source_id == "macao_astronomy_sepam_official":
+        return passes_source_specific_link_filter(seed, link_text, href)
+    if source_id == "israel_space_agency_official":
+        return passes_source_specific_link_filter(seed, link_text, href)
+    if source_id == "thailand_astronomy_posn_official" and "#exam-" in href:
+        return True
+    if source_id == "thailand_astronomy_posn_official":
+        if "#" in href:
+            return False
+        return batch_c_page_link(source_id, href)
+    if source_id in {"slovenia_astronomy_dmfa_official", "slovenia_astronomy_primary_dmfa_official", "slovenia_utrinek_dmfa_official"}:
+        return passes_source_specific_link_filter(seed, link_text, href)
+    if source_id == "croatia_astronomy_azoo_official":
+        return passes_source_specific_link_filter(seed, link_text, href)
+    if source_id in {"sri_lanka_ipsl_official", "sri_lanka_junior_ipsl_official"}:
+        return passes_source_specific_link_filter(seed, link_text, href)
+    if source_id == "baao_bpho_official" and not decoded_url_path(href).lower().startswith("/baao/"):
+        return False
+    if source_id in BATCH_C_SOURCE_IDS and batch_c_page_link(source_id, href):
+        return True
+    if source_id == "olaa_official_archive" and source_domain(href) == "drive.google.com":
+        return True
+    if source_id in BATCH_C_SOURCE_IDS and (infer_extension(href) in {"html", "htm"} or "." not in decoded_filename(href)):
+        context = f"{link_text} {href}"
+        return (
+            source_domain(href) == source_domain(seed["url"])
+            and not bool(RESULT_OR_PROMOTION_TOKENS.search(context))
+            and bool(re.search(r"archiv|past|task|problem|exam|paper|contest|olympiad|20\d{2}|pruebas|subiect|soal|prova|ข้อสอบ", context, re.I))
+        )
     if source_id == VSOSH_MOSCOW_TEAM_SOURCE_ID:
         return False
     if source_id == VSOSH_SIRIUS_SOURCE_ID:
@@ -574,14 +768,19 @@ def should_record_seed_link(seed: dict, link_text: str, href: str) -> bool:
 
 
 def infer_family(default_family: str, *texts: str) -> str:
-    if default_family in {"ioaa_junior", "gecaa", "usaaao", "inao", "czech_astronomy"}:
+    # A source configuration is the provenance boundary.  In particular,
+    # national archives often mention IOAA without those linked materials
+    # becoming part of the national source family.  The historical IAO
+    # mirrors are the exception: they deliberately co-host explicit IOAA
+    # papers, which remain part of the existing IOAA corpus.
+    if default_family == "ioaa":
+        return "ioaa"
+    if default_family != "iao":
         return default_family
     text = " ".join(texts).lower()
     if "ioaa" in text or "gecaa" in text:
         return "ioaa"
-    if default_family == "iao":
-        return "iao"
-    return default_family
+    return "iao"
 
 
 def apply_source_specific_seed_page_overrides(seed: dict, document_type: str, extra_types: list[str]) -> tuple[str, list[str]]:
@@ -604,6 +803,18 @@ def record_seed_page(seed: dict, title: str, extension: str = "html") -> dict:
         round_detail=round_detail,
         document_type=document_type,
     )
+    if source_id_of(seed) == "poland_astronomy_planetarium_official":
+        edition_years = {"lxiv": 2021, "lxv": 2022, "lxvi": 2023, "lxvii": 2024}
+        filename = decoded_filename(href).lower()
+        for edition, edition_year in edition_years.items():
+            if filename.startswith(edition):
+                year = edition_year
+                round_detail = f"edition-{edition}"
+                break
+    if source_id_of(seed) == "bulgaria_astronomy_official":
+        match = re.search(r"(?:^|[-_/])(?P<year>\d{2})-(?:I|II|III)-", decoded_filename(href), re.I)
+        if match:
+            year = 2000 + int(match.group("year"))
     language = infer_language(title)
     variant_tag = infer_variant_tag(seed["source_role"], title or seed["source_id"], seed["url"], extra_types)
     return {
@@ -648,6 +859,73 @@ def apply_source_specific_link_overrides(
         serbia_stage = serbia_stage_from_url(href)
         if serbia_stage is not None:
             return "solutions", ["tasks", "solutions"], serbia_stage, None, "sr"
+    if source_id == "caao_official_past_contests":
+        if re.search(r"(?:^|[-_/])c(?:a)?ao[-_ ]?20\d{2}|c(?:a)?ao[-_ ]?problems", decoded_filename(href), re.I):
+            return "tasks", ["tasks"], "national", None, "en"
+    if source_id == "bulgaria_astronomy_official":
+        name = decoded_filename(href).lower()
+        stage = {"-i-": "municipal", "-ii-": "regional", "-iii-": "national"}
+        inferred_stage = next((value for token, value in stage.items() if token in name), stage_or_round)
+        if name.startswith(("a", "sol_")):
+            return "solutions", ["solutions"], inferred_stage, round_detail, "bg"
+        return "tasks", ["tasks"], inferred_stage, round_detail, "bg"
+    if source_id == "brazil_oba_official":
+        name = decoded_filename(href).lower()
+        level = re.search(r"niv(?:el)?[_ -]?(\d)", name)
+        detail = f"level-{level.group(1)}" if level else round_detail
+        if "gb" in name or "gabarito" in name:
+            return "solutions", ["solutions"], "national", detail, "pt"
+        return "tasks", ["tasks"], "national", detail, "pt"
+    if source_id in {"sri_lanka_ipsl_official", "sri_lanka_junior_ipsl_official"}:
+        name = decoded_filename(href).lower()
+        language = "si" if "sinhala" in name else "ta" if "tamil" in name else "en"
+        if "answer" in name or "solution" in name:
+            return "solutions", ["solutions"], "national", None, language
+        return "tasks", ["tasks"], "national", None, language
+    if source_id == "croatia_astronomy_azoo_official":
+        context = normalize_whitespace(f"{link_text} {page_title} {href}").lower()
+        attachment_label = normalize_whitespace(f"{link_text} {decoded_filename(href)}").lower()
+        stage = "school" if "škol" in context or "skol" in context else "county" if "župan" in context or "zupan" in context else "state" if "držav" in context or "drzav" in context else stage_or_round
+        if any(token in attachment_label for token in ("rješen", "rjesen", "odgovor")):
+            return "solutions", ["solutions"], stage, round_detail, "hr"
+        return "tasks", ["tasks"], stage, round_detail, "hr"
+    slovenia_prefixes = {
+        "slovenia_astronomy_dmfa_official": "as_",
+        "slovenia_astronomy_primary_dmfa_official": "asos_",
+        "slovenia_utrinek_dmfa_official": "asosu_",
+    }
+    if source_id in slovenia_prefixes:
+        name = normalize_whitespace(f"{href} {link_text}").lower()
+        stage = "state" if "_drzavno_" in name else "school" if "_solsko_" in name else stage_or_round
+        return "solutions", ["tasks", "solutions"], stage, round_detail, "sl"
+    if source_id == "poland_astronomy_planetarium_official":
+        edition_years = {"lxiv": 2021, "lxv": 2022, "lxvi": 2023, "lxvii": 2024}
+        filename = decoded_filename(href).lower()
+        for edition, edition_year in edition_years.items():
+            if filename.startswith(edition):
+                # The archive PDFs are annual official competition booklets;
+                # their Roman edition number is more authoritative than the
+                # current-page navigation year.
+                return "tasks", ["tasks"], "national", f"edition-{edition}", "pl"
+    if source_id == "olaa_official_archive":
+        if re.search(r"soluci|resolu|gabarit", text := normalize_whitespace(f"{link_text} {href}").lower()):
+            return "solutions", ["solutions"], stage_or_round, round_detail, "es"
+        if re.search(r"prueba|prova|problema|quest", text):
+            return "tasks", ["tasks"], stage_or_round, round_detail, "es"
+    if source_id == "thailand_astronomy_posn_official" and "#exam-" in href:
+        return "tasks", ["tasks"], "national", round_detail, "th"
+    if source_id == "nepal_astronomy_naso_official" and source_domain(href) == "bit.ly":
+        return "tasks", ["tasks"], "practice", round_detail, "en"
+    if source_id == "bangladesh_bao_official":
+        label = normalize_whitespace(f"{link_text} {decoded_filename(href)}").lower()
+        return "tasks", ["tasks"], "national", "general" if "general" in label else round_detail, "en"
+    if source_id == "macao_astronomy_sepam_official":
+        label = f"{link_text} {decoded_filename(href)}"
+        if "试题及答案" in label:
+            return "solutions", ["tasks", "solutions"], "preliminary", None, "zh"
+        if "答案" in label:
+            return "solutions", ["solutions"], "preliminary", None, "zh"
+        return "tasks", ["tasks"], "preliminary", None, "zh"
     if source_id == RUSSIA_TEAM_QUAL_SOURCE_ID and is_russia_team_qual_direct_archive_file(href):
         return document_type, extra_types, stage_or_round, round_detail, language
     if source_id == OWAO_ASTROEDU_SOURCE_ID:
@@ -750,7 +1028,13 @@ def build_candidate_entry(
 ) -> dict:
     title_bits = [link_text, page_title, href]
     family = infer_family(seed["olympiad_family"], href, link_text, page_title)
-    year = infer_year(" ".join(filter(None, title_bits)))
+    year_text = " ".join(filter(None, title_bits))
+    year = infer_year(year_text)
+    if source_id_of(seed) == "thailand_astronomy_posn_official" and year is not None:
+        year = thai_buddhist_year_to_gregorian(
+            year,
+            explicit_buddhist_era=bool(re.search(r"\b(?:b\.e\.|be|buddhist\s+era|พ\.ศ\.)\b", year_text, re.I)),
+        )
     document_type, extra_types = infer_document_type(*title_bits)
     stage_or_round, round_detail = infer_stage(family, *title_bits)
     language = infer_language(link_text, href)
@@ -769,6 +1053,10 @@ def build_candidate_entry(
         round_detail,
         language,
     )
+    if source_id_of(seed) == "bangladesh_bao_official":
+        filename_year = re.search(r"question_(20\d{2})_", decoded_filename(href), re.I)
+        if filename_year:
+            year = int(filename_year.group(1))
     year, stage_or_round, round_detail, document_type = apply_context_overrides(
         context,
         year=year,
@@ -776,6 +1064,10 @@ def build_candidate_entry(
         round_detail=round_detail,
         document_type=document_type,
     )
+    if source_id_of(seed) == "thailand_astronomy_posn_official" and year is not None:
+        # Cards label their exam year in the Thai Buddhist calendar.  This is
+        # source-specific card context, never an interpretation of IDs/URLs.
+        year = thai_buddhist_year_to_gregorian(year, explicit_buddhist_era=True)
     # These filename/source rules are authoritative.  Reapply them after page
     # context because a parent page can describe a different division/round.
     if source_id_of(seed) in {STRUVE_ASTROEDU_SOURCE_ID, IOAA_JUNIOR_SOURCE_ID, USAAAO_SOURCE_ID, *INAO_SOURCE_IDS}:
@@ -784,6 +1076,20 @@ def build_candidate_entry(
         )
     variant_tag = infer_variant_tag(seed["source_role"], link_text or page_title, href, extra_types)
     access_mode, access_note = access_mode_for_url(href)
+    # The official OLAA archive exposes public Drive previews, but this
+    # crawler's normal unauthenticated Drive download endpoint is robots-blocked.
+    # Preserve every official link as provenance while skipping equivalent
+    # attempts rather than repeatedly probing the blocked mechanism.
+    if source_id_of(seed) == "olaa_official_archive" and source_domain(href) == "drive.google.com":
+        access_mode, access_note = "discovery_only", "official_linked_google_drive_robots_blocked"
+    if source_id_of(seed) == "brazil_oba_official" and infer_extension(href) not in DIRECT_FILE_EXTENSIONS:
+        # The OBA archive links to a reordered copy of its own HTML catalogue.
+        # Preserve it as an official container, never as a task-paper download.
+        access_mode, access_note = "discovery_only", "official_archive_container"
+    if source_id_of(seed) == "croatia_astronomy_azoo_official" and infer_extension(href) not in DIRECT_FILE_EXTENSIONS:
+        access_mode, access_note = "discovery_only", "official_astronomy_archive_post"
+    if source_id_of(seed) == "thailand_astronomy_posn_official" and "#exam-" in href:
+        access_mode, access_note = "discovery_only", "official_form_gated_download"
     notes = append_note(f"extra_types={','.join(extra_types)}", access_note)
     if access_mode == "discovery_only":
         notes = append_note(notes, "discovery_only")
@@ -807,7 +1113,13 @@ def build_candidate_entry(
         "parent_page_url": parent_page_url,
         "parent_page_title": parent_page_title,
         "filename_original": decoded_filename(href) or "download",
-        "extension": "pdf" if source_id_of(seed) == VSOSH_EDSOO_SOURCE_ID or (source_id_of(seed) == CZECH_SOURCE_ID and "/f/detail/" in href) else infer_extension(href),
+        "extension": "pdf" if (
+            source_id_of(seed) == VSOSH_EDSOO_SOURCE_ID
+            or (source_id_of(seed) == CZECH_SOURCE_ID and "/f/detail/" in href)
+            or (source_id_of(seed) == "olaa_official_archive" and source_domain(href) == "drive.google.com")
+            or (source_id_of(seed) == "nepal_astronomy_naso_official" and source_domain(href) == "bit.ly")
+            or source_id_of(seed) in {"slovenia_astronomy_dmfa_official", "slovenia_astronomy_primary_dmfa_official", "slovenia_utrinek_dmfa_official"}
+        ) else infer_extension(href),
         "variant_tag": variant_tag,
         "round_detail": round_detail,
         "logical_document_types": list(dict.fromkeys(extra_types)),
@@ -888,8 +1200,11 @@ def discover_documents(root: Path, families: set[str] | None, dry_run: bool, lim
     if limit is not None:
         seeds = seeds[:limit]
 
+    previous_discovered = load_jsonl(root / "data" / "manifests" / "discovered_documents.jsonl")
     discovered: dict[tuple[str, str], dict] = {}
     coverage: dict[tuple[str, int | None, str], set[str]] = defaultdict(set)
+    attempted_source_ids = {seed["source_id"] for seed in seeds}
+    successful_source_ids: set[str] = set()
 
     # Stable public direct-file fallbacks cover intermittent archive pages.
     for source in SOURCE_DEFINITIONS:
@@ -912,6 +1227,7 @@ def discover_documents(root: Path, families: set[str] | None, dry_run: bool, lim
         if response.status_code and response.status_code >= 400:
             errors_logger.error("SEED bad_status source_id=%s url=%s status=%s", seed["source_id"], seed["url"], response.status_code)
             continue
+        successful_source_ids.add(seed["source_id"])
 
         title = extract_title(response.text)
         if should_record_seed_page(seed):
@@ -938,6 +1254,14 @@ def discover_documents(root: Path, families: set[str] | None, dry_run: bool, lim
             source_id = source_id_of(seed)
             if source_id == OWAO_SOURCE_ID:
                 links = owao_page_links(page_html, page_url)
+            elif source_id == "nzoaa_official":
+                links = nzoaa_page_links(page_html, page_url)
+            elif source_id == "nepal_astronomy_naso_official":
+                links = nepal_naso_page_links(page_html, page_url)
+            elif source_id == "thailand_astronomy_posn_official":
+                links = thailand_form_gated_links(page_html, page_url) + extract_links(page_html, page_url)
+            elif source_id == "croatia_astronomy_azoo_official" and "/wp-json/wp/v2/search" in page_url:
+                links = croatia_azoo_search_links(page_html)
             elif source_id in {IOAA_JUNIOR_SOURCE_ID, USAAAO_SOURCE_ID, *INAO_SOURCE_IDS, CZECH_SOURCE_ID}:
                 links = batch_a_page_links(seed, page_html, page_url, page_context)
             elif source_id in {STRUVE_ASTROEDU_SOURCE_ID, "mao_official_archive", RUSSIA_TEAM_QUAL_SOURCE_ID}:
@@ -946,6 +1270,12 @@ def discover_documents(root: Path, families: set[str] | None, dry_run: bool, lim
                 links = extract_links(page_html, page_url)
             for link in links:
                 href = link["href"]
+                if source_id in {"slovenia_astronomy_dmfa_official", "slovenia_astronomy_primary_dmfa_official", "slovenia_utrinek_dmfa_official"}:
+                    # DMFA's archive emits Windows-style root-relative paths.
+                    # Normalize them before URL joining so GetPDF is requested
+                    # from /Tekmovanja rather than the current archive folder.
+                    windows_path = re.search(r"\\Tekmovanja\\(.+)$", href)
+                    href = urljoin(page_url, f"/Tekmovanja/{windows_path.group(1)}") if windows_path else href.replace("\\", "/")
                 if source_id_of(seed) == OWAO_SOURCE_ID and not link.get("section"):
                     continue
                 if not should_record_seed_link(seed, link["text"], href):
@@ -981,7 +1311,15 @@ def discover_documents(root: Path, families: set[str] | None, dry_run: bool, lim
                 store_discovered_entry(discovered, entry, seen_from=page_url)
                 coverage[(entry["olympiad_family"], entry["year"], entry["stage_or_round"])].update(logical_document_types(entry))
 
-                extension = "html" if re.search(r"/(?:junior-ioaa/past-olympiads/20\d{2}|archiv/\d+-rocnik-20\d{2}-(?:\d{2}|20\d{2}))/?$", href) else infer_extension(href)
+                extension = "html" if (
+                    re.search(r"/(?:junior-ioaa/past-olympiads/20\d{2}|archiv/\d+-rocnik-20\d{2}-(?:\d{2}|20\d{2}))/?$", href)
+                    or batch_c_page_link(source_id, href)
+                    or (source_id in BATCH_C_SOURCE_IDS and "." not in decoded_filename(href))
+                ) else infer_extension(href)
+                if source_id == "thailand_astronomy_posn_official" and "#exam-" in href:
+                    # A visible card is provenance, not a link to follow: POSN
+                    # requires the user-role/purpose form before a file exists.
+                    extension = "bin"
                 if extension not in {"html", "htm"}:
                     continue
                 if not should_follow_second_hop(seed, depth=depth, parent_is_container=parent_is_container):
@@ -1002,6 +1340,18 @@ def discover_documents(root: Path, families: set[str] | None, dry_run: bool, lim
                 nested_title = extract_title(nested_response.text)
                 child_context = derive_child_context(page_context, entry)
                 page_queue.append((nested_response.final_url, nested_title, nested_response.text, child_context, depth + 1))
+
+    # A one-source outage must not erase a previously validated candidate
+    # snapshot during a focused refresh.  Keep it only when every seed for that
+    # source failed; a reachable source is still refreshed authoritatively.
+    failed_source_ids = attempted_source_ids - successful_source_ids
+    for row in previous_discovered:
+        if row.get("source_id") not in failed_source_ids:
+            continue
+        if families and row.get("olympiad_family") not in families:
+            continue
+        store_discovered_entry(discovered, row)
+        coverage[(row["olympiad_family"], row.get("year"), row["stage_or_round"])].update(logical_document_types(row))
 
     discovered_rows = sorted(
         discovered.values(),
