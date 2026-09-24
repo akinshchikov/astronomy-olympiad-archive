@@ -36,6 +36,7 @@ class SourceCoverageCatalogTests(TestCase):
             {
                 "apao_issp_official",
                 "bangladesh_bdoaa_official",
+                "bulgaria_astronomy_oap_legacy",
                 "indonesia_osn_official",
                 "israel_multispace_archive",
                 "korea_kao_official",

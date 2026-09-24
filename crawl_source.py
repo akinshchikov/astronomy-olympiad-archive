@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import hashlib
+import json
 from pathlib import Path
 import re
 import urllib.error
-from urllib.parse import quote, urlsplit, urlunsplit
+from urllib.parse import parse_qsl, quote, urlencode, urlsplit, urlunsplit
 
 from utils.cli import build_common_parser
 from utils.fs_utils import ensure_dir, load_jsonl, write_jsonl
@@ -27,11 +28,39 @@ def public_download_url(url: str) -> str:
     it intentionally does not handle confirmation tokens or restricted files.
     """
     parts = urlsplit(url)
+    if parts.netloc.lower() == "api.pcloud.com" and parts.path.rstrip("/").endswith("/getpublinkdownload"):
+        query = [(key, value) for key, value in parse_qsl(parts.query, keep_blank_values=False) if key in {"code", "fileid"}]
+        return urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(query), ""))
     url = urlunsplit((parts.scheme, parts.netloc, quote(parts.path, safe="/%"), quote(parts.query, safe="=&%"), parts.fragment))
     match = re.match(r"https://drive\.google\.com/file/d/([^/]+)/", url)
     if match:
         return f"https://drive.usercontent.google.com/download?id={match.group(1)}&export=download"
     return url
+
+
+def fetch_download_response(client: HttpClient, row: dict, request_url: str):
+    """Fetch a candidate, resolving pCloud's documented public-link API only at download time."""
+    response = client.fetch(request_url)
+    parts = urlsplit(request_url)
+    if not (
+        row.get("source_id") == "bulgaria_astronomy_official"
+        and parts.netloc.lower() == "api.pcloud.com"
+        and parts.path.rstrip("/").endswith("/getpublinkdownload")
+    ):
+        return response
+
+    try:
+        payload = json.loads(response.text)
+    except json.JSONDecodeError as error:
+        raise OSError(f"Invalid pCloud download-link response: {error}") from error
+    if payload.get("result") != 0:
+        raise OSError(f"pCloud getpublinkdownload failed: result={payload.get('result')}")
+    hosts = payload.get("hosts")
+    path = payload.get("path")
+    if not isinstance(hosts, list) or not hosts or not isinstance(hosts[0], str) or not isinstance(path, str):
+        raise OSError("pCloud getpublinkdownload returned no usable host/path")
+    download_url = urlunsplit(("https", hosts[0], path, "", ""))
+    return client.fetch(download_url)
 
 
 def response_matches_extension(extension: str, content_type: str, content: bytes) -> bool:
@@ -52,6 +81,10 @@ def guessed_content_type(extension: str) -> str:
         "htm": "text/html; charset=utf-8",
         "html": "text/html; charset=utf-8",
         "pdf": "application/pdf",
+        "rtf": "application/rtf",
+        "jpg": "image/jpeg",
+        "jpeg": "image/jpeg",
+        "png": "image/png",
         "zip": "application/zip",
     }.get(extension, "")
 
@@ -152,7 +185,7 @@ def crawl_documents(root: Path, families: set[str] | None, dry_run: bool, limit:
 
         request_url = public_download_url(url)
         try:
-            response = client.fetch(request_url)
+            response = fetch_download_response(client, row, request_url)
         except Exception as error:
             errors_logger.error("DOWNLOAD failed url=%s error_type=%s error=%s", url, type(error).__name__, error)
             terminal_status = terminal_failure_status(error)
@@ -168,7 +201,7 @@ def crawl_documents(root: Path, families: set[str] | None, dry_run: bool, limit:
             continue
 
         content_type = get_header_value(response.headers, "Content-Type")
-        if extension in {"pdf", "doc", "docx", "zip"} and not response_matches_extension(extension, content_type, response.content):
+        if extension in {"pdf", "doc", "docx", "zip", "rtf", "jpg", "jpeg", "png"} and not response_matches_extension(extension, content_type, response.content):
             errors_logger.error("DOWNLOAD rejected_content url=%s final_url=%s expected=%s content_type=%s", url, response.final_url, extension, content_type)
             completed[checkpoint_key(row)] = {
                 **row,
@@ -180,7 +213,7 @@ def crawl_documents(root: Path, families: set[str] | None, dry_run: bool, limit:
             }
             write_jsonl(checkpoint_path(root), completed.values())
             continue
-        if infer_extension(url) in {"pdf", "doc", "docx", "zip"} and "html" in content_type.lower():
+        if extension in {"pdf", "doc", "docx", "zip", "rtf", "jpg", "jpeg", "png"} and "html" in content_type.lower():
             page_text = html_to_text(response.text).lower()
             if any(token in page_text for token in ("login", "sign in", "войти", "авторизац")):
                 errors_logger.error("DOWNLOAD skipped_login_page url=%s final_url=%s", url, response.final_url)

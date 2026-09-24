@@ -29,6 +29,10 @@ EVENT_METADATA_FILENAME = "event-metadata.json"
 EVENT_SOURCE_URLS_FILENAME = "event-source-urls.txt"
 EVENT_RELATIONS_FILENAME = "event-relations.json"
 OWAO_SOURCE_ID = "owao_tasks_official"
+AUTHORITATIVE_DISCOVERY_METADATA_SOURCE_IDS = {
+    "belarus_astronomy_belastro_archive",
+    "bulgaria_astronomy_official",
+}
 CONTAINER_SOURCE_IDS = {
     "ioaa_past_olympiads",
     "ioaa_problems",
@@ -167,6 +171,15 @@ def resolve_extension(row: dict, raw_path: Path) -> str:
 
 
 def resolve_year(row: dict, max_reasonable_year: int, text_hint: str) -> int | None:
+    # Some bounded source parsers already resolve academic-year and archive
+    # context more reliably than filenames inside the linked files.  Preserve
+    # that discovery result instead of letting an embedded/legacy filename
+    # (for example 1900 or the first year of a school season) move the entry.
+    if str(row.get("source_id", "")) in AUTHORITATIVE_DISCOVERY_METADATA_SOURCE_IDS:
+        discovered_year = row.get("year")
+        if isinstance(discovered_year, int) and discovered_year <= max_reasonable_year:
+            return discovered_year
+
     candidates = (
         context_year(row),
         infer_year(str(row.get("filename_original", ""))),
@@ -401,6 +414,7 @@ def normalize(root: Path, families: set[str] | None, dry_run: bool, limit: int |
         year = resolve_year(row, max_reasonable_year, text_hint)
         context = seed_context(row)
         document_type = row["document_type"]
+        source_metadata_is_authoritative = str(row.get("source_id", "")) in AUTHORITATIVE_DISCOVERY_METADATA_SOURCE_IDS
         is_owao_seed_page = row.get("source_id") == OWAO_SOURCE_ID and "seed_page=true" in str(row.get("notes", ""))
         inferred_document_type, _ = infer_document_type(
             str(row.get("filename_original", "")),
@@ -409,9 +423,9 @@ def normalize(root: Path, families: set[str] | None, dry_run: bool, limit: int |
             str(row.get("parent_page_title", "")),
             str(row.get("parent_page_url", "")),
         )
-        if not is_owao_seed_page and document_type == "info" and inferred_document_type != "info":
+        if not source_metadata_is_authoritative and not is_owao_seed_page and document_type == "info" and inferred_document_type != "info":
             document_type = inferred_document_type
-        elif document_type == "tasks" and inferred_document_type in {
+        elif not source_metadata_is_authoritative and document_type == "tasks" and inferred_document_type in {
             "solutions",
             "marking",
             "analysis",
@@ -431,7 +445,7 @@ def normalize(root: Path, families: set[str] | None, dry_run: bool, limit: int |
                 round_detail = "senior"
             elif "inaojr" in filename_lower:
                 round_detail = "junior"
-        if stage_or_round == "unknown" or not round_detail:
+        if not source_metadata_is_authoritative and (stage_or_round == "unknown" or not round_detail):
             inferred_stage, inferred_round_detail = infer_stage(
                 row["olympiad_family"],
                 str(row.get("filename_original", "")),

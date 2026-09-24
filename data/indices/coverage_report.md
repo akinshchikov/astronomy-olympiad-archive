@@ -10,13 +10,14 @@ Coverage labels describe the current archive state, not the importance or qualit
 | apao | Asian-Pacific Astronomy Olympiad | Азиатско-Тихоокеанская астрономическая олимпиада | Asia-Pacific | international secondary-school olympiad | 0 | none | Source currently unresolved | Unknown | official | dead links | apao_issp_official=dead_links |
 | bangladesh_bao | Bangladesh Astronomy Olympiad | Астрономическая олимпиада Бангладеш | Bangladesh | national olympiad | 10 | 2024–2024 | Indexed local archive | Partial archive | official | open | none |
 | bangladesh_bdoaa | Bangladesh Olympiad on Astronomy and Astrophysics | Олимпиада Бангладеш по астрономии и астрофизике | Bangladesh | national olympiad | 0 | none | Source currently unresolved | Unknown | official | dead links | bangladesh_bdoaa_official=dead_links |
+| belarus_astronomy | Belarusian Republican Astronomy Olympiad | Республиканская олимпиада Республики Беларусь по астрономии | Belarus | national school olympiad | 425 | 2000–2025 | Indexed local archive | Partial archive | archive | open | none |
 | brazil_oba | Brazilian Astronomy and Astronautics Olympiad | Бразильская олимпиада по астрономии и астронавтике | Brazil | national multi-level olympiad | 216 | 1998–2024 | Indexed local archive | Partial archive | official | partially accessible | brazil_oba_official=partially_accessible |
 | baao | British Astronomy and Astrophysics Olympiad | Британская олимпиада по астрономии и астрофизике | United Kingdom | national secondary-school olympiad | 0 | none | Metadata catalogued | Unknown | official | partially accessible | baao_bpho_official=partially_accessible |
-| bulgaria_astronomy | Bulgarian Astronomy Olympiad | Болгарская астрономическая олимпиада | Bulgaria | national multi-age olympiad | 29 | 1998–2026 | Indexed local archive | Partial archive | official | open | none |
+| bulgaria_astronomy | Bulgarian Astronomy Olympiad | Болгарская астрономическая олимпиада | Bulgaria | national multi-age olympiad | 220 | 2005–2026 | Indexed local archive | Partial archive | official | dead links, open | bulgaria_astronomy_oap_legacy=dead_links |
 | caao | Canadian Astronomy and Astrophysics Olympiad | Канадская олимпиада по астрономии и астрофизике | Canada | national olympiad | 7 | 2017–2023 | Indexed local archive | Partial archive | official | open | none |
 | china_cnao | China National Astronomy Olympiad | Национальная астрономическая олимпиада Китая | China | national olympiad | 0 | none | Metadata catalogued | Unknown | official | no archive found | china_cnao_beijing_planetarium_official=no_archive_found |
 | croatia_astronomy | Croatian Astronomy Competition | Хорватское соревнование по астрономии | Croatia | national school competition | 563 | 2008–2026 | Indexed local archive | Partial archive | official | partially accessible | croatia_astronomy_azoo_official=partially_accessible |
-| czech_astronomy | Czech Astronomical Olympiad | Чешская астрономическая олимпиада | Czechia | national multi-category olympiad | 77 | 2004–2025 | Indexed local archive | Partial archive | official | partially accessible | czech_astronomy_official=partially_accessible |
+| czech_astronomy | Czech Astronomical Olympiad | Чешская астрономическая олимпиада | Czechia | national multi-category olympiad | 92 | 2004–2026 | Indexed local archive | Partial archive | official | partially accessible | czech_astronomy_official=partially_accessible |
 | gecaa | Global e-Competition on Astronomy and Astrophysics | Глобальное электронное соревнование по астрономии и астрофизике | International | international competition | 6 | 2020–2020 | Indexed local archive | Partial archive | official | dead links, open | gecaa_official_archive=dead_links |
 | hong_kong_astronomy | Hong Kong Astronomy Competition | Астрономическое соревнование Гонконга | Hong Kong, China | regional competition | 0 | none | Metadata catalogued | Unknown | official | policy blocked | hong_kong_astronomy_space_museum=policy_blocked |
 | inao | Indian National Astronomy Olympiad | Индийская национальная астрономическая олимпиада | India | national olympiad | 43 | 2008–2026 | Indexed local archive | Partial archive | official | open | explicit-no-redistribution |
@@ -34,10 +35,10 @@ Coverage labels describe the current archive state, not the importance or qualit
 | nepal_astronomy | Nepal Astronomy Olympiad | Непальская астрономическая олимпиада | Nepal | national olympiad | 2 | none | Indexed local archive | Sample only | official | open | none |
 | nzoaa | New Zealand Olympiad on Astronomy and Astrophysics | Новозеландская олимпиада по астрономии и астрофизике | New Zealand | national olympiad | 0 | 2024–2024 | Metadata catalogued | Unknown | official | policy blocked | nzoaa_official=policy_blocked |
 | owao | Open World Astronomy Olympiad | Открытая всемирная астрономическая олимпиада | International | international olympiad | 20 | 2022–2025 | Indexed local archive | Partial archive | archive, official | open, partially accessible | owao_tasks_official=partially_accessible |
-| poland_astronomy | Polish Astronomy Olympiad | Польская астрономическая олимпиада | Poland | national senior olympiad | 6 | 2027–2027 | Indexed local archive | Partial archive | official | open | none |
+| poland_astronomy | Polish Astronomy Olympiad | Польская астрономическая олимпиада | Poland | national senior olympiad | 7 | 2027–2027 | Indexed local archive | Partial archive | official | open | none |
 | poland_astronomy_junior | Polish Junior Astronomy Olympiad | Польская юниорская астрономическая олимпиада | Poland | national junior olympiad | 0 | 2025–2026 | Metadata catalogued | Unknown | official | partially accessible | poland_astronomy_junior_official=partially_accessible |
 | romania_astronomy | Romanian Astronomy and Astrophysics Olympiad | Румынская олимпиада по астрономии и астрофизике | Romania | national olympiad | 0 | none | Source currently unresolved | Unknown | official | dead links | romania_astronomy_official=dead_links |
-| russia_team_qual | Russia Team Qualification in Astronomy and Astrophysics | Отбор в сборную России по астрономии и астрофизике | Russia | national team selection | 70 | 2016–2026 | Indexed local archive | Partial archive | official | partially accessible | russia_team_qual_archive=partially_accessible |
+| russia_team_qual | Russia Team Qualification in Astronomy and Astrophysics | Отбор в сборную России по астрономии и астрофизике | Russia | national team selection | 74 | 2016–2026 | Indexed local archive | Partial archive | official | partially accessible | russia_team_qual_archive=partially_accessible |
 | spbao | Saint Petersburg Astronomy Olympiad | Санкт-Петербургская астрономическая олимпиада | Russia | regional multi-stage olympiad | 440 | 2010–2026 | Indexed local archive | Partial archive | archive, official | open, partially accessible | spbao_olimpiada_archive=partially_accessible; spbao_year_class_pages=partially_accessible |
 | serbia_astronomy | Serbian Astronomy Olympiad | Сербская астрономическая олимпиада | Serbia | national olympiad | 31 | 2012–2026 | Indexed local archive | Partial archive | official | open | none |
 | singapore_astronomy | Singapore Astronomy Olympiad | Сингапурская астрономическая олимпиада | Singapore | national olympiad | 0 | none | Metadata catalogued | Unknown | official | robots blocked | singapore_astronomy_official=robots_blocked |
@@ -48,9 +49,9 @@ Coverage labels describe the current archive state, not the importance or qualit
 | sri_lanka_junior_astronomy | Sri Lanka Junior Astronomy Olympiad | Юниорская астрономическая олимпиада Шри-Ланки | Sri Lanka | national junior olympiad | 25 | 2011–2024 | Indexed local archive | Partial archive | official | open | none |
 | struve | Struve Astronomy Olympiad | Астрономическая олимпиада имени Струве | Russia | multi-stage school olympiad | 43 | 2022–2026 | Indexed local archive | Partial archive | mirror, official | open, partially accessible | struve_astroedu_archive=partially_accessible |
 | taiwan_astronomy | Taiwan Astronomy Olympiad | Тайваньская астрономическая олимпиада | Taiwan | national olympiad candidate | 0 | none | Deferred pending a reliable archive | Unknown | archive | not applicable | none |
-| thailand_astronomy | Thailand Astronomy Olympiad | Таиландская астрономическая олимпиада | Thailand | national olympiad | 0 | 2009–2025 | Metadata catalogued | Unknown | official | form gated | thailand_astronomy_posn_official=form_gated |
+| thailand_astronomy | Thailand Astronomy Olympiad | Таиландская астрономическая олимпиада | Thailand | national olympiad | 0 | 2009–2026 | Metadata catalogued | Unknown | official | form gated | thailand_astronomy_posn_official=form_gated |
 | ukraine_astronomy | Ukrainian Student Astronomy Olympiad | Украинская ученическая астрономическая олимпиада | Ukraine | national school olympiad | 0 | none | Source currently unresolved | Unknown | official | dead links | ukraine_usao_official=dead_links |
-| usaaao | United States Astronomy and Astrophysics Olympiad | Олимпиада США по астрономии и астрофизике | United States | national olympiad and team selection | 58 | 2014–2026 | Indexed local archive | Partial archive | official | open | none |
+| usaaao | United States Astronomy and Astrophysics Olympiad | Олимпиада США по астрономии и астрофизике | United States | national olympiad and team selection | 59 | 2014–2026 | Indexed local archive | Partial archive | official | open | none |
 
 ## Detailed discovery and archive coverage
 
@@ -102,6 +103,18 @@ Coverage labels describe the current archive state, not the importance or qualit
 
 - No materials discovered yet.
 
+## belarus_astronomy
+
+- Years found: 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025
+- Years with tasks: 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025
+- Years with solutions: 2003, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025
+- Years with mirror material: none
+- Relation groups summary: exact_duplicate=32, partial_overlap=1, possible_duplicate=73, reformatted_version=56, scan_variant=19, source_variant=236, translated_version=6
+- Low-confidence years: none
+- Discovery-only / undownloaded years: 2020
+- Undownloaded document types: tasks=2
+- Gaps: none observed inside valid competition range
+
 ## brazil_oba
 
 - Years found: 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024
@@ -128,15 +141,15 @@ Coverage labels describe the current archive state, not the importance or qualit
 
 ## bulgaria_astronomy
 
-- Years found: 1998, 2025, 2026
-- Years with tasks: 1998, 2025, 2026
-- Years with solutions: 2026
+- Years found: 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026
+- Years with tasks: 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026
+- Years with solutions: 2019, 2022, 2023, 2024, 2025, 2026
 - Years with mirror material: none
-- Relation groups summary: possible_duplicate=1, source_variant=27
+- Relation groups summary: possible_duplicate=42, source_variant=178
 - Low-confidence years: none
 - Discovery-only / undownloaded years: none
 - Undownloaded document types: none
-- Gaps: 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024
+- Gaps: none observed inside valid competition range
 
 ## caao
 
@@ -168,12 +181,12 @@ Coverage labels describe the current archive state, not the importance or qualit
 
 ## czech_astronomy
 
-- Years found: 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025
+- Years found: 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026
 - Years with tasks: none
-- Years with solutions: 2020, 2021, 2022, 2023, 2024, 2025
+- Years with solutions: 2020, 2021, 2022, 2023, 2024, 2025, 2026
 - Years with mirror material: none
-- Relation groups summary: possible_duplicate=22, source_variant=48
-- Low-confidence years: 2004, 2005, 2006, 2024, 2025
+- Relation groups summary: exact_duplicate=144, possible_duplicate=6, source_variant=8
+- Low-confidence years: 2004, 2005, 2006, 2024, 2025, 2026
 - Discovery-only / undownloaded years: none
 - Undownloaded document types: none
 - Gaps: none observed inside valid competition range
@@ -294,7 +307,7 @@ Coverage labels describe the current archive state, not the importance or qualit
 - Years with tasks: 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026
 - Years with solutions: 2010, 2011, 2012, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026
 - Years with mirror material: none
-- Relation groups summary: exact_duplicate=98, partial_overlap=10, possible_duplicate=15, source_variant=450
+- Relation groups summary: exact_duplicate=122, partial_overlap=9, possible_duplicate=15, source_variant=427
 - Low-confidence years: none
 - Discovery-only / undownloaded years: 2017
 - Undownloaded document types: tasks=1
@@ -342,7 +355,7 @@ Coverage labels describe the current archive state, not the importance or qualit
 - Years with tasks: none
 - Years with solutions: none
 - Years with mirror material: none
-- Relation groups summary: possible_duplicate=1, source_variant=3
+- Relation groups summary: possible_duplicate=1, source_variant=5
 - Low-confidence years: none
 - Discovery-only / undownloaded years: none
 - Undownloaded document types: none
@@ -370,10 +383,10 @@ Coverage labels describe the current archive state, not the importance or qualit
 - Years with tasks: 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026
 - Years with solutions: none
 - Years with mirror material: none
-- Relation groups summary: possible_duplicate=22, reformatted_version=4, source_variant=41
+- Relation groups summary: possible_duplicate=20, reformatted_version=4, source_variant=47
 - Low-confidence years: none
 - Discovery-only / undownloaded years: 2021, 2022, 2023, 2024, 2025, 2026
-- Undownloaded document types: tasks=31
+- Undownloaded document types: tasks=35
 - Gaps: none observed inside valid competition range
 
 ## spbao
@@ -483,14 +496,14 @@ Coverage labels describe the current archive state, not the importance or qualit
 
 ## thailand_astronomy
 
-- Years found: 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025
-- Years with tasks: 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025
+- Years found: 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026
+- Years with tasks: 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026
 - Years with solutions: none
 - Years with mirror material: none
 - Relation groups summary: none
 - Low-confidence years: none
-- Discovery-only / undownloaded years: 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025
-- Undownloaded document types: tasks=19
+- Discovery-only / undownloaded years: 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026
+- Undownloaded document types: tasks=21
 - Gaps: none observed inside valid competition range
 
 ## ukraine_astronomy

@@ -246,6 +246,28 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
         extras={"default_context": {"record_seed_page": False}},
     ),
     SourceDefinition(
+        source_id="belarus_astronomy_belastro_archive",
+        label="Belarus astronomy: BelAstro public archive",
+        olympiad_family="belarus_astronomy",
+        source_role="archive",
+        source_priority=1,
+        strategy="static",
+        seed_urls=[
+            "https://belastro.org/district.html",
+            "https://belastro.org/regional.html",
+            "https://belastro.org/republican.html",
+        ],
+        notes="Public BelAstro archive for district, regional, and republican stages; the unrelated Russian remote-olympiad section is excluded.",
+        extras={
+            "default_context": {"record_seed_page": False},
+            "seed_contexts": {
+                "https://belastro.org/district.html": {"stage_or_round": "district"},
+                "https://belastro.org/regional.html": {"stage_or_round": "regional"},
+                "https://belastro.org/republican.html": {"stage_or_round": "final"},
+            },
+        },
+    ),
+    SourceDefinition(
         source_id="serbia_astronomy_official",
         label="Serbia astronomy: official NAOK archive page",
         olympiad_family="serbia_astronomy",
@@ -491,7 +513,7 @@ ADDITIONAL_SOURCE_DEFINITIONS = (
     ("singapore_astronomy_official", "Singapore Astronomy Olympiad: Astronomy.SG", "singapore_astronomy", "official", 1, "https://astronomy.sg/singapore-astronomy-olympiad/", "Only documents explicitly linked from this official page are followed."),
     ("sri_lanka_ipsl_official", "Sri Lanka Astronomy Olympiad: IPSL", "sri_lanka_astronomy", "official", 1, "https://ipsl.lk/astronomy-olympiad/", "Senior lineage; translations remain language variants."),
     ("sri_lanka_junior_ipsl_official", "Sri Lanka Junior Astronomy Olympiad: IPSL", "sri_lanka_junior_astronomy", "official", 1, "https://ipsl.lk/astronomy-olympiad/", "Separate junior lineage; translations remain language variants."),
-    ("bulgaria_astronomy_official", "Bulgarian Astronomy Olympiad: official archive", "bulgaria_astronomy", "official", 1, "https://astro-olymp.org/", "Official task corpus; press and results links are excluded."),
+    ("bulgaria_astronomy_official", "Bulgarian Astronomy Olympiad: official archive", "bulgaria_astronomy", "official", 1, "https://astro-olymp.org/", "Official task corpus plus the historical pCloud folder linked by the official archive page; press and results links are excluded."),
     ("slovenia_astronomy_dmfa_official", "Slovenian Astronomy Competition: DMFA", "slovenia_astronomy", "official", 1, "https://www.dmfa.si/Tekmovanja/As/", "High-school lineage."),
     ("slovenia_astronomy_primary_dmfa_official", "Slovenian Primary Astronomy Competition: DMFA", "slovenia_astronomy_primary", "official", 1, "https://www.dmfa.si/tekmovanja/AsOS/", "Separate primary-school lineage."),
     ("slovenia_utrinek_dmfa_official", "Slovenian Utrinek Astronomy Competition: DMFA", "slovenia_utrinek", "official", 1, "https://www.dmfa.si/tekmovanja/AsOSU/", "Separate Utrinek lineage."),
@@ -517,6 +539,7 @@ SOURCE_DEFINITIONS.extend(
         source_priority=priority,
         strategy="static",
         seed_urls={
+            "bulgaria_astronomy_official": [seed_url, "https://api.pcloud.com/showpublink?code=kZVYO47ZNTqx8rCGDUhDAuiu0k6ScQnH6QMV"],
             "croatia_astronomy_azoo_official": [seed_url, "https://www.azoo.hr/wp-json/wp/v2/search?search=astronomija&per_page=100"],
             "slovenia_astronomy_dmfa_official": ["https://www.dmfa.si/Tekmovanja/As/ArhivNalog.aspx"],
             "slovenia_astronomy_primary_dmfa_official": ["https://www.dmfa.si/tekmovanja/AsOS/ArhivNalog.aspx"],

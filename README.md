@@ -257,16 +257,16 @@ find data/archive -maxdepth 3 -type d -name 'owao' -print
 
 ## Snapshot
 
-Current tracked public snapshot refreshed on `2026-08-01`:
+Current tracked public snapshot refreshed on `2026-09-24`:
 
-- configured seed sources: `53`
-- discovered public documents: `3768`
-- olympiad index rows: `687`
-- unique public files in `files_index.csv`: `3538`
-- relation groups: `592`
-- families with indexed local files: `27`
-- families represented in `olympiads_index.csv`: `32`
-- evaluated sources in `source_coverage.csv`: `62` (`53` currently configured)
+- configured seed sources: `54`
+- discovered public documents: `4053`
+- olympiad index rows: `793`
+- unique public files in `files_index.csv`: `4175`
+- relation groups: `740`
+- families with indexed local files: `28`
+- families represented in `olympiads_index.csv`: `33`
+- evaluated sources in `source_coverage.csv`: `64` (`54` currently configured)
 
 The family coverage table reports, for every catalogued family, its English and
 Russian names, region, scope, indexed-file count, known year range, current content

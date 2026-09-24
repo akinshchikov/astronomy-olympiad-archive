@@ -1,0 +1,48 @@
+{
+  "result": 0,
+  "metadata": {
+    "name": "07_Olimpiada",
+    "isfolder": true,
+    "contents": [
+      {
+        "name": "2krag_11-12",
+        "isfolder": true,
+        "contents": [
+          {"name": "2005-II-1112.pdf", "isfolder": false, "fileid": 101, "contenttype": "application/pdf"},
+          {"name": "notes.txt", "isfolder": false, "fileid": 999, "contenttype": "text/plain"}
+        ]
+      },
+      {
+        "name": "3krag_9-10",
+        "isfolder": true,
+        "contents": [
+          {"name": "2019-III-910.pdf", "isfolder": false, "fileid": 103, "contenttype": "application/pdf"},
+          {"name": "2014-III-910-Th.pdf", "isfolder": false, "fileid": 104, "contenttype": "application/pdf"},
+          {"name": "2014-III-910-Pr.pdf", "isfolder": false, "fileid": 105, "contenttype": "application/pdf"}
+        ]
+      },
+      {
+        "name": "3krag_testove",
+        "isfolder": true,
+        "contents": [
+          {
+            "name": "3krag_testove_2022",
+            "isfolder": true,
+            "contents": [
+              {"name": "2022_2den_9-10.pdf", "isfolder": false, "fileid": 106, "contenttype": "application/pdf"},
+              {"name": "2022_2den_9-10_sol.pdf", "isfolder": false, "fileid": 107, "contenttype": "application/pdf"}
+            ]
+          },
+          {
+            "name": "3krag_primerni_testove_all",
+            "isfolder": true,
+            "contents": [
+              {"name": "test_9-10_AK01.pdf", "isfolder": false, "fileid": 108, "contenttype": "application/pdf"}
+            ]
+          }
+        ]
+      },
+      {"name": "readme_archive.pdf", "isfolder": false, "fileid": 109, "contenttype": "application/pdf"}
+    ]
+  }
+}
