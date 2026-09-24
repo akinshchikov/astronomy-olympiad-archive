@@ -246,6 +246,28 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
         extras={"default_context": {"record_seed_page": False}},
     ),
     SourceDefinition(
+        source_id="belarus_astronomy_belastro_archive",
+        label="Belarus astronomy: BelAstro public archive",
+        olympiad_family="belarus_astronomy",
+        source_role="archive",
+        source_priority=1,
+        strategy="static",
+        seed_urls=[
+            "https://belastro.org/district.html",
+            "https://belastro.org/regional.html",
+            "https://belastro.org/republican.html",
+        ],
+        notes="Public BelAstro archive for district, regional, and republican stages; the unrelated Russian remote-olympiad section is excluded.",
+        extras={
+            "default_context": {"record_seed_page": False},
+            "seed_contexts": {
+                "https://belastro.org/district.html": {"stage_or_round": "district"},
+                "https://belastro.org/regional.html": {"stage_or_round": "regional"},
+                "https://belastro.org/republican.html": {"stage_or_round": "final"},
+            },
+        },
+    ),
+    SourceDefinition(
         source_id="serbia_astronomy_official",
         label="Serbia astronomy: official NAOK archive page",
         olympiad_family="serbia_astronomy",

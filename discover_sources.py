@@ -40,6 +40,8 @@ STRUVE_ASTROEDU_SOURCE_ID = "struve_astroedu_archive"
 OWAO_SOURCE_ID = "owao_tasks_official"
 OWAO_ASTROEDU_SOURCE_ID = "owao_astroedu_archive"
 SERBIA_SOURCE_ID = "serbia_astronomy_official"
+BELARUS_SOURCE_ID = "belarus_astronomy_belastro_archive"
+BELASTRO_FILE_EXTENSIONS = {"pdf", "doc", "docx", "rtf", "jpg", "jpeg", "png"}
 RUSSIA_TEAM_QUAL_SOURCE_ID = "russia_team_qual_archive"
 VSOSH_ASTROEDU_SOURCE_ID = "vsosh_astroedu_archive"
 VSOSH_EDSOO_SOURCE_ID = "vsosh_edsoo_stage_documents"
@@ -77,6 +79,14 @@ def source_specific_page_link(source_id: str, href: str) -> bool:
     if source_id == "thailand_astronomy_posn_official":
         return bool(re.fullmatch(r"/projects/academic-olympiad/ao/examination/(?:page/[1-3]/)?", path))
     return False
+
+
+def belastro_extension(url: str) -> str:
+    name = decoded_filename(url).lower()
+    if "." not in name:
+        return ""
+    extension = name.rsplit(".", 1)[1]
+    return extension if extension in BELASTRO_FILE_EXTENSIONS else ""
 
 
 def croatia_azoo_search_links(payload: str) -> list[dict]:
@@ -628,6 +638,14 @@ def passes_source_specific_link_filter(seed: dict, link_text: str, href: str) ->
         return is_current_vsosh_edsoo_document(link_text, href)
     if source_id == SERBIA_SOURCE_ID:
         return serbia_stage_from_url(href) is not None
+    if source_id == BELARUS_SOURCE_ID:
+        path = decoded_url_path(href).lower()
+        return (
+            source_domain(href) == "belastro.org"
+            and "/files/russian_remote_olympiads/" not in path
+            and path.startswith(("/files/district/", "/files/3_stage/", "/files/republican/"))
+            and bool(belastro_extension(href))
+        )
     if source_id in IOAA_CORE_SOURCE_IDS:
         return "gecaa" not in combined and "junior-ioaa" not in combined and "junior ioaa" not in combined
     if source_id == IOAA_JUNIOR_SOURCE_ID:
@@ -708,6 +726,8 @@ def passes_source_specific_link_filter(seed: dict, link_text: str, href: str) ->
 
 def should_record_seed_link(seed: dict, link_text: str, href: str) -> bool:
     source_id = source_id_of(seed)
+    if source_id == BELARUS_SOURCE_ID:
+        return passes_source_specific_link_filter(seed, link_text, href)
     if source_id == "nzoaa_official":
         # The past-papers page also links to itself and general site navigation.
         # Only a labelled official paper/marking Drive link is corpus evidence.
@@ -862,6 +882,20 @@ def apply_source_specific_link_overrides(
     if source_id == "caao_official_past_contests":
         if re.search(r"(?:^|[-_/])c(?:a)?ao[-_ ]?20\d{2}|c(?:a)?ao[-_ ]?problems", decoded_filename(href), re.I):
             return "tasks", ["tasks"], "national", None, "en"
+    if source_id == BELARUS_SOURCE_ID:
+        label = normalize_whitespace(f"{link_text} {decoded_filename(href)}").lower()
+        detail = round_detail
+        if re.search(r"theor|teor|теор|тэор", label):
+            detail = "theoretical"
+        elif re.search(r"practic|prakt|experiment|практ|экспер", label):
+            detail = "practical"
+        if document_type == "info":
+            if re.search(r"(?:^|[ _/-])(map|data|appendix|addition)|карт", label):
+                document_type, extra_types = "reference_data", ["reference_data"]
+            else:
+                document_type, extra_types = "tasks", ["tasks"]
+        language = "be" if re.search(r"[ўЎіІ]|беларус", f"{link_text} {decoded_filename(href)}", re.I) else "ru"
+        return document_type, extra_types or [document_type], stage_or_round, detail, language
     if source_id == "bulgaria_astronomy_official":
         name = decoded_filename(href).lower()
         stage = {"-i-": "municipal", "-ii-": "regional", "-iii-": "national"}
@@ -1113,8 +1147,13 @@ def build_candidate_entry(
         "parent_page_url": parent_page_url,
         "parent_page_title": parent_page_title,
         "filename_original": decoded_filename(href) or "download",
-        "extension": "pdf" if (
-            source_id_of(seed) == VSOSH_EDSOO_SOURCE_ID
+        "extension": (
+            belastro_extension(href)
+            if source_id_of(seed) == BELARUS_SOURCE_ID and belastro_extension(href)
+            else "pdf"
+        ) if (
+            (source_id_of(seed) == BELARUS_SOURCE_ID and bool(belastro_extension(href)))
+            or source_id_of(seed) == VSOSH_EDSOO_SOURCE_ID
             or (source_id_of(seed) == CZECH_SOURCE_ID and "/f/detail/" in href)
             or (source_id_of(seed) == "olaa_official_archive" and source_domain(href) == "drive.google.com")
             or (source_id_of(seed) == "nepal_astronomy_naso_official" and source_domain(href) == "bit.ly")

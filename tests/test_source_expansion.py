@@ -38,6 +38,7 @@ class SourceExpansionTests(TestCase):
         self.assertIn("olaa_official_archive", runtime)
         self.assertEqual(runtime["bangladesh_bao_official"], "bangladesh_bao")
         self.assertEqual(runtime["sri_lanka_junior_ipsl_official"], "sri_lanka_junior_astronomy")
+        self.assertEqual(runtime["belarus_astronomy_belastro_archive"], "belarus_astronomy")
         self.assertNotIn("apao_issp_official", runtime)
         self.assertNotIn("taiwan_astronomy_deferred_reference", runtime)
         self.assertNotIn("hong_kong_astronomy_space_museum", runtime)
@@ -152,6 +153,67 @@ class SourceExpansionTests(TestCase):
         rows = self.discover_rows(source, {page: response(page, f"<a href='{paper}'>2023</a><a href='{ioaa}'>IOAA 2023</a>")})
         self.assertEqual((rows[paper]["document_type"], rows[paper]["stage_or_round"], rows[paper]["year"]), ("tasks", "national", 2023))
         self.assertNotIn(ioaa, rows)
+
+    def test_belarus_archive_keeps_stage_context_and_excludes_russian_remote_material(self):
+        page = "https://belastro.org/district.html"
+        task = "https://belastro.org/files/District/2019-2020/Задания теоретического тура.pdf"
+        solution = "https://belastro.org/files/District/2019-2020/Решения практического тура.pdf"
+        scan = "https://belastro.org/files/District/2019-2020/Материалы для практического тура/Задание 5/Задание 5.jpg"
+        remote = "https://belastro.org/files/Russian_Remote_Olympiads/zao08sol.pdf"
+        source = SourceDefinition(
+            "belarus_astronomy_belastro_archive",
+            "BelAstro",
+            "belarus_astronomy",
+            "archive",
+            1,
+            "static",
+            [page],
+            extras={
+                "default_context": {"record_seed_page": False},
+                "seed_contexts": {page: {"stage_or_round": "district"}},
+            },
+        )
+        html = (FIXTURES / "belarus_district_archive.html").read_text(encoding="utf-8")
+        rows = self.discover_rows(source, {page: response(page, html)})
+        self.assertEqual((rows[task]["year"], rows[task]["stage_or_round"], rows[task]["document_type"], rows[task]["round_detail"]), (2020, "district", "tasks", "theoretical"))
+        self.assertEqual((rows[solution]["year"], rows[solution]["stage_or_round"], rows[solution]["document_type"], rows[solution]["round_detail"]), (2020, "district", "solutions", "practical"))
+        self.assertEqual((rows[scan]["extension"], rows[scan]["document_type"], rows[scan]["round_detail"]), ("jpg", "tasks", "practical"))
+        self.assertNotIn(remote, rows)
+
+    def test_belarus_normalization_preserves_discovered_academic_year_over_legacy_filename(self):
+        seed = {
+            "source_id": "belarus_astronomy_belastro_archive",
+            "olympiad_family": "belarus_astronomy",
+            "source_role": "archive",
+            "source_priority": 1,
+            "url": "https://belastro.org/district.html",
+            "context": {"stage_or_round": "district"},
+        }
+        href = "https://belastro.org/files/District/2004-2005/1900.jpg"
+        row = discover_sources.build_candidate_entry(
+            seed,
+            href=href,
+            link_text="Практическое задание",
+            page_title="District archive",
+            parent_page_url=seed["url"],
+            parent_page_title="District archive",
+            context=seed["context"],
+        )
+        self.assertEqual(row["year"], 2005)
+        with TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            raw = crawl_source.target_raw_path(root, row["source_id"], row["source_url"], row["extension"])
+            raw.parent.mkdir(parents=True, exist_ok=True)
+            raw.write_bytes(b"fixture image")
+            write_jsonl(
+                root / "data/manifests/download_manifest.jsonl",
+                [{**row, "raw_path": str(raw), "txt_path": "", "status": "downloaded", "content_type": "image/jpeg"}],
+            )
+            self.assertEqual(normalize_archive.normalize(root, {"belarus_astronomy"}, False, None), 0)
+            normalized = load_jsonl(root / "data/manifests/normalized_entries.jsonl")
+            self.assertEqual(len(normalized), 1)
+            self.assertEqual((normalized[0]["year"], normalized[0]["stage_or_round"]), (2005, "district"))
+            self.assertIn("/2005/district/", normalized[0]["archive_path"].replace("\\", "/"))
 
     def test_bulgaria_and_brazil_official_filename_metadata(self):
         bulgaria = {"source_id": "bulgaria_astronomy_official", "olympiad_family": "bulgaria_astronomy", "source_role": "official", "source_priority": 1, "url": "https://astro-olymp.org/", "context": {}}

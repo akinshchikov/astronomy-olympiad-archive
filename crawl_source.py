@@ -52,6 +52,10 @@ def guessed_content_type(extension: str) -> str:
         "htm": "text/html; charset=utf-8",
         "html": "text/html; charset=utf-8",
         "pdf": "application/pdf",
+        "rtf": "application/rtf",
+        "jpg": "image/jpeg",
+        "jpeg": "image/jpeg",
+        "png": "image/png",
         "zip": "application/zip",
     }.get(extension, "")
 
@@ -168,7 +172,7 @@ def crawl_documents(root: Path, families: set[str] | None, dry_run: bool, limit:
             continue
 
         content_type = get_header_value(response.headers, "Content-Type")
-        if extension in {"pdf", "doc", "docx", "zip"} and not response_matches_extension(extension, content_type, response.content):
+        if extension in {"pdf", "doc", "docx", "zip", "rtf", "jpg", "jpeg", "png"} and not response_matches_extension(extension, content_type, response.content):
             errors_logger.error("DOWNLOAD rejected_content url=%s final_url=%s expected=%s content_type=%s", url, response.final_url, extension, content_type)
             completed[checkpoint_key(row)] = {
                 **row,
@@ -180,7 +184,7 @@ def crawl_documents(root: Path, families: set[str] | None, dry_run: bool, limit:
             }
             write_jsonl(checkpoint_path(root), completed.values())
             continue
-        if infer_extension(url) in {"pdf", "doc", "docx", "zip"} and "html" in content_type.lower():
+        if extension in {"pdf", "doc", "docx", "zip", "rtf", "jpg", "jpeg", "png"} and "html" in content_type.lower():
             page_text = html_to_text(response.text).lower()
             if any(token in page_text for token in ("login", "sign in", "войти", "авторизац")):
                 errors_logger.error("DOWNLOAD skipped_login_page url=%s final_url=%s", url, response.final_url)
