@@ -9,7 +9,7 @@ from html.parser import HTMLParser
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
-from urllib.parse import urljoin
+from urllib.parse import parse_qs, quote, urljoin, urlsplit
 
 from utils.cli import build_common_parser
 from utils.fs_utils import ensure_dir, load_jsonl, normalize_whitespace, write_jsonl
@@ -41,6 +41,8 @@ OWAO_SOURCE_ID = "owao_tasks_official"
 OWAO_ASTROEDU_SOURCE_ID = "owao_astroedu_archive"
 SERBIA_SOURCE_ID = "serbia_astronomy_official"
 BELARUS_SOURCE_ID = "belarus_astronomy_belastro_archive"
+BULGARIA_SOURCE_ID = "bulgaria_astronomy_official"
+BULGARIA_PCLOUD_CODE = "kZVYO47ZNTqx8rCGDUhDAuiu0k6ScQnH6QMV"
 BELASTRO_FILE_EXTENSIONS = {"pdf", "doc", "docx", "rtf", "jpg", "jpeg", "png"}
 RUSSIA_TEAM_QUAL_SOURCE_ID = "russia_team_qual_archive"
 VSOSH_ASTROEDU_SOURCE_ID = "vsosh_astroedu_archive"
@@ -88,6 +90,127 @@ def belastro_extension(url: str) -> str:
     extension = name.rsplit(".", 1)[1]
     return extension if extension in BELASTRO_FILE_EXTENSIONS else ""
 
+
+def pcloud_filename(url: str) -> str:
+    """Return the stable display filename carried by a pCloud API candidate URL."""
+    if source_domain(url) != "api.pcloud.com":
+        return ""
+    query = parse_qs(urlsplit(url).query)
+    return str((query.get("filename") or [""])[0]).strip()
+
+
+def bulgaria_event_year(url: str) -> int | None:
+    """Infer the competition year from Bulgarian archive filenames, not upload dates."""
+    name = (pcloud_filename(url) or decoded_filename(url)).lower()
+    if full := re.match(r"^(20\d{2})(?:[-_]|$)", name):
+        return int(full.group(1))
+    if short := re.match(r"^a?(\d{2})-(?:iii|ii|i)-", name, re.I):
+        return 2000 + int(short.group(1))
+    if full_answer := re.match(r"^a(20\d{2})-(?:iii|ii|i)-", name, re.I):
+        return int(full_answer.group(1))
+    if day_two := re.match(r"^(20\d{2})_2den_", name):
+        return int(day_two.group(1))
+    if day_two_solution := re.match(r"^sol_(20\d{2})_2den_", name):
+        return int(day_two_solution.group(1))
+    return None
+
+
+def bulgaria_pcloud_links(payload: str) -> list[dict]:
+    """Enumerate competition papers from the historical Bulgarian pCloud archive."""
+    try:
+        data = json.loads(payload)
+    except json.JSONDecodeError:
+        return []
+    metadata = data.get("metadata")
+    if not isinstance(metadata, dict):
+        return []
+
+    links: list[dict] = []
+
+    def walk(node: dict, parents: list[str]) -> None:
+        name = normalize_whitespace(str(node.get("name", "")))
+        if node.get("isfolder"):
+            next_parents = [*parents, name] if name else parents
+            for child in node.get("contents", []):
+                if isinstance(child, dict):
+                    walk(child, next_parents)
+            return
+
+        fileid = node.get("fileid")
+        if not isinstance(fileid, int) or not name.lower().endswith(".pdf"):
+            return
+
+        path_parts = [part for part in parents if part]
+        path_text = "/".join(path_parts).lower()
+
+        # The public folder also contains six non-year-specific sample tests
+        # and two archive/readme aids.  They are preparation/metadata, not
+        # competition papers, so keep the corpus boundary event-specific.
+        if "3krag_primerni_testove_all" in path_text or len(path_parts) <= 1:
+            return
+
+        stage = (
+            "regional"
+            if any(part.lower().startswith("2krag_") for part in path_parts)
+            else "national"
+            if any(part.lower().startswith("3krag_") for part in path_parts)
+            else "unknown"
+        )
+        age_match = re.search(r"(?:^|[-_])(56|78|910|1112)(?:[-_.]|$)", name.lower())
+        if not age_match:
+            age_match = re.search(r"(?:^|[_-])(5-6|7-8|9-10|11-12)(?=$|[_.-])", name.lower())
+        if not age_match:
+            age_match = re.search(r"(?:^|[_-])(5-6|7-8|9-10|11-12)(?=$|[_.-])", path_text)
+        age_token = age_match.group(1) if age_match else ""
+        age_detail = {
+            "56": "grade-5-6",
+            "5-6": "grade-5-6",
+            "78": "grade-7-8",
+            "7-8": "grade-7-8",
+            "910": "grade-9-10",
+            "9-10": "grade-9-10",
+            "1112": "grade-11-12",
+            "11-12": "grade-11-12",
+        }.get(age_token)
+
+        lowered = name.lower()
+        subtype = (
+            "test"
+            if "3krag_testove" in path_text or "2den" in lowered or "-test" in lowered
+            else "theoretical"
+            if re.search(r"-th(?:\.|$)", lowered)
+            else "practical"
+            if re.search(r"-pr(?:\.|$)", lowered)
+            else None
+        )
+        detail = "-".join(filter(None, (age_detail, subtype))) or None
+        document_type = "solutions" if ("_sol." in lowered or "-sol." in lowered or "-otg-" in lowered) else "tasks"
+        year = infer_year(name)
+
+        href = (
+            "https://api.pcloud.com/getpublinkdownload"
+            f"?code={BULGARIA_PCLOUD_CODE}&fileid={fileid}&filename={quote(name)}"
+        )
+        context_text = " / ".join([*path_parts, name])
+        context = {
+            "stage_or_round": stage,
+            "document_type": document_type,
+        }
+        if year is not None:
+            context["year"] = year
+        if detail:
+            context["round_detail"] = detail
+        links.append(
+            {
+                "href": href,
+                "text": name,
+                "context": context,
+                "context_text": context_text,
+            }
+        )
+
+    walk(metadata, [])
+    return links
 
 def croatia_azoo_search_links(payload: str) -> list[dict]:
     """Select only astronomy test/solution posts from AZOO's public search API."""
@@ -646,6 +769,10 @@ def passes_source_specific_link_filter(seed: dict, link_text: str, href: str) ->
             and path.startswith(("/files/district/", "/files/3_stage/", "/files/republican/"))
             and bool(belastro_extension(href))
         )
+    if source_id == BULGARIA_SOURCE_ID and source_domain(href) == "api.pcloud.com":
+        return decoded_url_path(href).lower().endswith("/getpublinkdownload") and bool(pcloud_filename(href))
+    if source_id == BULGARIA_SOURCE_ID and source_domain(href) == "astro-olymp.org":
+        return decoded_url_path(href).lower().startswith("/wp-content/uploads/") and infer_extension(href) == "pdf"
     if source_id in IOAA_CORE_SOURCE_IDS:
         return "gecaa" not in combined and "junior-ioaa" not in combined and "junior ioaa" not in combined
     if source_id == IOAA_JUNIOR_SOURCE_ID:
@@ -727,6 +854,10 @@ def passes_source_specific_link_filter(seed: dict, link_text: str, href: str) ->
 def should_record_seed_link(seed: dict, link_text: str, href: str) -> bool:
     source_id = source_id_of(seed)
     if source_id == BELARUS_SOURCE_ID:
+        return passes_source_specific_link_filter(seed, link_text, href)
+    if source_id == BULGARIA_SOURCE_ID and source_domain(href) == "api.pcloud.com":
+        return passes_source_specific_link_filter(seed, link_text, href)
+    if source_id == BULGARIA_SOURCE_ID:
         return passes_source_specific_link_filter(seed, link_text, href)
     if source_id == "nzoaa_official":
         # The past-papers page also links to itself and general site navigation.
@@ -896,13 +1027,44 @@ def apply_source_specific_link_overrides(
                 document_type, extra_types = "tasks", ["tasks"]
         language = "be" if re.search(r"[ўЎіІ]|беларус", f"{link_text} {decoded_filename(href)}", re.I) else "ru"
         return document_type, extra_types or [document_type], stage_or_round, detail, language
-    if source_id == "bulgaria_astronomy_official":
-        name = decoded_filename(href).lower()
-        stage = {"-i-": "municipal", "-ii-": "regional", "-iii-": "national"}
-        inferred_stage = next((value for token, value in stage.items() if token in name), stage_or_round)
-        if name.startswith(("a", "sol_")):
-            return "solutions", ["solutions"], inferred_stage, round_detail, "bg"
-        return "tasks", ["tasks"], inferred_stage, round_detail, "bg"
+    if source_id == BULGARIA_SOURCE_ID:
+        name = (pcloud_filename(href) or decoded_filename(href)).lower()
+        context_label = normalize_whitespace(f"{page_title} {name}").lower()
+        stage_match = re.search(r"(?:^|[-_])(iii|ii|i)(?:[-_]|$)", name, re.I)
+        stage_map = {"i": "municipal", "ii": "regional", "iii": "national"}
+        inferred_stage = stage_map.get(stage_match.group(1).lower(), stage_or_round) if stage_match else stage_or_round
+        if inferred_stage == "unknown" and ("2den" in name or "3krag_testove" in context_label):
+            inferred_stage = "national"
+
+        age_match = re.search(r"(?:[-_])(56|78|910|1112)(?:[-_.]|$)", name)
+        if not age_match:
+            age_match = re.search(r"(?:^|[_-])(5-6|7-8|9-10|11-12)(?=$|[_.-])", context_label)
+        age_token = age_match.group(1) if age_match else ""
+        age_detail = {
+            "56": "grade-5-6", "5-6": "grade-5-6",
+            "78": "grade-7-8", "7-8": "grade-7-8",
+            "910": "grade-9-10", "9-10": "grade-9-10",
+            "1112": "grade-11-12", "11-12": "grade-11-12",
+        }.get(age_token)
+
+        subtype = (
+            "test"
+            if "2den" in name or "-test" in name or "3krag_testove" in context_label
+            else "theoretical"
+            if re.search(r"-th(?:\.|$)", name)
+            else "practical"
+            if re.search(r"-pr(?:\.|$)", name)
+            else None
+        )
+        detail = "-".join(filter(None, (age_detail, subtype))) or round_detail
+        is_solution = (
+            bool(re.match(r"^a(?:20)?\d{2,4}[-_]", name))
+            or name.startswith("sol_")
+            or "_sol." in name
+            or "-sol." in name
+            or "-otg-" in name
+        )
+        return ("solutions", ["solutions"], inferred_stage, detail, "bg") if is_solution else ("tasks", ["tasks"], inferred_stage, detail, "bg")
     if source_id == "brazil_oba_official":
         name = decoded_filename(href).lower()
         level = re.search(r"niv(?:el)?[_ -]?(\d)", name)
@@ -1091,6 +1253,8 @@ def build_candidate_entry(
         filename_year = re.search(r"question_(20\d{2})_", decoded_filename(href), re.I)
         if filename_year:
             year = int(filename_year.group(1))
+    if source_id_of(seed) == BULGARIA_SOURCE_ID:
+        year = bulgaria_event_year(href) or year
     year, stage_or_round, round_detail, document_type = apply_context_overrides(
         context,
         year=year,
@@ -1146,13 +1310,18 @@ def build_candidate_entry(
         "source_role": source_role,
         "parent_page_url": parent_page_url,
         "parent_page_title": parent_page_title,
-        "filename_original": decoded_filename(href) or "download",
+        "filename_original": (
+            pcloud_filename(href)
+            if source_id_of(seed) == BULGARIA_SOURCE_ID and source_domain(href) == "api.pcloud.com"
+            else decoded_filename(href)
+        ) or "download",
         "extension": (
             belastro_extension(href)
             if source_id_of(seed) == BELARUS_SOURCE_ID and belastro_extension(href)
             else "pdf"
         ) if (
             (source_id_of(seed) == BELARUS_SOURCE_ID and bool(belastro_extension(href)))
+            or (source_id_of(seed) == BULGARIA_SOURCE_ID and source_domain(href) == "api.pcloud.com" and bool(pcloud_filename(href)))
             or source_id_of(seed) == VSOSH_EDSOO_SOURCE_ID
             or (source_id_of(seed) == CZECH_SOURCE_ID and "/f/detail/" in href)
             or (source_id_of(seed) == "olaa_official_archive" and source_domain(href) == "drive.google.com")
@@ -1299,6 +1468,8 @@ def discover_documents(root: Path, families: set[str] | None, dry_run: bool, lim
                 links = nepal_naso_page_links(page_html, page_url)
             elif source_id == "thailand_astronomy_posn_official":
                 links = thailand_form_gated_links(page_html, page_url) + extract_links(page_html, page_url)
+            elif source_id == BULGARIA_SOURCE_ID and source_domain(page_url) == "api.pcloud.com" and decoded_url_path(page_url).lower().endswith("/showpublink"):
+                links = bulgaria_pcloud_links(page_html)
             elif source_id == "croatia_astronomy_azoo_official" and "/wp-json/wp/v2/search" in page_url:
                 links = croatia_azoo_search_links(page_html)
             elif source_id in {IOAA_JUNIOR_SOURCE_ID, USAAAO_SOURCE_ID, *INAO_SOURCE_IDS, CZECH_SOURCE_ID}:

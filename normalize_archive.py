@@ -31,6 +31,7 @@ EVENT_RELATIONS_FILENAME = "event-relations.json"
 OWAO_SOURCE_ID = "owao_tasks_official"
 AUTHORITATIVE_DISCOVERY_METADATA_SOURCE_IDS = {
     "belarus_astronomy_belastro_archive",
+    "bulgaria_astronomy_official",
 }
 CONTAINER_SOURCE_IDS = {
     "ioaa_past_olympiads",

@@ -215,16 +215,76 @@ class SourceExpansionTests(TestCase):
             self.assertEqual((normalized[0]["year"], normalized[0]["stage_or_round"]), (2005, "district"))
             self.assertIn("/2005/district/", normalized[0]["archive_path"].replace("\\", "/"))
 
+    def test_bulgaria_pcloud_history_is_enumerated_with_stable_metadata(self):
+        page = "https://api.pcloud.com/showpublink?code=kZVYO47ZNTqx8rCGDUhDAuiu0k6ScQnH6QMV"
+        source = SourceDefinition(
+            "bulgaria_astronomy_official",
+            "Bulgarian archive",
+            "bulgaria_astronomy",
+            "official",
+            1,
+            "static",
+            [page],
+            extras={"default_context": {"record_seed_page": False}},
+        )
+        payload = (FIXTURES / "bulgaria_pcloud.json").read_text(encoding="utf-8")
+        rows = self.discover_rows(source, {page: response(page, payload)})
+        by_file = {row["filename_original"]: row for row in rows.values()}
+        self.assertEqual((by_file["2005-II-1112.pdf"]["year"], by_file["2005-II-1112.pdf"]["stage_or_round"], by_file["2005-II-1112.pdf"]["document_type"], by_file["2005-II-1112.pdf"]["round_detail"]), (2005, "regional", "tasks", "grade-11-12"))
+        self.assertEqual((by_file["2019-III-910.pdf"]["year"], by_file["2019-III-910.pdf"]["stage_or_round"], by_file["2019-III-910.pdf"]["round_detail"]), (2019, "national", "grade-9-10"))
+        self.assertEqual(by_file["2014-III-910-Th.pdf"]["round_detail"], "grade-9-10-theoretical")
+        self.assertEqual(by_file["2014-III-910-Pr.pdf"]["round_detail"], "grade-9-10-practical")
+        self.assertEqual((by_file["2022_2den_9-10.pdf"]["year"], by_file["2022_2den_9-10.pdf"]["stage_or_round"], by_file["2022_2den_9-10.pdf"]["document_type"], by_file["2022_2den_9-10.pdf"]["round_detail"]), (2022, "national", "tasks", "grade-9-10-test"))
+        self.assertEqual((by_file["2022_2den_9-10_sol.pdf"]["stage_or_round"], by_file["2022_2den_9-10_sol.pdf"]["document_type"], by_file["2022_2den_9-10_sol.pdf"]["round_detail"]), ("national", "solutions", "grade-9-10-test"))
+        self.assertNotIn("test_9-10_AK01.pdf", by_file)
+        self.assertNotIn("readme_archive.pdf", by_file)
+        self.assertNotIn("notes.txt", by_file)
+
+    def test_bulgaria_pcloud_download_is_resolved_only_when_fetching_file(self):
+        candidate = "https://api.pcloud.com/getpublinkdownload?code=kZVYO47ZNTqx8rCGDUhDAuiu0k6ScQnH6QMV&fileid=101&filename=2005-II-1112.pdf"
+        request_url = crawl_source.public_download_url(candidate)
+        self.assertNotIn("filename=", request_url)
+        calls = []
+
+        class PcloudClient:
+            def fetch(self, url):
+                calls.append(url)
+                if url.startswith("https://api.pcloud.com/getpublinkdownload"):
+                    return SimpleNamespace(
+                        final_url=url,
+                        status_code=200,
+                        text=json.dumps({"result": 0, "hosts": ["c1.pcloud.com"], "path": "/hash/2005-II-1112.pdf"}),
+                        content=b'{"result":0}',
+                        headers={"Content-Type": "application/json"},
+                    )
+                return SimpleNamespace(
+                    final_url=url,
+                    status_code=200,
+                    text="",
+                    content=b"%PDF-1.7 fixture",
+                    headers={"Content-Type": "application/pdf"},
+                )
+
+        downloaded = crawl_source.fetch_download_response(PcloudClient(), {"source_id": "bulgaria_astronomy_official"}, request_url)
+        self.assertTrue(downloaded.content.startswith(b"%PDF-"))
+        self.assertEqual(calls[-1], "https://c1.pcloud.com/hash/2005-II-1112.pdf")
+
     def test_bulgaria_and_brazil_official_filename_metadata(self):
         bulgaria = {"source_id": "bulgaria_astronomy_official", "olympiad_family": "bulgaria_astronomy", "source_role": "official", "source_priority": 1, "url": "https://astro-olymp.org/", "context": {}}
         brazil = {"source_id": "brazil_oba_official", "olympiad_family": "brazil_oba", "source_role": "official", "source_priority": 1, "url": "https://sistema.oba.org.br/", "context": {}}
         task = discover_sources.build_candidate_entry(bulgaria, href="https://astro-olymp.org/wp-content/uploads/2026/05/26-III-78.pdf", link_text="", page_title="", parent_page_url=bulgaria["url"], parent_page_title="", context={})
         answer = discover_sources.build_candidate_entry(bulgaria, href="https://astro-olymp.org/wp-content/uploads/2026/05/a26-III-78.pdf", link_text="", page_title="", parent_page_url=bulgaria["url"], parent_page_title="", context={})
+        municipal = discover_sources.build_candidate_entry(bulgaria, href="https://astro-olymp.org/wp-content/uploads/2025/12/26-I-56.pdf", link_text="", page_title="", parent_page_url=bulgaria["url"], parent_page_title="", context={})
+        day_two = discover_sources.build_candidate_entry(bulgaria, href="https://astro-olymp.org/wp-content/uploads/2026/05/2026_2den_9-10.pdf", link_text="", page_title="", parent_page_url=bulgaria["url"], parent_page_title="", context={})
+        day_two_solution = discover_sources.build_candidate_entry(bulgaria, href="https://astro-olymp.org/wp-content/uploads/2026/05/sol_2026_2den_9-10.pdf", link_text="", page_title="", parent_page_url=bulgaria["url"], parent_page_title="", context={})
         prova = discover_sources.build_candidate_entry(brazil, href="https://sistema.oba.org.br/2000_prova_niv3_oba.pdf", link_text="", page_title="", parent_page_url=brazil["url"], parent_page_title="", context={})
         gabarito = discover_sources.build_candidate_entry(brazil, href="https://sistema.oba.org.br/2000_gbniv3_oba.pdf", link_text="", page_title="", parent_page_url=brazil["url"], parent_page_title="", context={})
         container = discover_sources.build_candidate_entry(brazil, href="https://sistema.oba.org.br/site/?p=conteudo&idcat=9&pag=conteudo&m=s", link_text="Provas e Gabaritos", page_title="", parent_page_url=brazil["url"], parent_page_title="", context={})
-        self.assertEqual((task["stage_or_round"], task["document_type"]), ("national", "tasks"))
-        self.assertEqual(answer["document_type"], "solutions")
+        self.assertEqual((task["year"], task["stage_or_round"], task["document_type"], task["round_detail"]), (2026, "national", "tasks", "grade-7-8"))
+        self.assertEqual((answer["year"], answer["document_type"]), (2026, "solutions"))
+        self.assertEqual((municipal["year"], municipal["stage_or_round"], municipal["round_detail"]), (2026, "municipal", "grade-5-6"))
+        self.assertEqual((day_two["year"], day_two["stage_or_round"], day_two["round_detail"], day_two["document_type"]), (2026, "national", "grade-9-10-test", "tasks"))
+        self.assertEqual((day_two_solution["year"], day_two_solution["stage_or_round"], day_two_solution["round_detail"], day_two_solution["document_type"]), (2026, "national", "grade-9-10-test", "solutions"))
         self.assertEqual((prova["document_type"], prova["round_detail"]), ("tasks", "level-3"))
         self.assertEqual(gabarito["document_type"], "solutions")
         self.assertEqual(container["access_mode"], "discovery_only")
