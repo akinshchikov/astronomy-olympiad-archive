@@ -19,7 +19,7 @@ coverage.
 - pipeline code
 - source configuration
 - discovery and coverage manifests
-- coverage indices and relation-group summaries
+- event indices, olympiad-specific collection metadata, and relation-group summaries
 - documentation
 - small, explicitly approved lost-publication preservation sets under
   `data/preserved/`
@@ -76,6 +76,7 @@ data/
   indices/
     olympiads_index.csv
     files_index.csv
+    collections_index.csv     # public olympiad compilations/training sets
     relation_groups.csv
     coverage_report.md
   logs/                 # local logs, not committed
@@ -264,6 +265,24 @@ PY
 find data/archive -maxdepth 3 -type d -name 'owao' -print
 ```
 
+## Public collections and training material
+
+The archive also follows public olympiad-specific compilations and organizer-produced
+training/problem sets when an ordinary public source URL exists. These are downloaded
+by the normal pipeline into local storage; they are **not** copied into the Git
+repository and do not use the `data/preserved/` exception.
+
+Collections are tagged with `material_scope=collection` and indexed separately in
+[data/indices/collections_index.csv](data/indices/collections_index.csv). They may
+cover many competition years or mix competition, correspondence, and training
+problems, so they do not create synthetic rows in `olympiads_index.csv` and do not
+affect event-gap chronology.
+
+The source boundary is deliberately narrow: direct public organizer/official archive
+links are included, while purchase-only links and generic recommended textbooks are
+not crawl targets. Public external resources that the crawler cannot lawfully fetch
+(for example policy-blocked Drive links) remain discovery-only metadata.
+
 ## Metadata semantics
 
 - A physical document can logically represent several document types (for example, tasks and solutions). It is not split merely to force one `document_type` per file.
@@ -297,6 +316,7 @@ unresolved”, and “Deferred pending a reliable archive”.
 - [data/indices/coverage_report.md](data/indices/coverage_report.md)
 - [data/indices/olympiads_index.csv](data/indices/olympiads_index.csv)
 - [data/indices/files_index.csv](data/indices/files_index.csv)
+- [data/indices/collections_index.csv](data/indices/collections_index.csv)
 - [data/indices/relation_groups.csv](data/indices/relation_groups.csv)
 
 ## Limitations and known gaps
