@@ -227,6 +227,70 @@ class SourceExpansionTests(TestCase):
                 )
                 self.assertIsNone(rows[url]["year"])
 
+    def test_live_collection_access_boundaries_are_explicit(self):
+        mao = {
+            "source_id": "mao_public_collections",
+            "olympiad_family": "mao",
+            "source_role": "archive",
+            "source_priority": 2,
+            "context": {},
+        }
+        dead_https = discover_sources.build_candidate_entry(
+            mao,
+            href="https://www.astroolymp.ru/books/moscow_2.pdf",
+            link_text="moscow_2.pdf",
+            page_title="MAO collections",
+            parent_page_url="https://mos.olimpiada.ru/news/678",
+            parent_page_title="MAO collections",
+            context={"record_kind": "collection", "stage_or_round": "collection"},
+        )
+        live_http = discover_sources.build_candidate_entry(
+            mao,
+            href="http://astroolymp.ru/books/moscow_2.pdf",
+            link_text="moscow_2.pdf",
+            page_title="MAO collections",
+            parent_page_url="https://mos.olimpiada.ru/news/678",
+            parent_page_title="MAO collections",
+            context={"record_kind": "collection", "stage_or_round": "collection"},
+        )
+        self.assertEqual(dead_https["access_mode"], "discovery_only")
+        self.assertEqual(live_http["access_mode"], "download")
+
+        slovak = {
+            "source_id": "slovakia_astronomy_materials",
+            "olympiad_family": "slovakia_astronomy",
+            "source_role": "official",
+            "source_priority": 2,
+            "context": {},
+        }
+        for url in (
+            "https://assets.openstax.org/oscms-prodcms/media/documents/Astronomy-2e-WEB_6qnoaIc.pdf",
+            "http://physics.ujep.cz/~zmoravec/astronomie/siroky/siroky.pdf",
+        ):
+            with self.subTest(url=url):
+                row = discover_sources.build_candidate_entry(
+                    slovak,
+                    href=url,
+                    link_text="reference PDF",
+                    page_title="Materiály AO",
+                    parent_page_url="https://www.astronomickaolympiada.sk/materialy/",
+                    parent_page_title="Materiály AO",
+                    context={"record_kind": "collection", "stage_or_round": "collection"},
+                )
+                self.assertEqual(row["access_mode"], "discovery_only")
+
+    def test_mao_public_collections_include_live_http_2003_2005_fallback(self):
+        source = next(
+            source
+            for source in SOURCE_DEFINITIONS
+            if source.source_id == "mao_public_collections"
+        )
+        url = "http://astroolymp.ru/books/moscow_2.pdf"
+        self.assertIn(url, source.extras["direct_file_urls"])
+        context = discover_sources.configured_link_context(source.source_id, url)
+        self.assertEqual(context["collection_id"], "mao-2003-2005")
+        self.assertEqual(context["covered_years"], "2003-2005")
+
     def test_collection_metadata_never_creates_synthetic_event_year(self):
         seed = {
             "source_id": "test_collection",
