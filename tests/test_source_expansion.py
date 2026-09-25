@@ -197,6 +197,36 @@ class SourceExpansionTests(TestCase):
                     self.assertEqual(context.get("stage_or_round"), "collection")
                     self.assertTrue(context.get("collection_id"))
 
+    def test_slovak_ioaa_example_page_is_one_collection(self):
+        page = "https://www.astronomickaolympiada.sk/ulohy/riesene-priklady-ioaa/"
+        theory = "https://www.astronomickaolympiada.sk/wp-content/uploads/2024/08/TH-solution-2024.pdf"
+        data = "https://www.astronomickaolympiada.sk/wp-content/uploads/2024/08/DA-solution-2024.pdf"
+        source = next(
+            source
+            for source in SOURCE_DEFINITIONS
+            if source.source_id == "slovakia_astronomy_materials"
+        )
+        pages = {
+            source.seed_urls[0]: response(source.seed_urls[0], ""),
+            source.seed_urls[1]: response(source.seed_urls[1], ""),
+            page: response(
+                page,
+                f"<a href='{theory}'>TH-solution-2024</a><a href='{data}'>DA-solution-2024</a>",
+            ),
+        }
+        rows = self.discover_rows(source, pages)
+
+        for url in (theory, data):
+            with self.subTest(url=url):
+                self.assertEqual(rows[url]["record_kind"], "collection")
+                self.assertEqual(rows[url]["collection_id"], "slovakia-ao-solved-ioaa-examples")
+                self.assertEqual(rows[url]["collection_title"], "Riešené príklady IOAA")
+                self.assertEqual(
+                    rows[url]["related_families"],
+                    ["slovakia_astronomy", "ioaa", "gecaa"],
+                )
+                self.assertIsNone(rows[url]["year"])
+
     def test_collection_metadata_never_creates_synthetic_event_year(self):
         seed = {
             "source_id": "test_collection",
