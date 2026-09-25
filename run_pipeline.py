@@ -18,6 +18,7 @@ PUBLIC_SNAPSHOT_FILES = (
     "data/manifests/discovered_documents.jsonl",
     "data/manifests/discovery_coverage.csv",
     "data/indices/olympiads_index.csv",
+    "data/indices/collections_index.csv",
     "data/indices/files_index.csv",
     "data/indices/relation_groups.csv",
     "data/indices/coverage_report.md",
