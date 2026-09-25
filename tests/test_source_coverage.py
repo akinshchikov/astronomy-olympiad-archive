@@ -68,7 +68,7 @@ class SourceCoverageCatalogTests(TestCase):
                 "not_applicable",
             },
             "source_role": {"official", "mirror", "archive"},
-            "redistribution_status": {"unknown", "explicit-no-redistribution"},
+            "redistribution_status": {"unknown", "explicit-no-redistribution", "explicit-permission"},
         }
         for field, values in allowed.items():
             with self.subTest(field=field):
