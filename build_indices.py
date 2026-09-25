@@ -169,7 +169,7 @@ def write_family_coverage_table(handle, rows: list[dict[str, str | int]]) -> Non
         ]
         escaped = [str(value).replace("|", "\\|").replace("\n", " ") for value in values]
         handle.write("| " + " | ".join(escaped) + " |\n")
-    handle.write("\n## Detailed discovery and archive coverage\n\n")
+    handle.write("\n")
 
 
 def vsosh_2026_material_key(row: dict) -> tuple[str, str, str, str] | None:
@@ -428,6 +428,10 @@ def build(root: Path, families: set[str] | None) -> int:
         discovered_rows = [row for row in discovered_rows if row["olympiad_family"] in families]
         downloaded_rows = [row for row in downloaded_rows if row["olympiad_family"] in families]
 
+    event_entries = [row for row in entries if not is_collection_row(row)]
+    event_discovered_rows = [row for row in discovered_rows if not is_collection_row(row)]
+    collections_rows = collection_index_rows(discovered_rows, entries)
+
     relation_groups_lookup = {}
     relation_groups_path = root / "data" / "indices" / "relation_groups.csv"
     if relation_groups_path.exists():
@@ -440,7 +444,7 @@ def build(root: Path, families: set[str] | None) -> int:
     relation_groups_per_event: dict[tuple[str, int | None, str], set[str]] = defaultdict(set)
     downloaded_candidate_ids = {row["candidate_id"] for row in downloaded_rows}
     missing_rows_by_family: dict[str, list[dict]] = defaultdict(list)
-    for row in discovered_rows:
+    for row in event_discovered_rows:
         if row["candidate_id"] not in downloaded_candidate_ids:
             missing_rows_by_family[row["olympiad_family"]].append(row)
 
@@ -464,6 +468,9 @@ def build(root: Path, families: set[str] | None) -> int:
         )
         objects[entry["sha256"]]["source_count"] += 1
         objects[entry["sha256"]]["source_urls"].add(entry["source_url"])
+
+        if is_collection_row(entry):
+            continue
 
         key = (entry["olympiad_family"], entry["year"], entry["stage_or_round"])
         if key not in olympiad_index:
@@ -499,7 +506,7 @@ def build(root: Path, families: set[str] | None) -> int:
     # Discovery-only sources still represent known event coverage.  Keep them in
     # the lightweight event index even when robots, login requirements, or an
     # external share prevent lawful automatic normalization.
-    for row in discovered_rows:
+    for row in event_discovered_rows:
         key = (row["olympiad_family"], row["year"], row["stage_or_round"])
         if key not in olympiad_index:
             olympiad_index[key] = {
@@ -548,6 +555,28 @@ def build(root: Path, families: set[str] | None) -> int:
             writer.writeheader()
             writer.writerows(sorted(files_rows, key=lambda row: (row["olympiad_family"], row["year"] or 0, row["representative_filename"])))
 
+    collections_index_path = root / "data" / "indices" / "collections_index.csv"
+    collection_fields = [
+        "collection_id",
+        "olympiad_family",
+        "title",
+        "collection_type",
+        "publication_years",
+        "covered_years",
+        "source_ids",
+        "source_urls",
+        "access_modes",
+        "num_discovered_documents",
+        "num_files",
+        "has_tasks",
+        "has_solutions",
+        "languages",
+    ]
+    with collections_index_path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=collection_fields)
+        writer.writeheader()
+        writer.writerows(collections_rows)
+
     olympiads_index_path = root / "data" / "indices" / "olympiads_index.csv"
     with olympiads_index_path.open("w", encoding="utf-8", newline="") as handle:
         rows = sorted(olympiad_index.values(), key=lambda row: (row["olympiad_family"], row["year"] or 0, row["stage_or_round"]))
@@ -564,11 +593,13 @@ def build(root: Path, families: set[str] | None) -> int:
             by_family[row["olympiad_family"]].append(row)
 
         entries_by_family = defaultdict(list)
-        for entry in entries:
+        for entry in event_entries:
             entries_by_family[entry["olympiad_family"]].append(entry)
 
         overview_rows = family_coverage_rows(root, files_rows, list(olympiad_index.values()), families)
         write_family_coverage_table(handle, overview_rows)
+        write_collections_table(handle, collections_rows)
+        handle.write("## Detailed discovery and archive coverage\n\n")
         coverage_families = [str(row["family_id"]) for row in overview_rows]
 
         family_history = load_family_history(root)
@@ -576,7 +607,7 @@ def build(root: Path, families: set[str] | None) -> int:
             family_rows = by_family.get(family, [])
             handle.write(f"## {family}\n\n")
             if family == "vsosh_astronomy":
-                write_vsosh_2026_discovery_coverage(handle, discovered_rows)
+                write_vsosh_2026_discovery_coverage(handle, event_discovered_rows)
             if not family_rows:
                 handle.write("- No materials discovered yet.\n\n")
                 continue
