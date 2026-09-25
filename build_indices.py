@@ -327,6 +327,7 @@ def collection_index_rows(entries: list[dict], discovered_rows: list[dict]) -> l
                 "language": str(row.get("language") or "unknown"),
                 "document_types": set(),
                 "downloaded_files": set(),
+                "source_ids": set(),
                 "source_urls": set(),
                 "access_modes": set(),
             },
@@ -338,6 +339,8 @@ def collection_index_rows(entries: list[dict], discovered_rows: list[dict]) -> l
         payload["document_types"].update(logical_document_types(row))
         if downloaded and row.get("sha256"):
             payload["downloaded_files"].add(str(row["sha256"]))
+        if row.get("source_id"):
+            payload["source_ids"].add(str(row["source_id"]))
         if row.get("source_url"):
             payload["source_urls"].add(str(row["source_url"]))
         if row.get("access_mode"):
@@ -362,7 +365,7 @@ def collection_index_rows(entries: list[dict], discovered_rows: list[dict]) -> l
                 "language": payload["language"],
                 "document_types": "|".join(sorted(payload["document_types"])),
                 "downloaded_files": len(payload["downloaded_files"]),
-                "source_count": len(payload["source_urls"]),
+                "source_count": len(payload["source_ids"]),
                 "source_urls": "|".join(sorted(payload["source_urls"])),
                 "access_modes": "|".join(sorted(payload["access_modes"])),
             }
