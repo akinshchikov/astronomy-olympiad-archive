@@ -1468,6 +1468,10 @@ def build_candidate_entry(
         # Cards label their exam year in the Thai Buddhist calendar.  This is
         # source-specific card context, never an interpretation of IDs/URLs.
         year = thai_buddhist_year_to_gregorian(year, explicit_buddhist_era=True)
+    if context.get("material_scope") == "collection" and "year" not in context:
+        # A year embedded in a compilation filename usually describes covered
+        # competition material, not a single event or a verified publication date.
+        year = None
     # These filename/source rules are authoritative.  Reapply them after page
     # context because a parent page can describe a different division/round.
     if source_id_of(seed) in {STRUVE_ASTROEDU_SOURCE_ID, IOAA_JUNIOR_SOURCE_ID, USAAAO_SOURCE_ID, *INAO_SOURCE_IDS}:
