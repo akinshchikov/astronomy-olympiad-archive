@@ -360,11 +360,21 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
             },
             "direct_file_urls": [
                 "https://www.astroolymp.ru/books/moscow_1.pdf",
+                "https://astroedu.ru/assets/problems/mos/mos-1997-2002.pdf",
                 "https://www.astroolymp.ru/books/moscow_2.pdf",
                 "https://astroolymp.ru/books/moscow_3.pdf",
             ],
             "link_contexts": {
                 "https://www.astroolymp.ru/books/moscow_1.pdf": {
+                    "collection_id": "mao-1997-2002",
+                    "collection_title": "Задачи Московской астрономической олимпиады. 1997–2002",
+                    "collection_type": "competition_compilation",
+                    "covered_years": "1997-2002",
+                    "document_type": "solutions",
+                    "logical_document_types": ["tasks", "solutions"],
+                    "related_families": ["mao"],
+                },
+                "https://astroedu.ru/assets/problems/mos/mos-1997-2002.pdf": {
                     "collection_id": "mao-1997-2002",
                     "collection_title": "Задачи Московской астрономической олимпиады. 1997–2002",
                     "collection_type": "competition_compilation",
