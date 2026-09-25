@@ -464,7 +464,13 @@ def configured_link_context(source_id: str, href: str) -> dict:
         if source.source_id != source_id:
             continue
         contexts = source.extras.get("link_contexts", {})
-        return dict(contexts.get(href, {}))
+        if href in contexts:
+            return dict(contexts[href])
+        href_domain, href_path = source_domain(href), decoded_url_path(href)
+        for configured_url, context in contexts.items():
+            if source_domain(configured_url) == href_domain and decoded_url_path(configured_url) == href_path:
+                return dict(context)
+        return {}
     return {}
 
 
