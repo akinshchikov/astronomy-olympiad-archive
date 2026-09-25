@@ -117,14 +117,61 @@ class SourceExpansionTests(TestCase):
             ),
             (
                 {"source_id": "slovakia_astronomy_materials"},
-                "Recommended external book",
+                "Recommended external public PDF",
                 "https://example.org/astronomy.pdf",
+                True,
+            ),
+            (
+                {"source_id": "slovakia_astronomy_materials"},
+                "Publisher catalog",
+                "https://example.org/book",
                 False,
             ),
         ]
         for seed, title, url, expected in cases:
             with self.subTest(url=url):
                 self.assertEqual(discover_sources.passes_source_specific_link_filter(seed, title, url), expected)
+
+        slovak_seed = {
+            "source_id": "slovakia_astronomy_materials",
+            "url": "https://www.astronomickaolympiada.sk/materialy/",
+        }
+        self.assertFalse(
+            discover_sources.should_record_seed_link(
+                slovak_seed,
+                "Kontakt",
+                "https://www.astronomickaolympiada.sk/kontakt/",
+            )
+        )
+        self.assertTrue(
+            discover_sources.should_record_seed_link(
+                slovak_seed,
+                "Astronomy 2e",
+                "https://assets.openstax.org/oscms-prodcms/media/documents/Astronomy-2e-WEB_6qnoaIc.pdf",
+            )
+        )
+
+    def test_materials_page_marks_only_documents_as_collections(self):
+        page = "https://www.planetarium.edu.pl/olimpiada/dla-zawodnikow.html"
+        pdf = "https://www.planetarium.edu.pl/pliki/zpdooa_astronomia_sferyczna.pdf"
+        nav = "https://www.planetarium.edu.pl/index/lxx-olimpiada-astronomiczna-2026-27.html"
+        source = next(
+            source
+            for source in SOURCE_DEFINITIONS
+            if source.source_id == "poland_astronomy_training_materials"
+        )
+        rows = self.discover_rows(
+            source,
+            {
+                page: response(
+                    page,
+                    f"<a href='{pdf}'>Astronomia Sferyczna</a><a href='{nav}'>LXX OA</a>",
+                )
+            },
+        )
+        self.assertEqual(set(rows), {pdf})
+        self.assertEqual(rows[pdf]["record_kind"], "collection")
+        self.assertIsNone(rows[pdf]["year"])
 
     def test_collection_metadata_never_creates_synthetic_event_year(self):
         seed = {
