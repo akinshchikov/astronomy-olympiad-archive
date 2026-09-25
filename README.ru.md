@@ -18,7 +18,7 @@
 - код pipeline
 - конфиг источников
 - discovery-manifest и coverage-manifest
-- итоговые индексы покрытия и relation groups
+- event-индексы, metadata олимпиадных сборников и relation groups
 - документация
 - небольшие явно разрешённые наборы утраченных публичных публикаций в
   `data/preserved/`
@@ -87,6 +87,7 @@ data/
   indices/
     olympiads_index.csv
     files_index.csv
+    collections_index.csv     # публичные олимпиадные сборники/тренировочные материалы
     relation_groups.csv
     coverage_report.md
   logs/                 # локальные логи, не коммитятся
@@ -262,6 +263,25 @@ PY
 find data/archive -maxdepth 3 -type d -name 'owao' -print
 ```
 
+## Публичные сборники и тренировочные материалы
+
+Архив также агрегирует публичные олимпиадные сборники и подготовительные наборы
+задач, опубликованные организаторами, если существует обычная публичная ссылка на
+источник. Такие файлы скачиваются обычным pipeline только в локальное хранилище:
+они **не** копируются в Git и для них не используется исключение
+`data/preserved/`.
+
+Сборники получают `material_scope=collection` и индексируются отдельно в
+[data/indices/collections_index.csv](data/indices/collections_index.csv). Один
+сборник может охватывать много лет или смешивать соревновательные, заочные и
+тренировочные задачи, поэтому он не создаёт искусственных событий в
+`olympiads_index.csv` и не влияет на расчёт пробелов в хронологии.
+
+Граница источников узкая: включаются прямые публичные ссылки организаторов и
+официальных архивов; ссылки только на покупку и обычные рекомендованные учебники не
+являются crawl targets. Публичные внешние ресурсы, которые crawler не может
+корректно скачать (например policy-blocked Drive), остаются discovery-only metadata.
+
 ## Семантика metadata
 
 - Один физический документ может логически представлять несколько типов материалов (например, задачи и решения). Он не разрезается лишь ради одного `document_type` на файл.
@@ -296,6 +316,7 @@ find data/archive -maxdepth 3 -type d -name 'owao' -print
 - [data/indices/coverage_report.md](data/indices/coverage_report.md)
 - [data/indices/olympiads_index.csv](data/indices/olympiads_index.csv)
 - [data/indices/files_index.csv](data/indices/files_index.csv)
+- [data/indices/collections_index.csv](data/indices/collections_index.csv)
 - [data/indices/relation_groups.csv](data/indices/relation_groups.csv)
 
 ## Ограничения и известные пробелы
