@@ -24,6 +24,10 @@ coverage.
 - small, explicitly approved lost-publication preservation sets under
   `data/preserved/`
 
+The tracked manifests and indices are intentional public artifacts: they represent
+the last validated repository-wide snapshot, while transient local pipeline state
+remains ignored.
+
 Large local binary data is intentionally not committed outside that narrow
 preservation exception:
 
@@ -147,7 +151,9 @@ Selected families only:
 python3 run_pipeline.py --families struve owao serbia_astronomy russia_team_qual
 ```
 
-The same `--families` filter now also applies to `coverage_report.md`.
+A `run_pipeline.py --families ...` run is snapshot-protected: it may update local
+raw/archive/checkpoint state for the selected families, but the tracked global
+manifests and indices are restored byte-for-byte when the run exits.
 
 Clean and rebuild only one family locally:
 
@@ -171,9 +177,13 @@ Notes:
 
 - `python3 run_pipeline.py --clean` removes all generated local outputs first: `data/raw/`, `data/archive/`, `data/logs/`, generated manifests, and generated indices.
 - `python3 cleanup_outputs.py --families ...` removes only the selected family archive tree, matching raw source folders, and shared logs. It intentionally does not delete the shared `data/archive/objects/` store.
-- Focused cleanup also removes rows for the selected families from generated JSONL manifests, preventing stale records from being reused in a focused rebuild. It does not delete `data/archive/objects/`.
+- Focused cleanup removes selected-family rows only from local download/checkpoint/
+  normalization manifests. It deliberately leaves the tracked public discovery
+  snapshot untouched and does not delete `data/archive/objects/`.
 - Download checkpoints reuse only a validated local binary; current discovery metadata remains authoritative when a crawl is resumed.
-- A focused run with `--families ...` is meant for local targeted refreshes. To rebuild the complete global manifests and indices again, run the pipeline without `--families`.
+- A focused run with `--families ...` is a local acquisition/validation run and
+  never publishes a partial snapshot. Only an unfiltered pipeline run refreshes the
+  tracked repository-wide manifests and indices.
 
 ## First-priority source seeds
 

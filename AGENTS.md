@@ -81,6 +81,10 @@ proposing a commit.
 Do not run a full global network crawl or global clean rebuild inside short Codex
 execution windows. Run it manually in a persistent local terminal (for example
 `tmux`) when explicitly requested. Focused runs are preferred during development.
+A `run_pipeline.py --families ...` run is snapshot-protected: it may alter local
+acquisition/normalization state, but it must restore the tracked repository-wide
+manifests and indices before returning. Only an unfiltered run refreshes the public
+snapshot.
 
 ## Commit guidance
 

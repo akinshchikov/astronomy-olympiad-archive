@@ -25,6 +25,15 @@ GENERATED_INDEX_FILES = (
     "coverage_report.md",
 )
 
+# Family-scoped cleanup is local. Tracked discovery snapshots are deliberately
+# excluded so a targeted validation cannot erase repository-wide public metadata.
+FOCUSED_MUTABLE_MANIFEST_FILES = (
+    "download_manifest.jsonl",
+    "download_checkpoint.jsonl",
+    "normalized_entries.jsonl",
+    "relation_edges.jsonl",
+)
+
 
 def remove_path(path: Path, removed: list[str]) -> None:
     if not path.exists():
@@ -45,8 +54,8 @@ def source_ids_for_families(families: set[str]) -> set[str]:
 
 
 def remove_family_manifest_rows(root: Path, families: set[str], removed: list[str]) -> None:
-    """Drop stale rows for a focused rebuild without deleting other families."""
-    for filename in GENERATED_MANIFEST_FILES:
+    """Drop stale selected-family rows only from local focused-run manifests."""
+    for filename in FOCUSED_MUTABLE_MANIFEST_FILES:
         path = root / "data" / "manifests" / filename
         if not path.exists() or path.suffix != ".jsonl":
             continue

@@ -111,8 +111,9 @@ senior/junior, the three Slovenia lineages, BAO/BDOAA, and Macao/CNAO.
 1. Keep the working tree free of generated binaries, logs, checkpoints, and local
    manifests.
 2. Run `python3 -m unittest discover -s tests -q` and `git diff --check`.
-3. Confirm committed public counts are derived from the tracked manifests and
-   indices; do not hand-edit generated coverage facts.
+3. Confirm committed public counts are derived from the tracked repository-wide
+   manifests and indices; do not hand-edit generated coverage facts. Focused
+   `--families` runs are local validation and must not replace this public snapshot.
 4. Publish only code, lightweight metadata, documentation, release notes, and
    explicitly approved `data/preserved/` files that satisfy the exception above.
 5. Verify every preserved binary against its tracked byte size and SHA-256 manifest.

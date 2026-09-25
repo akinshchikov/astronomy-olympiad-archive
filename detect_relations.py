@@ -88,6 +88,25 @@ def choose_canonical(entries: list[dict]) -> dict:
     return max(entries, key=sort_key)
 
 
+def relation_group_id_for_bucket(key: tuple[str, int | None, str, str]) -> str:
+    """Return a stable human-readable identifier for one relation bucket."""
+    family, year, stage_or_round, document_type = key
+    return "--".join(
+        (
+            "rg",
+            path_slug(family, fallback="olympiad"),
+            year_tag(year),
+            path_slug(stage_or_round, fallback="stage"),
+            path_slug(document_type, fallback="document"),
+        )
+    )
+
+
+def relation_bucket_sort_key(key: tuple[str, int | None, str, str]) -> tuple:
+    family, year, stage_or_round, document_type = key
+    return (family, year if year is not None else -1, stage_or_round, document_type)
+
+
 def detect(root: Path, families: set[str] | None) -> int:
     logger = configure_logger("detect_relations", root / "data" / "logs" / "normalization.log")
     entries = load_jsonl(root / "data" / "manifests" / "normalized_entries.jsonl")
@@ -106,13 +125,13 @@ def detect(root: Path, families: set[str] | None) -> int:
 
     relation_rows: list[dict] = []
     relation_groups: list[dict] = []
-    group_counter = 1
 
-    for bucket_entries in buckets.values():
+    for bucket_key in sorted(buckets, key=relation_bucket_sort_key):
+        bucket_entries = buckets[bucket_key]
         if len(bucket_entries) < 2:
             continue
 
-        group_id = f"rg_{group_counter:04d}"
+        group_id = relation_group_id_for_bucket(bucket_key)
         bucket_relations = []
         for index, left in enumerate(bucket_entries):
             for right in bucket_entries[index + 1 :]:
@@ -179,8 +198,6 @@ def detect(root: Path, families: set[str] | None) -> int:
             entry["relation_confidence"] = best_relation["relation_confidence"]
             entry["same_event_confidence"] = best_relation["same_event_confidence"]
             entry["same_content_confidence"] = best_relation["same_content_confidence"]
-
-        group_counter += 1
 
     write_jsonl(root / "data" / "manifests" / "normalized_entries.jsonl", entries)
     write_jsonl(root / "data" / "manifests" / "relation_edges.jsonl", relation_rows)
