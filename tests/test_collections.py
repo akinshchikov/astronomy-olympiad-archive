@@ -85,3 +85,15 @@ class CollectionIndexTests(TestCase):
             self.assertEqual(len(files), 2)
             collection_file = next(row for row in files if row["record_kind"] == "collection")
             self.assertEqual(collection_file["collection_id"], "example-collection")
+
+            collection_event_info = (
+                root
+                / "data"
+                / "archive"
+                / "example"
+                / "unknown-year"
+                / "collection"
+                / "info"
+                / "event-metadata.json"
+            )
+            self.assertFalse(collection_event_info.exists())
