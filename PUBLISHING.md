@@ -106,9 +106,11 @@ synthetic competition years or gaps in `olympiads_index.csv`.
 
 A public collection link is an acquisition source, not permission to republish the
 binary. Ordinary collection PDFs remain local under the same rules as competition
-papers. Purchase-only listings are not crawl targets. General books or recommended
-external literature are not pulled merely because an olympiad page mentions them;
-the collection source must itself be a bounded public olympiad/organizer resource.
+papers. Purchase-only listings are not crawl targets. A bounded official olympiad
+materials page may, however, point directly to a freely downloadable document on an
+external host; that public target may be acquired with the official page retained as
+its provenance. Arbitrary nested crawling of external literature sites is out of
+scope: only the explicitly linked public document is followed.
 
 ## Redistribution and access boundaries
 
