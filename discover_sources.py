@@ -1511,6 +1511,22 @@ def build_candidate_entry(
         and "ioaa-problem-book-2007-2025.pdf" in decoded_filename(href).lower()
     ):
         access_mode, access_note = "discovery_only", "official_ioaa_cdn_robots_blocked"
+    if source_id_of(seed) == "slovakia_astronomy_materials":
+        if source_domain(href) == "assets.openstax.org":
+            access_mode, access_note = "discovery_only", "official_linked_openstax_robots_blocked"
+        elif source_domain(href) == "physics.ujep.cz":
+            access_mode, access_note = "discovery_only", "official_linked_ujep_robots_blocked"
+    if (
+        source_id_of(seed) == "mao_public_collections"
+        and urlsplit(href).scheme == "https"
+        and source_domain(href).removeprefix("www.") == "astroolymp.ru"
+        and decoded_url_path(href).lower() in {
+            "/books/moscow_1.pdf",
+            "/books/moscow_2.pdf",
+            "/books/moscow_3.pdf",
+        }
+    ):
+        access_mode, access_note = "discovery_only", "legacy_https_unreachable_http_fallback_available"
     if source_id_of(seed) == "brazil_oba_official" and infer_extension(href) not in DIRECT_FILE_EXTENSIONS:
         # The OBA archive links to a reordered copy of its own HTML catalogue.
         # Preserve it as an official container, never as a task-paper download.
