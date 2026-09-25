@@ -19,8 +19,8 @@ ordinary downloads.
   `data/manifests/discovered_documents.jsonl`, and
   `data/manifests/discovery_coverage.csv`.
 - Lightweight public indices: `data/indices/olympiads_index.csv`,
-  `data/indices/files_index.csv`, `data/indices/relation_groups.csv`, and
-  `data/indices/coverage_report.md`.
+  `data/indices/collections_index.csv`, `data/indices/files_index.csv`,
+  `data/indices/relation_groups.csv`, and `data/indices/coverage_report.md`.
 - The repository-wide source coverage catalog
   `data/audits/source_coverage.csv` and `data/config/family_metadata.csv`, used by
   the generated coverage report.
@@ -94,6 +94,21 @@ authority. In particular, Iran's catalogued source is a mirror; Israel Space Age
 provenance does not make Multi-Space authoritative; and provincial Chinese contests
 are not CNAO. Preserve family boundaries such as Poland senior/junior, Sri Lanka
 senior/junior, the three Slovenia lineages, BAO/BDOAA, and Macao/CNAO.
+
+## Public collections and training publications
+
+Official olympiad sources may expose problem books, solved-problem collections,
+training sets, observation exercises, study notes, or reference material that span
+several competition years. The pipeline may catalogue and download those public
+documents into the normal local archive. They use `record_kind=collection` and are
+indexed separately in `data/indices/collections_index.csv`; they must not create
+synthetic competition years or gaps in `olympiads_index.csv`.
+
+A public collection link is an acquisition source, not permission to republish the
+binary. Ordinary collection PDFs remain local under the same rules as competition
+papers. Purchase-only listings are not crawl targets. General books or recommended
+external literature are not pulled merely because an olympiad page mentions them;
+the collection source must itself be a bounded public olympiad/organizer resource.
 
 ## Redistribution and access boundaries
 
