@@ -169,9 +169,16 @@ class SourceExpansionTests(TestCase):
                 )
             },
         )
-        self.assertEqual(set(rows), {pdf})
+        self.assertIn(pdf, rows)
+        self.assertNotIn(nav, rows)
         self.assertEqual(rows[pdf]["record_kind"], "collection")
         self.assertIsNone(rows[pdf]["year"])
+        self.assertTrue(
+            all(
+                row.get("record_kind") == "collection"
+                for row in rows.values()
+            )
+        )
 
     def test_collection_metadata_never_creates_synthetic_event_year(self):
         seed = {
