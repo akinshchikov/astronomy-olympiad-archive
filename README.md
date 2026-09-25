@@ -75,6 +75,7 @@ data/
     relation_edges.jsonl           # local, not committed
   indices/
     olympiads_index.csv
+    collections_index.csv
     files_index.csv
     relation_groups.csv
     coverage_report.md
@@ -267,6 +268,12 @@ find data/archive -maxdepth 3 -type d -name 'owao' -print
 ## Metadata semantics
 
 - A physical document can logically represent several document types (for example, tasks and solutions). It is not split merely to force one `document_type` per file.
+- Public problem books, solved-problem sets, training collections, and reference
+  material from bounded official olympiad sources use `record_kind=collection`.
+  They are downloaded only into the local archive and indexed separately; a span
+  such as 2007–2025 never becomes a synthetic competition year.
+- Purchase-only books and unrelated external recommended literature are not
+  download targets.
 - `access_mode=discovery_only` retains useful public provenance that is not a download target.
 - Chronology configuration distinguishes actual competition gaps from retained prehistory/anomalous years and known not-held components.
 
@@ -281,7 +288,7 @@ Current tracked public snapshot refreshed on `2026-09-25`:
 - relation groups: `740`
 - families with indexed local files: `29`
 - families represented in `olympiads_index.csv`: `34`
-- evaluated sources in `source_coverage.csv`: `65` (`55` currently configured)
+- evaluated sources in `source_coverage.csv`: `69` (`59` configured in the current source catalog; the tracked discovery snapshot above still has `55` seed sources until the next global refresh)
 
 The family coverage table reports, for every catalogued family, its English and
 Russian names, region, scope, indexed-file count, known year range, current content
@@ -296,6 +303,7 @@ unresolved”, and “Deferred pending a reliable archive”.
 
 - [data/indices/coverage_report.md](data/indices/coverage_report.md)
 - [data/indices/olympiads_index.csv](data/indices/olympiads_index.csv)
+- [data/indices/collections_index.csv](data/indices/collections_index.csv)
 - [data/indices/files_index.csv](data/indices/files_index.csv)
 - [data/indices/relation_groups.csv](data/indices/relation_groups.csv)
 
