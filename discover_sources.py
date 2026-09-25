@@ -12,7 +12,7 @@ from pathlib import Path
 from urllib.parse import parse_qs, quote, urljoin, urlsplit
 
 from utils.cli import build_common_parser
-from utils.fs_utils import ensure_dir, load_jsonl, normalize_whitespace, write_jsonl
+from utils.fs_utils import ensure_dir, load_jsonl, normalize_whitespace, slugify_ascii, write_jsonl
 from utils.html_utils import extract_links, extract_title, html_to_text
 from utils.http_utils import HttpClient
 from utils.logging_utils import configure_logger
@@ -454,6 +454,16 @@ def is_source_seed(seed: dict, source_id: str) -> bool:
 
 def seed_context(seed: dict) -> dict:
     return dict(seed.get("context") or {})
+
+
+def configured_link_context(source_id: str, href: str) -> dict:
+    """Return optional source-config metadata for a specific linked document."""
+    for source in SOURCE_DEFINITIONS:
+        if source.source_id != source_id:
+            continue
+        contexts = source.extras.get("link_contexts", {})
+        return dict(contexts.get(href, {}))
+    return {}
 
 
 def context_year(context: dict) -> int | None:
@@ -1389,6 +1399,34 @@ def build_candidate_entry(
         document_type, extra_types, stage_or_round, round_detail, language = apply_source_specific_link_overrides(
             seed, href, link_text, page_title, document_type, extra_types, stage_or_round, round_detail, language
         )
+
+    record_kind = str(context.get("record_kind") or "event")
+    collection_metadata: dict = {}
+    if record_kind == "collection":
+        # A compilation/training publication can span many competition years.
+        # Never turn a year in its title or URL into a synthetic olympiad event.
+        year = None
+        stage_or_round = str(context.get("stage_or_round") or "collection")
+        document_type = str(context.get("document_type") or document_type)
+        if context.get("logical_document_types"):
+            extra_types = [str(value) for value in context["logical_document_types"]]
+        if context.get("language"):
+            language = str(context["language"])
+        collection_id = str(context.get("collection_id") or "").strip()
+        if not collection_id:
+            identity = decoded_filename(href) or link_text or href
+            collection_id = slugify_ascii(f"{seed['source_id']}-{identity}", fallback="collection").replace("_", "-")
+        related_families = context.get("related_families") or [family]
+        collection_metadata = {
+            "record_kind": "collection",
+            "collection_id": collection_id,
+            "collection_title": str(context.get("collection_title") or link_text or decoded_filename(href) or page_title),
+            "collection_type": str(context.get("collection_type") or "training_collection"),
+            "publication_year": context.get("publication_year"),
+            "covered_years": str(context.get("covered_years") or ""),
+            "related_families": list(related_families),
+        }
+
     variant_tag = infer_variant_tag(seed["source_role"], link_text or page_title, href, extra_types)
     access_mode, access_note = access_mode_for_url(href)
     # The official OLAA archive exposes public Drive previews, but this
@@ -1412,7 +1450,7 @@ def build_candidate_entry(
     if family == "iao" and source_domain(href) in {"issp.ac.ru", "www.issp.ac.ru"}:
         source_role, source_priority = "official", 1
         notes = append_note(notes, f"discovered_via={seed['source_id']}")
-    return {
+    entry = {
         "candidate_id": hashlib.sha1(f"{seed['source_id']}::{href}".encode("utf-8")).hexdigest(),
         "source_id": seed["source_id"],
         "olympiad_family": family,
@@ -1454,6 +1492,8 @@ def build_candidate_entry(
         "seed_context": context,
         "confidence": confidence_score(year, stage_or_round, document_type, link_text or page_title),
     }
+    entry.update(collection_metadata)
+    return entry
 
 
 def store_discovered_entry(
@@ -1549,8 +1589,10 @@ def discover_documents(root: Path, families: set[str] | None, dry_run: bool, lim
         if families and source.olympiad_family not in families:
             continue
         for href in source.extras.get("direct_file_urls", []):
-            seed = {"source_id": source.source_id, "olympiad_family": source.olympiad_family, "source_role": source.source_role, "source_priority": source.source_priority, "context": dict(source.extras.get("default_context", {}))}
-            entry = build_candidate_entry(seed, href=href, link_text=decoded_filename(href), page_title=source.label, parent_page_url=source.seed_urls[0], parent_page_title=source.label, context=seed["context"])
+            context = dict(source.extras.get("default_context", {}))
+            context.update(configured_link_context(source.source_id, href))
+            seed = {"source_id": source.source_id, "olympiad_family": source.olympiad_family, "source_role": source.source_role, "source_priority": source.source_priority, "context": context}
+            entry = build_candidate_entry(seed, href=href, link_text=decoded_filename(href), page_title=source.label, parent_page_url=source.seed_urls[0], parent_page_title=source.label, context=context)
             store_discovered_entry(discovered, entry, seen_from=source.seed_urls[0])
             coverage[(entry["olympiad_family"], entry["year"], entry["stage_or_round"])].update(logical_document_types(entry))
 
@@ -1626,6 +1668,7 @@ def discover_documents(root: Path, families: set[str] | None, dry_run: bool, lim
                     link_page_title = f"{page_title} {link['section']}"
                 link_context = dict(page_context)
                 link_context.update(link.get("context") or {})
+                link_context.update(configured_link_context(source_id, href))
                 if link.get("context_text"):
                     link_page_title = normalize_whitespace(f"{link_page_title} {link['context_text']}")
                     link_context["source_context_text"] = link["context_text"]
