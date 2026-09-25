@@ -77,6 +77,122 @@ class SourceExpansionTests(TestCase):
         self.assertTrue(discover_sources.should_record_seed_link(archive_seed, "Past contests 2025", "https://example.test/past-contests/2025"))
         self.assertFalse(discover_sources.should_record_seed_link(archive_seed, "Latest news", "https://example.test/news"))
 
+    def test_public_collection_sources_are_configured_and_bounded(self):
+        runtime = {source.source_id: source for source in SOURCE_DEFINITIONS}
+        self.assertIn("mao_public_collections", runtime)
+        self.assertIn("poland_astronomy_training_materials", runtime)
+        self.assertIn("slovakia_astronomy_official_archive", runtime)
+        self.assertIn("slovakia_astronomy_materials", runtime)
+
+        cases = [
+            (
+                {"source_id": "mao_public_collections"},
+                "MAO collection",
+                "https://astroolymp.ru/books/moscow_3.pdf",
+                True,
+            ),
+            (
+                {"source_id": "mao_public_collections"},
+                "unrelated",
+                "https://astroolymp.ru/books/other.pdf",
+                False,
+            ),
+            (
+                {"source_id": "poland_astronomy_training_materials"},
+                "Astronomia sferyczna",
+                "https://www.planetarium.edu.pl/pliki/zpdooa_astronomia_sferyczna.pdf",
+                True,
+            ),
+            (
+                {"source_id": "poland_astronomy_training_materials"},
+                "External textbook",
+                "https://example.org/book.pdf",
+                False,
+            ),
+            (
+                {"source_id": "slovakia_astronomy_materials"},
+                "Zbierka",
+                "https://www.astronomickaolympiada.sk/wp-content/uploads/2024/04/zbierka.pdf",
+                True,
+            ),
+            (
+                {"source_id": "slovakia_astronomy_materials"},
+                "Recommended external book",
+                "https://example.org/astronomy.pdf",
+                False,
+            ),
+        ]
+        for seed, title, url, expected in cases:
+            with self.subTest(url=url):
+                self.assertEqual(discover_sources.passes_source_specific_link_filter(seed, title, url), expected)
+
+    def test_collection_metadata_never_creates_synthetic_event_year(self):
+        seed = {
+            "source_id": "test_collection",
+            "olympiad_family": "mao",
+            "source_role": "archive",
+            "source_priority": 2,
+            "context": {},
+        }
+        context = {
+            "record_kind": "collection",
+            "stage_or_round": "collection",
+            "collection_id": "mao-2006-2015",
+            "collection_title": "MAO 2006-2015",
+            "collection_type": "mixed_collection",
+            "publication_year": 2015,
+            "covered_years": "2006-2015",
+            "document_type": "solutions",
+            "logical_document_types": ["tasks", "solutions"],
+            "language": "ru",
+            "related_families": ["mao", "russia_correspondence_astronomy"],
+        }
+        row = discover_sources.build_candidate_entry(
+            seed,
+            href="https://example.test/moscow_3_2006-2015.pdf",
+            link_text="Задачи и решения 2006-2015",
+            page_title="Collection",
+            parent_page_url="https://example.test/",
+            parent_page_title="Collection",
+            context=context,
+        )
+        self.assertIsNone(row["year"])
+        self.assertEqual(row["stage_or_round"], "collection")
+        self.assertEqual(row["publication_year"], 2015)
+        self.assertEqual(row["covered_years"], "2006-2015")
+        self.assertEqual(row["logical_document_types"], ["tasks", "solutions"])
+        self.assertEqual(row["related_families"], ["mao", "russia_correspondence_astronomy"])
+
+    def test_configured_link_context_is_applied_to_direct_collection_url(self):
+        url = "https://cdn.ioaastrophysics.org/assets/IOAA%20problems/ioaa-problem-book-2007-2025.pdf"
+        context = discover_sources.configured_link_context("ioaa_problems", url)
+        self.assertEqual(context["record_kind"], "collection")
+        self.assertEqual(context["collection_id"], "ioaa-problem-book-2007-2025")
+        self.assertEqual(context["covered_years"], "2007-2025")
+
+    def test_slovak_archive_round_and_solution_metadata(self):
+        seed = {
+            "source_id": "slovakia_astronomy_official_archive",
+            "olympiad_family": "slovakia_astronomy",
+            "source_role": "official",
+            "source_priority": 1,
+            "context": {},
+        }
+        url = "https://www.astronomickaolympiada.sk/wp-content/uploads/2025/02/AO-2025-CK-SS-Riesenia.pdf"
+        row = discover_sources.build_candidate_entry(
+            seed,
+            href=url,
+            link_text="AO-2025-CK-SS-Riesenia",
+            page_title="Archív úloh",
+            parent_page_url="https://www.astronomickaolympiada.sk/ulohy/archiv-uloh/",
+            parent_page_title="Archív úloh",
+            context={},
+        )
+        self.assertEqual(
+            (row["year"], row["stage_or_round"], row["round_detail"], row["document_type"], row["language"]),
+            (2025, "final", "secondary", "solutions", "sk"),
+        )
+
     def test_thai_buddhist_era_conversion_is_explicit_and_bounded(self):
         self.assertEqual(thai_buddhist_year_to_gregorian(2567, explicit_buddhist_era=True), 2024)
         self.assertEqual(thai_buddhist_year_to_gregorian(2024, explicit_buddhist_era=True), 2024)
