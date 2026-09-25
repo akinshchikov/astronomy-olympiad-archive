@@ -86,6 +86,7 @@ data/
     relation_edges.jsonl           # локальный, не коммитится
   indices/
     olympiads_index.csv
+    collections_index.csv
     files_index.csv
     relation_groups.csv
     coverage_report.md
@@ -265,6 +266,12 @@ find data/archive -maxdepth 3 -type d -name 'owao' -print
 ## Семантика metadata
 
 - Один физический документ может логически представлять несколько типов материалов (например, задачи и решения). Он не разрезается лишь ради одного `document_type` на файл.
+- Публичные сборники задач и решений, тренировочные материалы и справочные
+  публикации из ограниченных официальных источников помечаются
+  `record_kind=collection`. Они скачиваются только в локальный архив и индексируются
+  отдельно; диапазон вроде 2007–2025 не превращается в искусственный год олимпиады.
+- Книги, доступные только для покупки, и посторонняя внешняя рекомендованная
+  литература не являются целями скачивания.
 - `access_mode=discovery_only` сохраняет полезную публичную provenance-информацию, но не является целью скачивания.
 - Конфигурация хронологии отличает реальные пробелы соревнований от сохранённых prehistory/anomalous years и известных не проведённых компонентов.
 
@@ -279,7 +286,7 @@ find data/archive -maxdepth 3 -type d -name 'owao' -print
 - relation groups: `740`
 - семейств с индексированными локальными файлами: `29`
 - семейств в `olympiads_index.csv`: `34`
-- проверенных источников в `source_coverage.csv`: `65` (`55` сейчас настроены)
+- проверенных источников в `source_coverage.csv`: `69` (`59` настроены в текущем каталоге источников; публичный discovery snapshot выше всё ещё содержит `55` seed-источников до следующего глобального refresh)
 
 Таблица покрытия семейств показывает для каждого каталогизированного семейства
 английское и русское название, регион, scope, число индексированных файлов,
@@ -295,6 +302,7 @@ find data/archive -maxdepth 3 -type d -name 'owao' -print
 
 - [data/indices/coverage_report.md](data/indices/coverage_report.md)
 - [data/indices/olympiads_index.csv](data/indices/olympiads_index.csv)
+- [data/indices/collections_index.csv](data/indices/collections_index.csv)
 - [data/indices/files_index.csv](data/indices/files_index.csv)
 - [data/indices/relation_groups.csv](data/indices/relation_groups.csv)
 
