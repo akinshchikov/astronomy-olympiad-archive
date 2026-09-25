@@ -34,6 +34,11 @@ in `utils/`; tests are in `tests/`.
   HTTP response/signature before storing a PDF or archive.
 - ZIP/container processing must be source-specific, bounded, validated, and local.
   Never commit raw containers or extracted members.
+- Public problem books and training/reference collections from bounded official
+  olympiad sources are valid local acquisition targets. Mark them
+  `record_kind=collection`, keep them out of event-year/gap semantics, and expose
+  only lightweight metadata through `collections_index.csv`. Purchase-only
+  listings and unrelated external recommended literature are not crawl targets.
 - A lost historical publication may be committed only through the documented
   `data/preserved/` exception: prior intentional public publication, technical
   disappearance rather than access restriction, explicit redistribution permission,
