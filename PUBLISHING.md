@@ -19,8 +19,8 @@ ordinary downloads.
   `data/manifests/discovered_documents.jsonl`, and
   `data/manifests/discovery_coverage.csv`.
 - Lightweight public indices: `data/indices/olympiads_index.csv`,
-  `data/indices/files_index.csv`, `data/indices/relation_groups.csv`, and
-  `data/indices/coverage_report.md`.
+  `data/indices/files_index.csv`, `data/indices/collections_index.csv`,
+  `data/indices/relation_groups.csv`, and `data/indices/coverage_report.md`.
 - The repository-wide source coverage catalog
   `data/audits/source_coverage.csv` and `data/config/family_metadata.csv`, used by
   the generated coverage report.
@@ -43,6 +43,21 @@ ordinary downloads.
 
 The public GitHub release must not attach those files. GitHub's normal source-code
 archives are sufficient release assets.
+
+## Public collections and training resources
+
+Public olympiad-specific compilations, problem collections, tutorials, observing
+exercises, and organizer-produced training sets may be configured as ordinary
+external sources when a direct public organizer/official-archive link exists.
+Downloaded copies remain in local generated storage under the same rules as
+competition papers; they are not committed merely because they are educationally
+useful.
+
+Purchase-only links, shop listings, and generic recommended textbooks are outside
+the crawler target set. A public page may still be retained as provenance when its
+linked resource is policy-blocked; this does not authorize an access-control
+workaround. Collection metadata is separated from competition-event chronology in
+`collections_index.csv`.
 
 ## Preserved-publication exception
 
