@@ -272,8 +272,10 @@ find data/archive -maxdepth 3 -type d -name 'owao' -print
   material from bounded official olympiad sources use `record_kind=collection`.
   They are downloaded only into the local archive and indexed separately; a span
   such as 2007–2025 never becomes a synthetic competition year.
-- Purchase-only books and unrelated external recommended literature are not
-  download targets.
+- Purchase-only books are not download targets. Direct public documents explicitly
+  linked from a bounded official olympiad materials page may be downloaded even
+  when the file itself is hosted externally; the crawler does not recursively
+  expand into the external site.
 - `access_mode=discovery_only` retains useful public provenance that is not a download target.
 - Chronology configuration distinguishes actual competition gaps from retained prehistory/anomalous years and known not-held components.
 
