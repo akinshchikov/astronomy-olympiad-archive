@@ -115,6 +115,8 @@ def detect(root: Path, families: set[str] | None) -> int:
 
     buckets: dict[tuple[str, int | None, str, str], list[dict]] = defaultdict(list)
     for entry in entries:
+        if entry.get("record_kind") == "collection":
+            continue
         key = (
             entry["olympiad_family"],
             entry["year"],
