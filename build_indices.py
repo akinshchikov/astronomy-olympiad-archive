@@ -288,6 +288,88 @@ def write_vsosh_2026_discovery_coverage(handle, discovered_rows: list[dict]) -> 
     handle.write("- Status is based on discovered public sources; downloading is tracked separately below.\n\n")
 
 
+COLLECTION_INDEX_FIELDS = (
+    "collection_id",
+    "olympiad_family",
+    "collection_title",
+    "collection_type",
+    "publication_year",
+    "covered_years",
+    "related_families",
+    "language",
+    "document_types",
+    "downloaded_files",
+    "source_count",
+    "source_urls",
+    "access_modes",
+)
+
+
+def collection_index_rows(entries: list[dict], discovered_rows: list[dict]) -> list[dict]:
+    collections: dict[str, dict] = {}
+
+    def add(row: dict, *, downloaded: bool) -> None:
+        if row.get("record_kind") != "collection":
+            return
+        collection_id = str(row.get("collection_id") or "").strip()
+        if not collection_id:
+            return
+        payload = collections.setdefault(
+            collection_id,
+            {
+                "collection_id": collection_id,
+                "olympiad_family": str(row.get("olympiad_family") or ""),
+                "collection_title": str(row.get("collection_title") or row.get("source_title") or collection_id),
+                "collection_type": str(row.get("collection_type") or "training_collection"),
+                "publication_year": row.get("publication_year") or "",
+                "covered_years": str(row.get("covered_years") or ""),
+                "related_families": set(),
+                "language": str(row.get("language") or "unknown"),
+                "document_types": set(),
+                "downloaded_files": set(),
+                "source_urls": set(),
+                "access_modes": set(),
+            },
+        )
+        related = row.get("related_families") or [row.get("olympiad_family")]
+        if isinstance(related, str):
+            related = [value for value in related.split(",") if value]
+        payload["related_families"].update(str(value) for value in related if value)
+        payload["document_types"].update(logical_document_types(row))
+        if downloaded and row.get("sha256"):
+            payload["downloaded_files"].add(str(row["sha256"]))
+        if row.get("source_url"):
+            payload["source_urls"].add(str(row["source_url"]))
+        if row.get("access_mode"):
+            payload["access_modes"].add(str(row["access_mode"]))
+
+    for row in discovered_rows:
+        add(row, downloaded=False)
+    for row in entries:
+        add(row, downloaded=True)
+
+    rows: list[dict] = []
+    for payload in collections.values():
+        rows.append(
+            {
+                "collection_id": payload["collection_id"],
+                "olympiad_family": payload["olympiad_family"],
+                "collection_title": payload["collection_title"],
+                "collection_type": payload["collection_type"],
+                "publication_year": payload["publication_year"],
+                "covered_years": payload["covered_years"],
+                "related_families": "|".join(sorted(payload["related_families"])),
+                "language": payload["language"],
+                "document_types": "|".join(sorted(payload["document_types"])),
+                "downloaded_files": len(payload["downloaded_files"]),
+                "source_count": len(payload["source_urls"]),
+                "source_urls": "|".join(sorted(payload["source_urls"])),
+                "access_modes": "|".join(sorted(payload["access_modes"])),
+            }
+        )
+    return sorted(rows, key=lambda row: (row["olympiad_family"], row["collection_id"]))
+
+
 def build(root: Path, families: set[str] | None) -> int:
     logger = configure_logger("build_indices", root / "data" / "logs" / "normalization.log")
     entries = load_jsonl(root / "data" / "manifests" / "normalized_entries.jsonl")
@@ -311,6 +393,8 @@ def build(root: Path, families: set[str] | None) -> int:
     downloaded_candidate_ids = {row["candidate_id"] for row in downloaded_rows}
     missing_rows_by_family: dict[str, list[dict]] = defaultdict(list)
     for row in discovered_rows:
+        if row.get("record_kind") == "collection":
+            continue
         if row["candidate_id"] not in downloaded_candidate_ids:
             missing_rows_by_family[row["olympiad_family"]].append(row)
 
@@ -330,10 +414,16 @@ def build(root: Path, families: set[str] | None) -> int:
                 "stage_or_round": entry["stage_or_round"],
                 "document_type": entry["document_type"],
                 "language": entry["language"],
+                "record_kind": str(entry.get("record_kind") or "event"),
+                "collection_id": str(entry.get("collection_id") or ""),
+                "publication_year": entry.get("publication_year") or "",
             },
         )
         objects[entry["sha256"]]["source_count"] += 1
         objects[entry["sha256"]]["source_urls"].add(entry["source_url"])
+
+        if entry.get("record_kind") == "collection":
+            continue
 
         key = (entry["olympiad_family"], entry["year"], entry["stage_or_round"])
         if key not in olympiad_index:
@@ -368,8 +458,11 @@ def build(root: Path, families: set[str] | None) -> int:
 
     # Discovery-only sources still represent known event coverage.  Keep them in
     # the lightweight event index even when robots, login requirements, or an
-    # external share prevent lawful automatic normalization.
+    # external share prevent lawful automatic normalization. Non-event collections
+    # are indexed separately and never create synthetic olympiad years.
     for row in discovered_rows:
+        if row.get("record_kind") == "collection":
+            continue
         key = (row["olympiad_family"], row["year"], row["stage_or_round"])
         if key not in olympiad_index:
             olympiad_index[key] = {
@@ -425,6 +518,13 @@ def build(root: Path, families: set[str] | None) -> int:
         if rows:
             writer.writeheader()
             writer.writerows(rows)
+
+    collections_rows = collection_index_rows(entries, discovered_rows)
+    collections_index_path = root / "data" / "indices" / "collections_index.csv"
+    with collections_index_path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(COLLECTION_INDEX_FIELDS))
+        writer.writeheader()
+        writer.writerows(collections_rows)
 
     coverage_path = root / "data" / "indices" / "coverage_report.md"
     with coverage_path.open("w", encoding="utf-8") as handle:
@@ -519,7 +619,12 @@ def build(root: Path, families: set[str] | None) -> int:
                 handle.write(f"- Known not-held components: {rendered}\n")
             handle.write("\n")
 
-    logger.info("INDICES files=%s olympiad_rows=%s", len(files_rows), len(olympiad_index))
+    logger.info(
+        "INDICES files=%s olympiad_rows=%s collections=%s",
+        len(files_rows),
+        len(olympiad_index),
+        len(collections_rows),
+    )
     return 0
 
 
