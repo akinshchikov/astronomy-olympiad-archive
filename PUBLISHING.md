@@ -1,8 +1,15 @@
 # Publishing Notes
 
-This repository publishes a reproducible pipeline and lightweight metadata, not a
-mirror of olympiad binaries. A public source URL or a successful local download does
-not itself grant permission to redistribute that file.
+This repository publishes a reproducible pipeline and lightweight metadata by
+default, not a general mirror of olympiad binaries. A public source URL or a
+successful local download does not itself grant permission to redistribute that
+file.
+
+A narrow preservation exception is documented below for small, bounded historical
+corpora whose original public publication has disappeared for technical reasons and
+whose redistribution is explicitly permitted. Those files live only under
+`data/preserved/` and are treated as source inputs, not as a precedent for mirroring
+ordinary downloads.
 
 ## Intended public content
 
@@ -18,6 +25,8 @@ not itself grant permission to redistribute that file.
   `data/audits/source_coverage.csv` and `data/config/family_metadata.csv`, used by
   the generated coverage report.
 - Release notes and automatically generated GitHub source-code archives.
+- Bounded historical source files under `data/preserved/` only when they satisfy
+  the preserved-publication exception below.
 
 ## Always local and ignored
 
@@ -29,10 +38,44 @@ not itself grant permission to redistribute that file.
   `data/manifests/relation_edges.jsonl`.
 - Raw downloads, normalized PDFs, ZIPs, DOC/DOCX files, locally extracted ZIP
   members, object-store files, checkpoints, logs, temporary HTML, and any manifest
-  containing local absolute paths.
+  containing local absolute paths, except for explicitly approved files below
+  `data/preserved/`.
 
 The public GitHub release must not attach those files. GitHub's normal source-code
 archives are sufficient release assets.
+
+## Preserved-publication exception
+
+A binary source file may be committed below `data/preserved/` only when all of the
+following are true:
+
+1. The material is directly within the archive's competition scope and was
+   intentionally published for public access in the past.
+2. The original/current public hosting has disappeared for technical or archival
+   reasons, rather than because of a login gate, takedown, redistribution
+   restriction, robots policy, or other access-control boundary.
+3. Redistribution of the exact material is explicitly permitted by the organizer,
+   author, or other relevant rights holder, or an equivalent documented
+   public-redistribution grant exists.
+4. Provenance is clear enough to identify the competition and publication history.
+   Private correspondence may support that provenance internally, but is not
+   committed merely to prove permission.
+5. The preservation set is small and bounded. A tracked manifest records the
+   repository path, year/context, byte size, and SHA-256 of every committed binary.
+
+Preserved files are ingested directly from the checked-out repository and must pass
+the same signature/integrity checks as downloaded inputs. They are not copied into
+GitHub Release assets separately; the normal source-code archive already contains
+them.
+
+The first use of this exception is the Russian Open Correspondence School Astronomy
+Olympiad corpus for 2005–2008: four Russian tasks-with-solutions PDFs that were
+historically public, later disappeared from public hosting for technical reasons,
+and are explicitly permitted for republication. The private correspondence used to
+confirm provenance is intentionally not part of the repository.
+
+This exception is reusable for genuinely similar lost-publication cases. It must not
+be used merely because a file was once reachable on the web.
 
 ## Independent coverage dimensions
 
@@ -70,6 +113,8 @@ senior/junior, the three Slovenia lineages, BAO/BDOAA, and Macao/CNAO.
 2. Run `python3 -m unittest discover -s tests -q` and `git diff --check`.
 3. Confirm committed public counts are derived from the tracked manifests and
    indices; do not hand-edit generated coverage facts.
-4. Publish only code, lightweight metadata, documentation, and release notes.
-5. If a future release changes source availability, record its actual state rather
+4. Publish only code, lightweight metadata, documentation, release notes, and
+   explicitly approved `data/preserved/` files that satisfy the exception above.
+5. Verify every preserved binary against its tracked byte size and SHA-256 manifest.
+6. If a future release changes source availability, record its actual state rather
    than treating discovery as permission or completeness.

@@ -3,8 +3,10 @@
 ## Purpose and public boundary
 
 This repository builds a reproducible local archive from public astronomy-olympiad
-sources. GitHub contains code and lightweight metadata only, never a mirror of
-downloaded binaries. Every olympiad family is first-class. Coverage fields describe
+sources. GitHub contains code and lightweight metadata by default, not a general
+mirror of downloaded binaries. The only binary exception is the bounded
+`data/preserved/` mechanism defined in `PUBLISHING.md` for lost historical
+publications with explicit redistribution permission. Every olympiad family is first-class. Coverage fields describe
 current source evidence and acquisition state, not the value of a competition. The
 repository-wide source catalog is `data/audits/source_coverage.csv`; the generated
 family view is in `data/indices/coverage_report.md`.
@@ -32,6 +34,11 @@ in `utils/`; tests are in `tests/`.
   HTTP response/signature before storing a PDF or archive.
 - ZIP/container processing must be source-specific, bounded, validated, and local.
   Never commit raw containers or extracted members.
+- A lost historical publication may be committed only through the documented
+  `data/preserved/` exception: prior intentional public publication, technical
+  disappearance rather than access restriction, explicit redistribution permission,
+  clear provenance, and a bounded checksum manifest. Never commit private
+  correspondence merely as permission evidence.
 
 Every family follows the same workflow:
 
@@ -43,10 +50,12 @@ identify family -> identify source -> preserve source role -> record access stat
 
 ## Committed and local data
 
-Committed lightweight metadata is limited to the source/discovery manifests, public
-indices, coverage report, and durable audits. Never commit `data/raw/`,
-`data/archive/`, `data/logs/`, `data/manual/`, download manifests, download
-checkpoints, normalized-entry manifests, relation-edge manifests, or any binaries.
+Committed public material is normally limited to the source/discovery manifests,
+public indices, coverage report, durable audits, code, and documentation. Never
+commit `data/raw/`, `data/archive/`, `data/logs/`, `data/manual/`, download
+manifests, download checkpoints, normalized-entry manifests, relation-edge
+manifests, or ordinary downloaded binaries. The only binary exception is a reviewed
+`data/preserved/` set satisfying `PUBLISHING.md`, with a tracked checksum manifest.
 `PUBLISHING.md` is the release policy.
 
 Downloads use `data/manifests/download_checkpoint.jsonl` locally. A resume may reuse
@@ -78,5 +87,6 @@ execution windows. Run it manually in a persistent local terminal (for example
 Use coherent commits: a source configuration/parser change with its tests and
 targeted metadata refresh, or a documentation-only release preparation. Before a
 commit, inspect `git status --short`, run the canonical test command, and ensure no
-local binary/archive output is staged. Do not push, tag, or release unless the user
+local binary/archive output is staged outside an explicitly reviewed
+`data/preserved/` exception. Do not push, tag, or release unless the user
 explicitly asks.

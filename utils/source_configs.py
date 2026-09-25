@@ -278,6 +278,19 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
         notes="Официальная страница NAOK / DAS с архивом задач и решений по годам.",
     ),
     SourceDefinition(
+        source_id="russia_correspondence_preserved_publication",
+        label="Russian Open Correspondence Astronomy Olympiad: preserved public files",
+        olympiad_family="russia_correspondence_astronomy",
+        source_role="archive",
+        source_priority=1,
+        strategy="preserved",
+        notes=(
+            "Historically public 2005–2008 Russian tasks-with-solutions files preserved "
+            "in-repository after the original public hosting disappeared for technical reasons."
+        ),
+        extras={"manifest_path": "data/preserved/russia_correspondence_astronomy/manifest.jsonl"},
+    ),
+    SourceDefinition(
         source_id="russia_team_qual_archive",
         label="Russia team qualification: archive of qualifying tests",
         olympiad_family="russia_team_qual",
@@ -561,6 +574,9 @@ def _seed_context_for_url(source: SourceDefinition, url: str, extra_context: dic
 
 
 def iter_seed_requests(source: SourceDefinition) -> list[SeedRequest]:
+    if source.strategy == "preserved":
+        return []
+
     if source.strategy == "static":
         return [
             SeedRequest(

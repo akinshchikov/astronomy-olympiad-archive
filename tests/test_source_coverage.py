@@ -68,7 +68,7 @@ class SourceCoverageCatalogTests(TestCase):
                 "not_applicable",
             },
             "source_role": {"official", "mirror", "archive"},
-            "redistribution_status": {"unknown", "explicit-no-redistribution"},
+            "redistribution_status": {"unknown", "explicit-no-redistribution", "explicit-permission"},
         }
         for field, values in allowed.items():
             with self.subTest(field=field):
@@ -117,7 +117,7 @@ class SourceCoverageCatalogTests(TestCase):
             len({row["olympiad_family"] for row in csv_rows("data/indices/files_index.csv")}),
             len({row["olympiad_family"] for row in csv_rows("data/indices/olympiads_index.csv")}),
         }
-        for relative in ("README.md", "README.ru.md", "docs/releases/v0.6.1.md"):
+        for relative in ("README.md", "README.ru.md"):
             compact = re.sub(r"[,\s]", "", docs[relative])
             with self.subTest(relative=relative):
                 self.assertTrue(all(str(count) in compact for count in counts))
