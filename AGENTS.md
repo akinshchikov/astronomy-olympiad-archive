@@ -38,7 +38,9 @@ in `utils/`; tests are in `tests/`.
   olympiad sources are valid local acquisition targets. Mark them
   `record_kind=collection`, keep them out of event-year/gap semantics, and expose
   only lightweight metadata through `collections_index.csv`. Purchase-only
-  listings and unrelated external recommended literature are not crawl targets.
+  listings are not crawl targets. Direct public documents explicitly linked from
+  an official olympiad materials page may live on an external host; acquire only
+  that linked document and do not recursively crawl the external site.
 - A lost historical publication may be committed only through the documented
   `data/preserved/` exception: prior intentional public publication, technical
   disappearance rather than access restriction, explicit redistribution permission,
