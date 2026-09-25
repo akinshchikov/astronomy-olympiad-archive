@@ -1240,7 +1240,7 @@ def apply_source_specific_link_overrides(
             stage_or_round = "final"
         if re.search(r"rieseni|riešen|vzorak", text):
             document_type, extra_types = "solutions", ["solutions"]
-        elif re.search(r"zadan|teoret|datova|dátov|prakt", text):
+        elif re.search(r"zadan|teoret|datova|dátov|prakt", text) or document_type == "info":
             document_type, extra_types = "tasks", ["tasks"]
         category = (
             "primary"
