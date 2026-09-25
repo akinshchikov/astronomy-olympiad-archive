@@ -92,6 +92,8 @@ def source_specific_page_link(source_id: str, href: str) -> bool:
         return "/archiwum/" in path or "/i-olimpiada-astronomiczna-juniorow" in path
     if source_id == "croatia_astronomy_azoo_official":
         return path.startswith("/natjecanja-i-smotre-arhiva/")
+    if source_id == "slovakia_astronomy_materials":
+        return path == "/zbierka/"
     if source_id == "thailand_astronomy_posn_official":
         return bool(re.fullmatch(r"/projects/academic-olympiad/ao/examination/(?:page/[1-3]/)?", path))
     return False
@@ -921,11 +923,20 @@ def passes_source_specific_link_filter(seed: dict, link_text: str, href: str) ->
             and decoded_url_path(href).lower().startswith("/pliki/")
             and infer_extension(href) == "pdf"
         )
-    if source_id in {"slovakia_astronomy_official_archive", "slovakia_astronomy_materials"}:
+    if source_id == "slovakia_astronomy_official_archive":
         return (
             source_domain(href) in {"astronomickaolympiada.sk", "www.astronomickaolympiada.sk"}
             and decoded_url_path(href).lower().startswith("/wp-content/uploads/")
             and infer_extension(href) in DIRECT_FILE_EXTENSIONS
+        )
+    if source_id == "slovakia_astronomy_materials":
+        # The official materials page deliberately points both to AO-hosted
+        # documents and to public third-party PDFs. Keep direct public files,
+        # but never turn ordinary navigation or purchase/catalog pages into
+        # archive documents.
+        return (
+            source_specific_page_link(source_id, href)
+            or infer_extension(href) in DIRECT_FILE_EXTENSIONS
         )
     if source_id in IOAA_CORE_SOURCE_IDS:
         return "gecaa" not in combined and "junior-ioaa" not in combined and "junior ioaa" not in combined
@@ -1019,6 +1030,8 @@ def should_record_seed_link(seed: dict, link_text: str, href: str) -> bool:
         return passes_source_specific_link_filter(seed, link_text, href)
     if source_id == "nepal_astronomy_naso_official":
         return source_domain(href) == "bit.ly" and "sample paper" in link_text.lower()
+    if source_id in {"poland_astronomy_training_materials", "slovakia_astronomy_materials"}:
+        return passes_source_specific_link_filter(seed, link_text, href)
     if source_id == "bangladesh_bao_official":
         return passes_source_specific_link_filter(seed, link_text, href)
     if source_id == "macao_astronomy_sepam_official":
@@ -1726,6 +1739,19 @@ def discover_documents(root: Path, families: set[str] | None, dry_run: bool, lim
                 link_context = dict(page_context)
                 link_context.update(link.get("context") or {})
                 link_context.update(configured_link_context(source_id, href))
+                if (
+                    source_id in {"poland_astronomy_training_materials", "slovakia_astronomy_materials"}
+                    and infer_extension(href) in DIRECT_FILE_EXTENSIONS
+                ):
+                    # Only actual public documents inherit collection semantics.
+                    # Navigation HTML from a materials page must remain a container,
+                    # never a synthetic collection/event.
+                    link_context.setdefault("record_kind", "collection")
+                    link_context.setdefault("stage_or_round", "collection")
+                    link_context.setdefault(
+                        "language",
+                        "pl" if source_id == "poland_astronomy_training_materials" else "sk",
+                    )
                 if link.get("context_text"):
                     link_page_title = normalize_whitespace(f"{link_page_title} {link['context_text']}")
                     link_context["source_context_text"] = link["context_text"]
