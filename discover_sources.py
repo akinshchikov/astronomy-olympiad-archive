@@ -1505,6 +1505,12 @@ def build_candidate_entry(
     # attempts rather than repeatedly probing the blocked mechanism.
     if source_id_of(seed) == "olaa_official_archive" and source_domain(href) == "drive.google.com":
         access_mode, access_note = "discovery_only", "official_linked_google_drive_robots_blocked"
+    if (
+        source_id_of(seed) == "ioaa_problems"
+        and source_domain(href) == "cdn.ioaastrophysics.org"
+        and "ioaa-problem-book-2007-2025.pdf" in decoded_filename(href).lower()
+    ):
+        access_mode, access_note = "discovery_only", "official_ioaa_cdn_robots_blocked"
     if source_id_of(seed) == "brazil_oba_official" and infer_extension(href) not in DIRECT_FILE_EXTENSIONS:
         # The OBA archive links to a reordered copy of its own HTML catalogue.
         # Preserve it as an official container, never as a task-paper download.
