@@ -310,7 +310,24 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
         strategy="static",
         seed_urls=["https://mosastro.olimpiada.ru/tasks"],
         notes="Текущий официальный архив задач МАО.",
-        extras={"default_context": {"record_seed_page": False}},
+        extras={
+            "default_context": {"record_seed_page": False},
+            "link_contexts": {
+                "https://astroolymp.ru/books/moscow_3.pdf": {
+                    "record_kind": "collection",
+                    "stage_or_round": "collection",
+                    "collection_id": "mao-2006-2015",
+                    "collection_title": "Задачи Московской астрономической олимпиады. 2006–2015",
+                    "collection_type": "mixed_collection",
+                    "publication_year": 2015,
+                    "covered_years": "2006-2015",
+                    "document_type": "solutions",
+                    "logical_document_types": ["tasks", "solutions"],
+                    "language": "ru",
+                    "related_families": ["mao", "russia_correspondence_astronomy"],
+                },
+            },
+        },
     ),
     SourceDefinition(
         source_id="mao_moscow_archive",
