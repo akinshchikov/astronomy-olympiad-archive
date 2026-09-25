@@ -64,6 +64,10 @@ VSOSH_SIRIUS_SOURCE_ID = "vsosh_sirius_final"
 SPBAO_OFFICIAL_SOURCE_ID = "spbao_official"
 IOAA_JUNIOR_SOURCE_ID = "ioaa_junior_official"
 USAAAO_SOURCE_ID = "usaaao_past_exams"
+USAAAO_TRAINING_SOURCE_ID = "usaaao_training_resources"
+SLOVAKIA_SOURCE_ID = "slovakia_astronomy_official_archive"
+SLOVAKIA_MATERIALS_SOURCE_ID = "slovakia_astronomy_official_materials"
+SINGAPORE_TRAINING_SOURCE_ID = "singapore_astronomy_training_resources"
 INAO_SOURCE_IDS = {"inao_hbcse_past_papers", "inao_hbcse_current"}
 CZECH_SOURCE_ID = "czech_astronomy_official"
 GECAA_SOURCE_IDS = {"gecaa_ioaa_archive", "gecaa_official_archive"}
@@ -740,12 +744,14 @@ def batch_a_page_links(seed: dict, raw_html: str, base_url: str, page_context: d
 
 
 def access_mode_for_url(url: str) -> tuple[str, str]:
-    """Interactive targets are useful provenance, but not crawl targets."""
+    """Interactive/policy-blocked targets are useful provenance, not crawl targets."""
     domain = source_domain(url)
     if domain == "uts.astroedu.ru":
         return "discovery_only", "interactive_or_login=uts"
     if domain == "edu.sirius.online":
         return "discovery_only", "interactive_or_login=edu_sirius"
+    if domain in {"drive.google.com", "docs.google.com"}:
+        return "discovery_only", "external_google_resource"
     return "download", ""
 
 
@@ -886,6 +892,27 @@ def passes_source_specific_link_filter(seed: dict, link_text: str, href: str) ->
             and path.startswith(("/files/district/", "/files/3_stage/", "/files/republican/"))
             and bool(belastro_extension(href))
         )
+    if source_id == SLOVAKIA_SOURCE_ID:
+        return (
+            source_domain(href) == "www.astronomickaolympiada.sk"
+            and infer_extension(href) in DIRECT_FILE_EXTENSIONS
+            and bool(re.search(r"(?:^|[-_/])ao(?:[-_]|\d)", decoded_filename(href), re.I))
+        )
+    if source_id == SLOVAKIA_MATERIALS_SOURCE_ID:
+        label = normalize_whitespace(f"{link_text} {decoded_filename(href)}").lower()
+        return (
+            source_domain(href) == "www.astronomickaolympiada.sk"
+            and infer_extension(href) in DIRECT_FILE_EXTENSIONS
+            and bool(re.search(r"zbierk|astrokurz|pozn[aá]mk|d[aá]tov|konšt|konst", label, re.I))
+        )
+    if source_id == USAAAO_TRAINING_SOURCE_ID:
+        label = normalize_whitespace(f"{link_text} {href}").lower()
+        return (
+            source_domain(href) in {"usaaao.org", "drive.google.com", "docs.google.com"}
+            and bool(re.search(r"slides?|\bps\s*\d|problem|solution", label, re.I))
+        )
+    if source_id == SINGAPORE_TRAINING_SOURCE_ID:
+        return source_domain(href) == "drive.google.com" and "additional sao resources" in link_text.lower()
     if source_id == BULGARIA_SOURCE_ID and source_domain(href) == "api.pcloud.com":
         return decoded_url_path(href).lower().endswith("/getpublinkdownload") and bool(pcloud_filename(href))
     if source_id == BULGARIA_SOURCE_ID and source_domain(href) == "astro-olymp.org":
@@ -979,6 +1006,13 @@ def should_record_seed_link(seed: dict, link_text: str, href: str) -> bool:
     if source_id == "nzoaa_official":
         # The past-papers page also links to itself and general site navigation.
         # Only a labelled official paper/marking Drive link is corpus evidence.
+        return passes_source_specific_link_filter(seed, link_text, href)
+    if source_id in {
+        SLOVAKIA_SOURCE_ID,
+        SLOVAKIA_MATERIALS_SOURCE_ID,
+        USAAAO_TRAINING_SOURCE_ID,
+        SINGAPORE_TRAINING_SOURCE_ID,
+    }:
         return passes_source_specific_link_filter(seed, link_text, href)
     if source_id == "nepal_astronomy_naso_official":
         return source_domain(href) == "bit.ly" and "sample paper" in link_text.lower()
@@ -1144,6 +1178,53 @@ def apply_source_specific_link_overrides(
                 document_type, extra_types = "tasks", ["tasks"]
         language = "be" if re.search(r"[ўЎіІ]|беларус", f"{link_text} {decoded_filename(href)}", re.I) else "ru"
         return document_type, extra_types or [document_type], stage_or_round, detail, language
+    if source_id == SLOVAKIA_SOURCE_ID:
+        name = normalize_whitespace(f"{decoded_filename(href)} {link_text}")
+        lowered = name.lower()
+        stage = (
+            "home"
+            if re.search(r"(?:^|[-_])dk(?:[-_]|$)", lowered)
+            else "regional"
+            if re.search(r"(?:^|[-_])rk(?:[-_]|$)", lowered)
+            else "final"
+            if re.search(r"(?:^|[-_])(?:ck|fi)(?:[-_]|$)", lowered)
+            else "qualifying"
+            if re.search(r"(?:^|[-_])1k(?:[-_]|$)", lowered)
+            else stage_or_round
+        )
+        category = (
+            "primary"
+            if re.search(r"(?:^|[-_])zs(?:[-_]|$)", lowered)
+            else "secondary"
+            if re.search(r"(?:^|[-_])ss(?:[-_]|$)", lowered)
+            else ""
+        )
+        subtype = (
+            "data-analysis"
+            if re.search(r"(?:^|[-_])da(?:[-_]|$)|datov", lowered)
+            else "practical"
+            if "prakt" in lowered
+            else "theoretical"
+            if "teor" in lowered
+            else ""
+        )
+        detail = "-".join(part for part in (category, subtype) if part) or round_detail
+        is_solution = bool(re.search(r"riesen|riešen|vzorak|vzorák", lowered))
+        return ("solutions", ["solutions"], stage, detail, "sk") if is_solution else ("tasks", ["tasks"], stage, detail, "sk")
+    if source_id == SLOVAKIA_MATERIALS_SOURCE_ID:
+        label = normalize_whitespace(f"{link_text} {decoded_filename(href)}").lower()
+        if "zbierk" in label:
+            return "solutions", ["tasks", "solutions"], "collection", round_detail, "sk"
+        return "info", ["info"], "collection", round_detail, "sk"
+    if source_id == USAAAO_TRAINING_SOURCE_ID:
+        label = normalize_whitespace(f"{link_text} {decoded_filename(href)} {href}").lower()
+        if "solution" in label:
+            return "solutions", ["solutions"], "collection", round_detail, "en"
+        if re.search(r"\bps\s*\d|problem", label):
+            return "tasks", ["tasks"], "collection", round_detail, "en"
+        return "info", ["info"], "collection", round_detail, "en"
+    if source_id == SINGAPORE_TRAINING_SOURCE_ID:
+        return "info", ["info"], "collection", round_detail, "en"
     if source_id == BULGARIA_SOURCE_ID:
         name = (pcloud_filename(href) or decoded_filename(href)).lower()
         context_label = normalize_whitespace(f"{page_title} {name}").lower()
@@ -1366,6 +1447,10 @@ def build_candidate_entry(
         round_detail,
         language,
     )
+    if context.get("logical_document_types"):
+        extra_types = [str(value) for value in context["logical_document_types"]]
+    if context.get("language"):
+        language = str(context["language"])
     if source_id_of(seed) == "bangladesh_bao_official":
         filename_year = re.search(r"question_(20\d{2})_", decoded_filename(href), re.I)
         if filename_year:
@@ -1412,7 +1497,7 @@ def build_candidate_entry(
     if family == "iao" and source_domain(href) in {"issp.ac.ru", "www.issp.ac.ru"}:
         source_role, source_priority = "official", 1
         notes = append_note(notes, f"discovered_via={seed['source_id']}")
-    return {
+    entry = {
         "candidate_id": hashlib.sha1(f"{seed['source_id']}::{href}".encode("utf-8")).hexdigest(),
         "source_id": seed["source_id"],
         "olympiad_family": family,
@@ -1454,6 +1539,17 @@ def build_candidate_entry(
         "seed_context": context,
         "confidence": confidence_score(year, stage_or_round, document_type, link_text or page_title),
     }
+    for key in (
+        "material_scope",
+        "collection_id",
+        "collection_title",
+        "collection_type",
+        "covered_years",
+        "publication_year",
+    ):
+        if context.get(key) not in {None, ""}:
+            entry[key] = context[key]
+    return entry
 
 
 def store_discovered_entry(
@@ -1549,8 +1645,10 @@ def discover_documents(root: Path, families: set[str] | None, dry_run: bool, lim
         if families and source.olympiad_family not in families:
             continue
         for href in source.extras.get("direct_file_urls", []):
-            seed = {"source_id": source.source_id, "olympiad_family": source.olympiad_family, "source_role": source.source_role, "source_priority": source.source_priority, "context": dict(source.extras.get("default_context", {}))}
-            entry = build_candidate_entry(seed, href=href, link_text=decoded_filename(href), page_title=source.label, parent_page_url=source.seed_urls[0], parent_page_title=source.label, context=seed["context"])
+            context = dict(source.extras.get("default_context", {}))
+            context.update(source.extras.get("direct_file_contexts", {}).get(href, {}))
+            seed = {"source_id": source.source_id, "olympiad_family": source.olympiad_family, "source_role": source.source_role, "source_priority": source.source_priority, "context": context}
+            entry = build_candidate_entry(seed, href=href, link_text=decoded_filename(href), page_title=source.label, parent_page_url=source.seed_urls[0], parent_page_title=source.label, context=context)
             store_discovered_entry(discovered, entry, seen_from=source.seed_urls[0])
             coverage[(entry["olympiad_family"], entry["year"], entry["stage_or_round"])].update(logical_document_types(entry))
 
