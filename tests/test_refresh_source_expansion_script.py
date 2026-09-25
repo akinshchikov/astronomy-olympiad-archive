@@ -15,6 +15,7 @@ PROTECTED = (
     "data/indices/coverage_report.md",
     "data/indices/files_index.csv",
     "data/indices/relation_groups.csv",
+    "data/indices/collections_index.csv",
 )
 
 
@@ -38,7 +39,7 @@ class RefreshScriptTests(TestCase):
             "source_id,olympiad_family,source_role,source_priority\n"
             "legacy_iao,iao,archive,2\n"
         )
-        for name in ("olympiads_index.csv", "coverage_report.md", "files_index.csv", "relation_groups.csv"):
+        for name in ("olympiads_index.csv", "coverage_report.md", "files_index.csv", "relation_groups.csv", "collections_index.csv"):
             (root / "data/indices" / name).write_text(f"original-{name}\n")
         return {relative: root / relative for relative in PROTECTED}
 
