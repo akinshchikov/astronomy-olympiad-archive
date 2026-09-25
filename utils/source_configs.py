@@ -697,8 +697,6 @@ SOURCE_DEFINITIONS.extend(
                     "collection_title": "IOAA problems and solutions 2007–2025",
                     "collection_type": "competition_compilation",
                     "covered_years": "2007-2025",
-                    "publication_year": 2026,
-                    "year": 2026,
                     "stage_or_round": "collection",
                     "document_type": "solutions",
                     "logical_document_types": ["tasks", "solutions"],
