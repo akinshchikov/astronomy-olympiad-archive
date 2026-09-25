@@ -9,7 +9,8 @@ mirror of downloaded binaries. The only binary exception is the bounded
 publications with explicit redistribution permission. Every olympiad family is first-class. Coverage fields describe
 current source evidence and acquisition state, not the value of a competition. The
 repository-wide source catalog is `data/audits/source_coverage.csv`; the generated
-family view is in `data/indices/coverage_report.md`.
+family view is in `data/indices/coverage_report.md`, with public compilations and
+training sets indexed separately in `data/indices/collections_index.csv`.
 
 Core stages are `discover_sources.py`, `crawl_source.py`,
 `import_manual_files.py`, `normalize_archive.py`, `detect_relations.py`,
@@ -34,6 +35,11 @@ in `utils/`; tests are in `tests/`.
   HTTP response/signature before storing a PDF or archive.
 - ZIP/container processing must be source-specific, bounded, validated, and local.
   Never commit raw containers or extracted members.
+- Public olympiad-specific compilations and organizer-produced training/problem
+  sets are ordinary external sources: download them only through the local pipeline,
+  tag them with `material_scope=collection`, and keep them out of event chronology.
+  Exclude purchase-only links and generic recommended textbooks. Policy-blocked
+  external resources remain discovery-only.
 - A lost historical publication may be committed only through the documented
   `data/preserved/` exception: prior intentional public publication, technical
   disappearance rather than access restriction, explicit redistribution permission,
