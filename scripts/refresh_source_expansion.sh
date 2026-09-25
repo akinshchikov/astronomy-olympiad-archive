@@ -11,7 +11,7 @@ log_path="$log_dir/source-expansion-$timestamp.log"
 stage_repo=$(mktemp -d "${TMPDIR:-/tmp}/astronomy-source-expansion.XXXXXX")
 success=0
 outputs=(data/manifests/discovered_documents.jsonl data/manifests/discovery_coverage.csv data/indices/olympiads_index.csv data/indices/coverage_report.md)
-protected=("${outputs[@]}" data/indices/files_index.csv data/indices/relation_groups.csv)
+protected=("${outputs[@]}" data/indices/files_index.csv data/indices/relation_groups.csv data/indices/collections_index.csv)
 backup_dir=$(mktemp -d "${TMPDIR:-/tmp}/astronomy-source-expansion-backups.XXXXXX")
 declare -A original_hash=()
 declare -a install_temps=()
@@ -195,7 +195,7 @@ for output in "${outputs[@]}"; do
         exit 1
     fi
 done
-for output in data/indices/files_index.csv data/indices/relation_groups.csv; do
+for output in data/indices/files_index.csv data/indices/relation_groups.csv data/indices/collections_index.csv; do
     [[ $(sha256sum "$root/$output" | awk '{print $1}') == ${original_hash[$output]} ]] || { echo "Protected non-output changed: $output" >&2; exit 1; }
 done
 if git status --porcelain | awk '{print $2}' | grep -Eq '^(data/(raw|archive|logs)/|.*\.(pdf|zip|doc|docx|html?|png|jpg)$)'; then
