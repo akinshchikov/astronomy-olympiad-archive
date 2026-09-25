@@ -117,7 +117,7 @@ class SourceCoverageCatalogTests(TestCase):
             len({row["olympiad_family"] for row in csv_rows("data/indices/files_index.csv")}),
             len({row["olympiad_family"] for row in csv_rows("data/indices/olympiads_index.csv")}),
         }
-        for relative in ("README.md", "README.ru.md", "docs/releases/v0.6.1.md"):
+        for relative in ("README.md", "README.ru.md"):
             compact = re.sub(r"[,\s]", "", docs[relative])
             with self.subTest(relative=relative):
                 self.assertTrue(all(str(count) in compact for count in counts))

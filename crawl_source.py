@@ -124,7 +124,6 @@ def preserved_repository_download_record(root: Path, row: dict, extension: str) 
             "content_type": guessed_content_type(extension),
             "request_url": str(row.get("source_url", "")),
             "final_url": str(row.get("source_url", "")),
-            "http_status": 200,
             "bytes": local_file.stat().st_size,
             "content_validation": "repository_preserved_pdf_signature" if extension == "pdf" else "repository_preserved_file",
         }

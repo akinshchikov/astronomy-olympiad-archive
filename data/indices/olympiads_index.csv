@@ -459,6 +459,10 @@ poland_astronomy,2027,observational,False,False,False,False,1,0,1,0.85
 poland_astronomy_junior,,unknown,False,False,False,False,0,0,0,0.4
 poland_astronomy_junior,2025,unknown,False,False,False,False,0,0,0,0.65
 poland_astronomy_junior,2026,unknown,False,False,False,False,0,0,0,0.65
+russia_correspondence_astronomy,2005,correspondence,True,True,False,False,1,0,1,0.99
+russia_correspondence_astronomy,2006,correspondence,True,True,False,False,1,0,1,0.99
+russia_correspondence_astronomy,2007,correspondence,True,True,False,False,1,0,1,0.99
+russia_correspondence_astronomy,2008,correspondence,True,True,False,False,1,0,1,0.99
 russia_team_qual,,theoretical,False,False,False,False,1,0,1,0.75
 russia_team_qual,,unknown,True,False,False,False,0,0,0,0.55
 russia_team_qual,2016,theoretical,True,False,False,False,4,1,4,0.99

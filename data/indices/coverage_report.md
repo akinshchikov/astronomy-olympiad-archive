@@ -39,6 +39,7 @@ Coverage labels describe the current archive state, not the importance or qualit
 | poland_astronomy_junior | Polish Junior Astronomy Olympiad | Польская юниорская астрономическая олимпиада | Poland | national junior olympiad | 0 | 2025–2026 | Metadata catalogued | Unknown | official | partially accessible | poland_astronomy_junior_official=partially_accessible |
 | romania_astronomy | Romanian Astronomy and Astrophysics Olympiad | Румынская олимпиада по астрономии и астрофизике | Romania | national olympiad | 0 | none | Source currently unresolved | Unknown | official | dead links | romania_astronomy_official=dead_links |
 | russia_team_qual | Russia Team Qualification in Astronomy and Astrophysics | Отбор в сборную России по астрономии и астрофизике | Russia | national team selection | 74 | 2016–2026 | Indexed local archive | Partial archive | official | partially accessible | russia_team_qual_archive=partially_accessible |
+| russia_correspondence_astronomy | Russian Open Correspondence School Astronomy Olympiad | Российская Открытая Заочная Школьная Астрономическая Олимпиада | Russia | open correspondence school olympiad | 4 | 2005–2008 | Indexed local archive | Partial archive | archive | open | explicit-permission |
 | spbao | Saint Petersburg Astronomy Olympiad | Санкт-Петербургская астрономическая олимпиада | Russia | regional multi-stage olympiad | 440 | 2010–2026 | Indexed local archive | Partial archive | archive, official | open, partially accessible | spbao_olimpiada_archive=partially_accessible; spbao_year_class_pages=partially_accessible |
 | serbia_astronomy | Serbian Astronomy Olympiad | Сербская астрономическая олимпиада | Serbia | national olympiad | 31 | 2012–2026 | Indexed local archive | Partial archive | official | open | none |
 | singapore_astronomy | Singapore Astronomy Olympiad | Сингапурская астрономическая олимпиада | Singapore | national olympiad | 0 | none | Metadata catalogued | Unknown | official | robots blocked | singapore_astronomy_official=robots_blocked |
@@ -387,6 +388,18 @@ Coverage labels describe the current archive state, not the importance or qualit
 - Low-confidence years: none
 - Discovery-only / undownloaded years: 2021, 2022, 2023, 2024, 2025, 2026
 - Undownloaded document types: tasks=35
+- Gaps: none observed inside valid competition range
+
+## russia_correspondence_astronomy
+
+- Years found: 2005, 2006, 2007, 2008
+- Years with tasks: 2005, 2006, 2007, 2008
+- Years with solutions: 2005, 2006, 2007, 2008
+- Years with mirror material: none
+- Relation groups summary: none
+- Low-confidence years: none
+- Discovery-only / undownloaded years: none
+- Undownloaded document types: none
 - Gaps: none observed inside valid competition range
 
 ## spbao

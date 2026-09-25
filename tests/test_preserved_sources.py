@@ -37,6 +37,7 @@ class PreservedPublicationTests(TestCase):
                 self.assertIsNotNone(record)
                 assert record is not None
                 self.assertEqual(record["status"], "preserved")
+                self.assertNotIn("http_status", record)
                 self.assertEqual(record["content_type"], "application/pdf")
                 self.assertEqual(record["bytes"], row["expected_bytes"])
                 self.assertTrue(Path(record["raw_path"]).is_file())
