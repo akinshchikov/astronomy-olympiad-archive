@@ -552,7 +552,8 @@ def normalize(root: Path, families: set[str] | None, dry_run: bool, limit: int |
             }
         )
         normalized_entries.append(entry)
-        event_groups[(row["olympiad_family"], year, stage_or_round)].append(entry)
+        if row.get("record_kind") != "collection":
+            event_groups[(row["olympiad_family"], year, stage_or_round)].append(entry)
         logger.info("NORMALIZE entry path=%s sha256=%s", archive_path, sha256)
 
     write_jsonl(root / "data" / "manifests" / "normalized_entries.jsonl", normalized_entries)
