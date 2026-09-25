@@ -413,6 +413,8 @@ def normalize(root: Path, families: set[str] | None, dry_run: bool, limit: int |
             continue
 
         year = resolve_year(row, max_reasonable_year, text_hint)
+        if row.get("record_kind") == "collection":
+            year = None
         context = seed_context(row)
         document_type = row["document_type"]
         source_metadata_is_authoritative = str(row.get("source_id", "")) in AUTHORITATIVE_DISCOVERY_METADATA_SOURCE_IDS
