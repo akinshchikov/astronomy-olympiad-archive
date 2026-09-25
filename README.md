@@ -21,8 +21,11 @@ coverage.
 - discovery and coverage manifests
 - coverage indices and relation-group summaries
 - documentation
+- small, explicitly approved lost-publication preservation sets under
+  `data/preserved/`
 
-Large local binary data is intentionally not committed:
+Large local binary data is intentionally not committed outside that narrow
+preservation exception:
 
 - `data/raw/`
 - `data/archive/`
@@ -73,6 +76,7 @@ data/
     coverage_report.md
   logs/                 # local logs, not committed
   manual/owao/          # optional manually downloaded OWAO files, not committed
+  preserved/             # exceptional bounded historical publications committed with checksums
 ```
 
 Normalized filename format:
@@ -189,6 +193,7 @@ Source-policy boundaries:
 - `inao_hbcse_past_papers` and `inao_hbcse_current` provide public metadata, but HBCSE’s explicit no-redistribution policy is retained as `redistribution_status=explicit-no-redistribution`. Downloaded INAO papers and solutions remain local and are not committed or republished.
 - `czech_astronomy_official` is a separate Czech Astronomical Olympiad family, not IAO. Protected or unavailable material is a discovery gap; the pipeline does not bypass login or access controls and filters unrelated IAO, press, and results material.
 - `gecaa_ioaa_archive` supplies available official GeCAA material from the IOAA-hosted archive. `gecaa_official_archive` remains an external availability gap: current `gecaa.ee` downloads, including known team documents, are not claimed as locally archived.
+- `russia_correspondence_preserved_publication` is a deliberate publishing-policy exception: the 2005–2008 Russian Open Correspondence School Astronomy Olympiad tasks-with-solutions PDFs were historically public, later disappeared for technical reasons, and are explicitly permitted for republication. Only the four source PDFs and their checksum manifest are committed; private provenance correspondence is not.
 
 Some families currently start from archive/mirror seeds rather than a priority-1 official source, notably `spbao` and parts of `iao`. IAO targets on `issp.ac.ru` retain official target provenance even when discovered through an archive index.
 
@@ -266,7 +271,7 @@ Current tracked public snapshot refreshed on `2026-09-24`:
 - relation groups: `740`
 - families with indexed local files: `28`
 - families represented in `olympiads_index.csv`: `33`
-- evaluated sources in `source_coverage.csv`: `64` (`54` currently configured)
+- evaluated sources in `source_coverage.csv`: `65` (`55` currently configured)
 
 The family coverage table reports, for every catalogued family, its English and
 Russian names, region, scope, indexed-file count, known year range, current content
@@ -299,7 +304,7 @@ unresolved”, and “Deferred pending a reliable archive”.
 
 ## For GitHub
 
-This repository is prepared for GitHub as code plus lightweight metadata, while the full binary archive is meant to be rebuilt locally.
+This repository is prepared for GitHub as code plus lightweight metadata, with only the narrow `data/preserved/` exception described in [PUBLISHING.md](PUBLISHING.md); the general binary archive is still meant to be rebuilt locally.
 
 Important:
 
