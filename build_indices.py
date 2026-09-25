@@ -335,7 +335,7 @@ def collection_index_rows(discovered_rows: list[dict], entries: list[dict]) -> l
         payload = ensure(row)
         if payload is None:
             continue
-        publication_year = row_context_value(row, "publication_year", row.get("year"))
+        publication_year = row_context_value(row, "publication_year", None)
         if publication_year not in {None, ""}:
             payload["publication_years"].add(str(publication_year))
         covered_years = row_context_value(row, "covered_years", "")
@@ -353,7 +353,7 @@ def collection_index_rows(discovered_rows: list[dict], entries: list[dict]) -> l
         payload = ensure(row)
         if payload is None:
             continue
-        publication_year = row_context_value(row, "publication_year", row.get("year"))
+        publication_year = row_context_value(row, "publication_year", None)
         if publication_year not in {None, ""}:
             payload["publication_years"].add(str(publication_year))
         covered_years = row_context_value(row, "covered_years", "")
