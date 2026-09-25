@@ -301,13 +301,25 @@ def crawl_documents(root: Path, families: set[str] | None, dry_run: bool, limit:
         completed[checkpoint_key(row)] = download_record
         write_jsonl(checkpoint_path(root), completed.values())
 
-    # Replace records for candidates considered in this crawl rather than
-    # appending them: a completed global resume must be idempotent.
-    refreshed_keys = {checkpoint_key(row) for row in discovered}
-    existing = [
-        row for row in load_jsonl(root / "data" / "manifests" / "download_manifest.jsonl")
-        if checkpoint_key(row) not in refreshed_keys
-    ]
+    # Discovery is authoritative for the scope being crawled.  Keeping old
+    # download-manifest rows merely because their candidate IDs disappeared
+    # leaves stale source variants in normalization forever (for example after
+    # an archive changes equivalent URLs).  Discovery already retains the last
+    # validated rows when an entire source refresh fails, so it is safe to
+    # prune rows that are no longer in the current selected-family snapshot.
+    #
+    # Manual imports are local user inputs rather than discovery candidates;
+    # preserve them here so a standalone crawl does not erase them.  The full
+    # orchestrator also re-imports them immediately after crawling.
+    previous_downloads = load_jsonl(root / "data" / "manifests" / "download_manifest.jsonl")
+    if families:
+        existing = [
+            row
+            for row in previous_downloads
+            if row.get("status") == "manual" or row.get("olympiad_family") not in families
+        ]
+    else:
+        existing = [row for row in previous_downloads if row.get("status") == "manual"]
     merged = {checkpoint_key(row): row for row in [*existing, *downloads]}
     write_jsonl(root / "data" / "manifests" / "download_manifest.jsonl", merged.values())
     logger.info("DOWNLOAD complete count=%s", len(downloads))
