@@ -216,6 +216,83 @@ class BackfillPipelineTests(TestCase):
             self.assertTrue((root / "data" / "archive" / "owao" / "2025" / "theoretical").is_dir())
             self.assertTrue((root / "data" / "archive" / "owao" / "2025" / "practical").is_dir())
 
+    def test_crawl_prunes_stale_download_candidates_in_selected_scope(self) -> None:
+        current = {
+            "candidate_id": "current",
+            "source_id": "example_source",
+            "olympiad_family": "iao",
+            "source_url": "https://example.test/current.pdf",
+            "extension": "pdf",
+            "access_mode": "download",
+            "notes": "",
+        }
+        stale_selected = {
+            "candidate_id": "stale-selected",
+            "source_id": "example_source",
+            "olympiad_family": "iao",
+            "source_url": "https://example.test/old.pdf",
+            "extension": "pdf",
+            "status": "downloaded",
+        }
+        other_family = {
+            "candidate_id": "other-family",
+            "source_id": "other_source",
+            "olympiad_family": "other",
+            "source_url": "https://example.test/other.pdf",
+            "extension": "pdf",
+            "status": "downloaded",
+        }
+        manual = {
+            "candidate_id": "manual-row",
+            "source_id": "manual",
+            "olympiad_family": "iao",
+            "source_url": "manual://example",
+            "extension": "pdf",
+            "status": "manual",
+        }
+
+        class NoFetchHttpClient:
+            def __init__(self, logger=None, dry_run=False):
+                pass
+
+            def fetch(self, url):
+                raise AssertionError(f"network fetch not expected: {url}")
+
+        # A focused crawl replaces only its selected-family discovery state.
+        with TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            manifest = root / "data" / "manifests" / "discovered_documents.jsonl"
+            write_jsonl(manifest, [current])
+            write_jsonl(
+                root / "data" / "manifests" / "download_manifest.jsonl",
+                [stale_selected, other_family, manual],
+            )
+            raw = crawl_source.target_raw_path(root, current["source_id"], current["source_url"], "pdf")
+            raw.parent.mkdir(parents=True, exist_ok=True)
+            raw.write_bytes(b"%PDF-1.7\nfixture")
+            with patch.object(crawl_source, "HttpClient", NoFetchHttpClient):
+                self.assertEqual(crawl_source.crawl_documents(root, {"iao"}, False, None), 0)
+            rows = {row["candidate_id"]: row for row in load_jsonl(root / "data" / "manifests" / "download_manifest.jsonl")}
+            self.assertEqual(set(rows), {"current", "other-family", "manual-row"})
+
+        # An unfiltered crawl drops all stale discovered rows, while retaining
+        # local manual input.
+        with TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            manifest = root / "data" / "manifests" / "discovered_documents.jsonl"
+            write_jsonl(manifest, [current])
+            write_jsonl(
+                root / "data" / "manifests" / "download_manifest.jsonl",
+                [stale_selected, other_family, manual],
+            )
+            raw = crawl_source.target_raw_path(root, current["source_id"], current["source_url"], "pdf")
+            raw.parent.mkdir(parents=True, exist_ok=True)
+            raw.write_bytes(b"%PDF-1.7\nfixture")
+            with patch.object(crawl_source, "HttpClient", NoFetchHttpClient):
+                self.assertEqual(crawl_source.crawl_documents(root, None, False, None), 0)
+            rows = {row["candidate_id"]: row for row in load_jsonl(root / "data" / "manifests" / "download_manifest.jsonl")}
+            self.assertEqual(set(rows), {"current", "manual-row"})
+
     def test_manual_owao_import_feeds_normalization(self) -> None:
         with TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
