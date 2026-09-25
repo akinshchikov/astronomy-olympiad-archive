@@ -1595,6 +1595,23 @@ def store_discovered_entry(
         current["confidence"] = round(max(float(current.get("confidence", 0.0)), float(entry.get("confidence", 0.0))), 2)
         if not current.get("seed_context") and entry.get("seed_context"):
             current["seed_context"] = entry["seed_context"]
+        if current.get("record_kind") != "collection" and entry.get("record_kind") == "collection":
+            for field in (
+                "record_kind",
+                "collection_id",
+                "collection_title",
+                "collection_type",
+                "publication_year",
+                "covered_years",
+                "related_families",
+            ):
+                if field in entry:
+                    current[field] = entry[field]
+            current["year"] = None
+            current["stage_or_round"] = entry.get("stage_or_round", "collection")
+            current["document_type"] = entry.get("document_type", current.get("document_type", "info"))
+            current["logical_document_types"] = list(entry.get("logical_document_types") or current.get("logical_document_types") or [])
+            current["language"] = entry.get("language", current.get("language", "unknown"))
     if seen_from:
         discovered[key]["notes"] = append_note(discovered[key]["notes"], f"seen_from={seen_from}")
     if extra_note:
