@@ -20,6 +20,7 @@ GENERATED_MANIFEST_FILES = (
 )
 GENERATED_INDEX_FILES = (
     "olympiads_index.csv",
+    "collections_index.csv",
     "files_index.csv",
     "relation_groups.csv",
     "coverage_report.md",
