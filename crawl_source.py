@@ -89,6 +89,49 @@ def guessed_content_type(extension: str) -> str:
     }.get(extension, "")
 
 
+
+def preserved_repository_download_record(root: Path, row: dict, extension: str) -> dict | None:
+    """Use a committed preservation copy directly instead of re-downloading it."""
+    repository_path_text = str(row.get("repository_path", "") or "").strip()
+    if not repository_path_text:
+        return None
+
+    repository_path = Path(repository_path_text)
+    if repository_path.is_absolute() or ".." in repository_path.parts:
+        raise ValueError(f"invalid preserved repository_path: {repository_path_text}")
+    root_resolved = root.resolve()
+    local_file = (root / repository_path).resolve()
+    if root_resolved not in local_file.parents or not local_file.is_file():
+        raise ValueError(f"preserved repository file missing: {repository_path_text}")
+    if not local_file_is_valid(local_file, extension):
+        raise ValueError(f"preserved repository file failed validation: {repository_path_text}")
+
+    expected_sha256 = str(row.get("expected_sha256", "") or "").lower()
+    if expected_sha256:
+        digest = hashlib.sha256(local_file.read_bytes()).hexdigest()
+        if digest != expected_sha256:
+            raise ValueError(f"preserved repository checksum mismatch: {repository_path_text}")
+    expected_bytes = row.get("expected_bytes")
+    if expected_bytes not in (None, "") and local_file.stat().st_size != int(expected_bytes):
+        raise ValueError(f"preserved repository size mismatch: {repository_path_text}")
+
+    record = dict(row)
+    record.update(
+        {
+            "raw_path": str(local_file),
+            "txt_path": "",
+            "status": "preserved",
+            "content_type": guessed_content_type(extension),
+            "request_url": str(row.get("source_url", "")),
+            "final_url": str(row.get("source_url", "")),
+            "http_status": 200,
+            "bytes": local_file.stat().st_size,
+            "content_validation": "repository_preserved_pdf_signature" if extension == "pdf" else "repository_preserved_file",
+        }
+    )
+    return record
+
+
 def checkpoint_path(root: Path) -> Path:
     return root / "data" / "manifests" / "download_checkpoint.jsonl"
 
@@ -137,6 +180,12 @@ def crawl_documents(root: Path, families: set[str] | None, dry_run: bool, limit:
             logger.info("DOWNLOAD skip_external_share url=%s notes=%s", url, notes)
             continue
         extension = str(row.get("extension") or infer_extension(url))
+        preserved_record = preserved_repository_download_record(root, row, extension)
+        if preserved_record is not None:
+            logger.info("DOWNLOAD preserved_repository_file url=%s path=%s", url, preserved_record["raw_path"])
+            downloads.append(preserved_record)
+            continue
+
         raw_path = target_raw_path(root, row["source_id"], url, extension)
         legacy_bin_path = target_raw_path(root, row["source_id"], url, "bin") if extension != "bin" else raw_path
         txt_path = raw_path.with_suffix(".txt")

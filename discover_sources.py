@@ -43,6 +43,18 @@ SERBIA_SOURCE_ID = "serbia_astronomy_official"
 BELARUS_SOURCE_ID = "belarus_astronomy_belastro_archive"
 BULGARIA_SOURCE_ID = "bulgaria_astronomy_official"
 BULGARIA_PCLOUD_CODE = "kZVYO47ZNTqx8rCGDUhDAuiu0k6ScQnH6QMV"
+PRESERVED_REPOSITORY_RAW_BASE = "https://raw.githubusercontent.com/akinshchikov/astronomy-olympiad-archive/main/"
+PRESERVED_REQUIRED_FIELDS = {
+    "repository_path",
+    "year",
+    "stage_or_round",
+    "document_type",
+    "logical_document_types",
+    "language",
+    "filename_original",
+    "sha256",
+    "bytes",
+}
 BELASTRO_FILE_EXTENSIONS = {"pdf", "doc", "docx", "rtf", "jpg", "jpeg", "png"}
 RUSSIA_TEAM_QUAL_SOURCE_ID = "russia_team_qual_archive"
 VSOSH_ASTROEDU_SOURCE_ID = "vsosh_astroedu_archive"
@@ -290,6 +302,111 @@ def parsed_page(raw_html: str, base_url: str) -> OrderedPageParser:
     parser.feed(raw_html)
     parser.close()
     return parser
+
+
+
+def preserved_source_entries(root: Path, source) -> list[dict]:
+    """Enumerate a bounded, explicitly redistributable in-repository preservation set."""
+    if source.strategy != "preserved":
+        return []
+
+    manifest_relative = str(source.extras.get("manifest_path", "")).strip()
+    if not manifest_relative:
+        raise ValueError(f"preserved source {source.source_id} has no manifest_path")
+    manifest_path = Path(manifest_relative)
+    if manifest_path.is_absolute() or ".." in manifest_path.parts:
+        raise ValueError(f"invalid preserved manifest path: {manifest_relative}")
+
+    root_resolved = root.resolve()
+    manifest_resolved = (root / manifest_path).resolve()
+    if root_resolved not in manifest_resolved.parents:
+        raise ValueError(f"preserved manifest escapes repository root: {manifest_relative}")
+    if not manifest_resolved.is_file():
+        raise FileNotFoundError(f"preserved manifest not found: {manifest_relative}")
+
+    entries: list[dict] = []
+    for manifest_row in load_jsonl(manifest_resolved):
+        missing = PRESERVED_REQUIRED_FIELDS - set(manifest_row)
+        if missing:
+            raise ValueError(
+                f"preserved manifest row missing fields for {source.source_id}: "
+                + ", ".join(sorted(missing))
+            )
+
+        repository_path_text = str(manifest_row["repository_path"]).strip()
+        repository_path = Path(repository_path_text)
+        if repository_path.is_absolute() or ".." in repository_path.parts:
+            raise ValueError(f"invalid preserved repository_path: {repository_path_text}")
+        local_file = (root / repository_path).resolve()
+        if root_resolved not in local_file.parents or not local_file.is_file():
+            raise ValueError(f"preserved repository_path must name an existing repository file: {repository_path_text}")
+
+        payload = local_file.read_bytes()
+        actual_sha256 = hashlib.sha256(payload).hexdigest()
+        expected_sha256 = str(manifest_row["sha256"]).lower()
+        expected_bytes = int(manifest_row["bytes"])
+        if actual_sha256 != expected_sha256:
+            raise ValueError(f"preserved file checksum mismatch: {repository_path_text}")
+        if len(payload) != expected_bytes:
+            raise ValueError(f"preserved file size mismatch: {repository_path_text}")
+
+        filename_original = str(manifest_row["filename_original"])
+        extension = local_file.suffix.lstrip(".").lower()
+        logical_types = manifest_row["logical_document_types"]
+        if not isinstance(logical_types, list) or not logical_types:
+            raise ValueError(f"logical_document_types must be a non-empty list: {repository_path_text}")
+        logical_types = [str(value) for value in logical_types]
+        year = int(manifest_row["year"])
+        stage_or_round = str(manifest_row["stage_or_round"])
+        document_type = str(manifest_row["document_type"])
+        language = str(manifest_row["language"])
+        source_url = PRESERVED_REPOSITORY_RAW_BASE + quote(repository_path_text, safe="/")
+        parent_page_url = (
+            "https://github.com/akinshchikov/astronomy-olympiad-archive/tree/main/"
+            + quote(str(repository_path.parent), safe="/")
+        )
+        source_title = str(manifest_row.get("source_title") or filename_original)
+        variant_tag = infer_variant_tag(source.source_role, source_title, source_url, logical_types)
+
+        entries.append(
+            {
+                "candidate_id": hashlib.sha1(f"{source.source_id}::{source_url}".encode("utf-8")).hexdigest(),
+                "source_id": source.source_id,
+                "olympiad_family": source.olympiad_family,
+                "year": year,
+                "stage_or_round": stage_or_round,
+                "language": language,
+                "document_type": document_type,
+                "source_url": source_url,
+                "source_domain": source_domain(source_url),
+                "source_title": source_title,
+                "source_priority": source.source_priority,
+                "source_role": source.source_role,
+                "parent_page_url": parent_page_url,
+                "parent_page_title": source.label,
+                "filename_original": filename_original,
+                "extension": extension,
+                "variant_tag": variant_tag,
+                "round_detail": str(manifest_row.get("round_detail") or "") or None,
+                "logical_document_types": logical_types,
+                "redistribution_status": "explicit-permission",
+                "access_mode": "repository_preserved",
+                "notes": (
+                    "preserved_publication=true; historical_publication_lost=true; "
+                    "redistribution_status=explicit-permission"
+                ),
+                "seed_context": {
+                    "year": year,
+                    "stage_or_round": stage_or_round,
+                    "document_type": document_type,
+                },
+                "confidence": 0.99,
+                "repository_path": repository_path_text,
+                "expected_sha256": expected_sha256,
+                "expected_bytes": expected_bytes,
+            }
+        )
+    return entries
 
 
 def build_source_candidates_csv(root: Path, families: set[str] | None) -> list[dict]:
@@ -1413,6 +1530,19 @@ def discover_documents(root: Path, families: set[str] | None, dry_run: bool, lim
     coverage: dict[tuple[str, int | None, str], set[str]] = defaultdict(set)
     attempted_source_ids = {seed["source_id"] for seed in seeds}
     successful_source_ids: set[str] = set()
+
+    # Repository-preserved publications are discovered deterministically from
+    # their committed manifests and require no external network endpoint.
+    for source in SOURCE_DEFINITIONS:
+        if families and source.olympiad_family not in families:
+            continue
+        if source.strategy != "preserved":
+            continue
+        for entry in preserved_source_entries(root, source):
+            store_discovered_entry(discovered, entry, seen_from=entry["parent_page_url"])
+            coverage[(entry["olympiad_family"], entry["year"], entry["stage_or_round"])].update(
+                logical_document_types(entry)
+            )
 
     # Stable public direct-file fallbacks cover intermittent archive pages.
     for source in SOURCE_DEFINITIONS:
