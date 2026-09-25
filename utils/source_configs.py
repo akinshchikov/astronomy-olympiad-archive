@@ -571,6 +571,93 @@ SOURCE_DEFINITIONS.extend(
 SOURCE_DEFINITIONS.extend(
     [
         SourceDefinition(
+            source_id="czech_astronomy_official_materials",
+            label="Czech Astronomy Olympiad: official study texts and problem booklets",
+            olympiad_family="czech_astronomy",
+            source_role="official",
+            source_priority=1,
+            strategy="static",
+            seed_urls=["https://olympiada.astro.cz/literatura-a-temata"],
+            notes="Official AO study texts, reference tables and open problem booklets; purchase-only recommended books are not crawl targets.",
+            extras={
+                "default_context": {
+                    "record_seed_page": False,
+                    "follow_second_hop": True,
+                    "max_follow_depth": 1,
+                    "material_scope": "collection",
+                    "collection_id": "czech_astronomy_official_materials",
+                    "collection_title": "Czech Astronomy Olympiad official study materials and problem booklets",
+                    "collection_type": "training_collection",
+                    "stage_or_round": "collection",
+                }
+            },
+        ),
+        SourceDefinition(
+            source_id="bulgaria_astronomy_preparation_official",
+            label="Bulgarian Astronomy Olympiad: official preparation notes",
+            olympiad_family="bulgaria_astronomy",
+            source_role="official",
+            source_priority=1,
+            strategy="direct_files",
+            seed_urls=["https://astro-olymp.org/?page_id=32"],
+            notes="Official public preparation notes linked from the Bulgarian Astronomy Olympiad preparation page.",
+            extras={
+                "direct_file_urls": [
+                    "https://astro-olymp.org/wp-content/uploads/2025/12/ZapiskiAstro2025.pdf"
+                ],
+                "default_context": {
+                    "material_scope": "collection",
+                    "collection_id": "bulgaria_astronomy_official_preparation",
+                    "collection_title": "Bulgarian Astronomy Olympiad official preparation notes",
+                    "collection_type": "training_collection",
+                    "stage_or_round": "collection",
+                    "document_type": "info",
+                    "logical_document_types": ["info"],
+                    "language": "bg",
+                },
+            },
+        ),
+        SourceDefinition(
+            source_id="poland_astronomy_junior_sample_sets",
+            label="Polish Junior Astronomy Olympiad: official sample problem sets",
+            olympiad_family="poland_astronomy_junior",
+            source_role="official",
+            source_priority=1,
+            strategy="direct_files",
+            seed_urls=["https://oaj.edu.pl/materialy/"],
+            notes="Eight public official sample task/solution PDFs for the three competition stages.",
+            extras={
+                "direct_file_urls": [
+                    "https://oaj.edu.pl/wp-content/uploads/sites/35/2025/09/Zadanie_OAJ.pdf",
+                    "https://oaj.edu.pl/wp-content/uploads/sites/35/2025/10/1etap_przyklad_rozw.pdf",
+                    "https://oaj.edu.pl/wp-content/uploads/sites/35/2024/11/OAJ_przykladowy_zestaw_2_stopnia.pdf",
+                    "https://oaj.edu.pl/wp-content/uploads/sites/35/2024/12/OAJ_2etap_rozwiazania.pdf",
+                    "https://oaj.edu.pl/wp-content/uploads/sites/35/2025/03/OAJ_3etap_praktyka_przyklad.pdf",
+                    "https://oaj.edu.pl/wp-content/uploads/sites/35/2025/03/OAJ_3etap_teoria_przyklad.pdf",
+                    "https://oaj.edu.pl/wp-content/uploads/sites/35/2025/03/3etap_teoria_przyklad_rozwiazania.pdf",
+                    "https://oaj.edu.pl/wp-content/uploads/sites/35/2025/03/3etap_praktyka_przyklad_rozwiazania.pdf",
+                ],
+                "direct_file_contexts": {
+                    "https://oaj.edu.pl/wp-content/uploads/sites/35/2025/09/Zadanie_OAJ.pdf": {"document_type": "tasks", "logical_document_types": ["tasks"], "round_detail": "sample-stage-1"},
+                    "https://oaj.edu.pl/wp-content/uploads/sites/35/2025/10/1etap_przyklad_rozw.pdf": {"document_type": "solutions", "logical_document_types": ["solutions"], "round_detail": "sample-stage-1"},
+                    "https://oaj.edu.pl/wp-content/uploads/sites/35/2024/11/OAJ_przykladowy_zestaw_2_stopnia.pdf": {"document_type": "tasks", "logical_document_types": ["tasks"], "round_detail": "sample-stage-2"},
+                    "https://oaj.edu.pl/wp-content/uploads/sites/35/2024/12/OAJ_2etap_rozwiazania.pdf": {"document_type": "solutions", "logical_document_types": ["solutions"], "round_detail": "sample-stage-2"},
+                    "https://oaj.edu.pl/wp-content/uploads/sites/35/2025/03/OAJ_3etap_praktyka_przyklad.pdf": {"document_type": "tasks", "logical_document_types": ["tasks"], "round_detail": "sample-stage-3-practical"},
+                    "https://oaj.edu.pl/wp-content/uploads/sites/35/2025/03/OAJ_3etap_teoria_przyklad.pdf": {"document_type": "tasks", "logical_document_types": ["tasks"], "round_detail": "sample-stage-3-theoretical"},
+                    "https://oaj.edu.pl/wp-content/uploads/sites/35/2025/03/3etap_teoria_przyklad_rozwiazania.pdf": {"document_type": "solutions", "logical_document_types": ["solutions"], "round_detail": "sample-stage-3-theoretical"},
+                    "https://oaj.edu.pl/wp-content/uploads/sites/35/2025/03/3etap_praktyka_przyklad_rozwiazania.pdf": {"document_type": "solutions", "logical_document_types": ["solutions"], "round_detail": "sample-stage-3-practical"},
+                },
+                "default_context": {
+                    "material_scope": "collection",
+                    "collection_id": "poland_astronomy_junior_sample_sets",
+                    "collection_title": "Polish Junior Astronomy Olympiad official sample problem sets",
+                    "collection_type": "training_collection",
+                    "stage_or_round": "collection",
+                    "language": "pl",
+                },
+            },
+        ),
+        SourceDefinition(
             source_id="slovakia_astronomy_official_archive",
             label="Slovak Astronomical Olympiad: official task archive",
             olympiad_family="slovakia_astronomy",
