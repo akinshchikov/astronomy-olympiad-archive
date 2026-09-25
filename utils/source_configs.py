@@ -672,6 +672,17 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
             "default_context": {
                 "record_seed_page": False,
             },
+            "seed_contexts": {
+                "https://www.astronomickaolympiada.sk/ulohy/riesene-priklady-ioaa/": {
+                    "record_kind": "collection",
+                    "stage_or_round": "collection",
+                    "collection_id": "slovakia-ao-solved-ioaa-examples",
+                    "collection_title": "Riešené príklady IOAA",
+                    "collection_type": "training_collection",
+                    "related_families": ["slovakia_astronomy", "ioaa", "gecaa"],
+                    "language": "en",
+                },
+            },
             "direct_file_urls": [
                 "https://www.astronomickaolympiada.sk/zbierka/",
                 "https://www.astronomickaolympiada.sk/wp-content/uploads/2024/04/zbierka.pdf",
