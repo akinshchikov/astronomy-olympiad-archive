@@ -359,12 +359,23 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
                 "language": "ru",
             },
             "direct_file_urls": [
+                "http://astroolymp.ru/books/moscow_1.pdf",
                 "https://www.astroolymp.ru/books/moscow_1.pdf",
                 "https://astroedu.ru/assets/problems/mos/mos-1997-2002.pdf",
+                "http://astroolymp.ru/books/moscow_2.pdf",
                 "https://www.astroolymp.ru/books/moscow_2.pdf",
                 "https://astroolymp.ru/books/moscow_3.pdf",
             ],
             "link_contexts": {
+                "http://astroolymp.ru/books/moscow_1.pdf": {
+                    "collection_id": "mao-1997-2002",
+                    "collection_title": "Задачи Московской астрономической олимпиады. 1997–2002",
+                    "collection_type": "competition_compilation",
+                    "covered_years": "1997-2002",
+                    "document_type": "solutions",
+                    "logical_document_types": ["tasks", "solutions"],
+                    "related_families": ["mao"],
+                },
                 "https://www.astroolymp.ru/books/moscow_1.pdf": {
                     "collection_id": "mao-1997-2002",
                     "collection_title": "Задачи Московской астрономической олимпиады. 1997–2002",
@@ -382,6 +393,15 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
                     "document_type": "solutions",
                     "logical_document_types": ["tasks", "solutions"],
                     "related_families": ["mao"],
+                },
+                "http://astroolymp.ru/books/moscow_2.pdf": {
+                    "collection_id": "mao-2003-2005",
+                    "collection_title": "Задачи Московской астрономической олимпиады. 2003–2005",
+                    "collection_type": "mixed_collection",
+                    "covered_years": "2003-2005",
+                    "document_type": "solutions",
+                    "logical_document_types": ["tasks", "solutions"],
+                    "related_families": ["mao", "russia_correspondence_astronomy"],
                 },
                 "https://www.astroolymp.ru/books/moscow_2.pdf": {
                     "collection_id": "mao-2003-2005",
