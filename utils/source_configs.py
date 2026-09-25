@@ -565,6 +565,247 @@ SOURCE_DEFINITIONS.extend(
 )
 
 
+# Public olympiad-specific compilations and training sets are ordinary external
+# sources. They are discovered/downloaded by the pipeline and are never committed
+# as preserved binaries merely because they are useful preparation material.
+SOURCE_DEFINITIONS.extend(
+    [
+        SourceDefinition(
+            source_id="slovakia_astronomy_official_archive",
+            label="Slovak Astronomical Olympiad: official task archive",
+            olympiad_family="slovakia_astronomy",
+            source_role="official",
+            source_priority=1,
+            strategy="static",
+            seed_urls=["https://www.astronomickaolympiada.sk/ulohy/archiv-uloh/"],
+            notes="Official Slovak AO archive with public tasks/solutions from 2007 onward.",
+            extras={"default_context": {"record_seed_page": False}},
+        ),
+        SourceDefinition(
+            source_id="slovakia_astronomy_official_materials",
+            label="Slovak Astronomical Olympiad: official preparation collections",
+            olympiad_family="slovakia_astronomy",
+            source_role="official",
+            source_priority=1,
+            strategy="static",
+            seed_urls=["https://www.astronomickaolympiada.sk/materialy/"],
+            notes="Official public AO collections and organizer-produced study materials; recommended third-party literature is excluded.",
+            extras={
+                "default_context": {
+                    "record_seed_page": False,
+                    "material_scope": "collection",
+                    "collection_id": "slovakia_astronomy_official_materials",
+                    "collection_title": "Slovak Astronomical Olympiad official preparation collections",
+                    "collection_type": "training_collection",
+                    "stage_or_round": "collection",
+                    "language": "sk",
+                }
+            },
+        ),
+        SourceDefinition(
+            source_id="mao_collection_1997_2002",
+            label="MAO collection: 1997–2002",
+            olympiad_family="mao",
+            source_role="archive",
+            source_priority=2,
+            strategy="direct_files",
+            seed_urls=["https://astroedu.ru/assets/problems/mos/mos-1997-2002.pdf"],
+            notes="Public organizer-maintained PDF compilation of Moscow Astronomy Olympiad problems and solutions, 1997–2002.",
+            extras={
+                "direct_file_urls": ["https://astroedu.ru/assets/problems/mos/mos-1997-2002.pdf"],
+                "default_context": {
+                    "material_scope": "collection",
+                    "collection_id": "mao_1997_2002",
+                    "collection_title": "Moscow Astronomy Olympiad problems 1997–2002",
+                    "collection_type": "competition_compilation",
+                    "covered_years": "1997-2002",
+                    "publication_year": 2002,
+                    "year": 2002,
+                    "stage_or_round": "collection",
+                    "document_type": "solutions",
+                    "logical_document_types": ["tasks", "solutions"],
+                    "language": "ru",
+                },
+            },
+        ),
+        SourceDefinition(
+            source_id="mao_collection_2003_2005",
+            label="MAO collection: 2003–2005",
+            olympiad_family="mao",
+            source_role="archive",
+            source_priority=2,
+            strategy="direct_files",
+            seed_urls=["https://astroolymp.ru/books/moscow_2.pdf"],
+            notes="Public organizer-hosted continuation covering MAO and related Moscow olympiad material for 2003–2005.",
+            extras={
+                "direct_file_urls": ["https://astroolymp.ru/books/moscow_2.pdf"],
+                "default_context": {
+                    "material_scope": "collection",
+                    "collection_id": "mao_2003_2005",
+                    "collection_title": "Moscow Astronomy Olympiad problems 2003–2005",
+                    "collection_type": "mixed_collection",
+                    "covered_years": "2003-2005",
+                    "publication_year": 2005,
+                    "year": 2005,
+                    "stage_or_round": "collection",
+                    "document_type": "solutions",
+                    "logical_document_types": ["tasks", "solutions"],
+                    "language": "ru",
+                },
+            },
+        ),
+        SourceDefinition(
+            source_id="mao_collection_2006_2015",
+            label="MAO collection: 2006–2015",
+            olympiad_family="mao",
+            source_role="official",
+            source_priority=1,
+            strategy="direct_files",
+            seed_urls=["https://mosastro.olimpiada.ru/tasks"],
+            notes="Collection linked from the current official MAO task archive; includes MAO, correspondence, additional and training problems.",
+            extras={
+                "direct_file_urls": ["https://astroolymp.ru/books/moscow_3.pdf"],
+                "default_context": {
+                    "material_scope": "collection",
+                    "collection_id": "mao_2006_2015",
+                    "collection_title": "Moscow Astronomy Olympiad problems 2006–2015",
+                    "collection_type": "mixed_collection",
+                    "covered_years": "2006-2015",
+                    "publication_year": 2015,
+                    "year": 2015,
+                    "stage_or_round": "collection",
+                    "document_type": "solutions",
+                    "logical_document_types": ["tasks", "solutions"],
+                    "language": "ru",
+                },
+            },
+        ),
+        SourceDefinition(
+            source_id="ioaa_problem_collection_official",
+            label="IOAA: official problems and solutions collection 2007–2025",
+            olympiad_family="ioaa",
+            source_role="official",
+            source_priority=1,
+            strategy="direct_files",
+            seed_urls=["https://ioaastrophysics.org/resources/problems-from-past-ioaa"],
+            notes="Official free LaTeX/PDF collection organized by topic; paid problem-book edition is not a crawl target.",
+            extras={
+                "direct_file_urls": ["https://cdn.ioaastrophysics.org/assets/IOAA%20problems/ioaa-problem-book-2007-2025.pdf"],
+                "default_context": {
+                    "material_scope": "collection",
+                    "collection_id": "ioaa_problem_collection_2007_2025",
+                    "collection_title": "IOAA problems and solutions 2007–2025",
+                    "collection_type": "competition_compilation",
+                    "covered_years": "2007-2025",
+                    "publication_year": 2026,
+                    "year": 2026,
+                    "stage_or_round": "collection",
+                    "document_type": "solutions",
+                    "logical_document_types": ["tasks", "solutions"],
+                    "language": "en",
+                },
+            },
+        ),
+        SourceDefinition(
+            source_id="poland_astronomy_preparation_official",
+            label="Polish Astronomy Olympiad: official preparation materials",
+            olympiad_family="poland_astronomy",
+            source_role="official",
+            source_priority=1,
+            strategy="direct_files",
+            seed_urls=["https://www.planetarium.edu.pl/olimpiada/dla-zawodnikow.html"],
+            notes="Organizer-produced public preparation tasks and observing exercises; bibliography-only literature PDF is excluded.",
+            extras={
+                "direct_file_urls": [
+                    "https://www.planetarium.edu.pl/pliki/stale_zadania_obserwacyjne.pdf",
+                    "https://www.planetarium.edu.pl/pliki/cwiczeniaobserwacyjne.pdf",
+                    "https://www.planetarium.edu.pl/pliki/zpdooa_astronomia_sferyczna.pdf",
+                ],
+                "default_context": {
+                    "material_scope": "collection",
+                    "collection_id": "poland_astronomy_official_preparation",
+                    "collection_title": "Polish Astronomy Olympiad official preparation materials",
+                    "collection_type": "training_collection",
+                    "stage_or_round": "collection",
+                    "document_type": "tasks",
+                    "logical_document_types": ["tasks"],
+                    "language": "pl",
+                },
+            },
+        ),
+        SourceDefinition(
+            source_id="caao_tutorials_official",
+            label="CAAO: official preparation tutorials",
+            olympiad_family="caao",
+            source_role="official",
+            source_priority=1,
+            strategy="direct_files",
+            seed_urls=["https://caao.ca/resources/"],
+            notes="Public CAAO/CAO preparation guides hosted by the organizer; generic textbook recommendations are excluded.",
+            extras={
+                "direct_file_urls": [
+                    "https://caao.ca/wp-content/uploads/2022/03/CAO-tutorial.pdf",
+                    "https://caao.ca/wp-content/uploads/2023/02/CAAO-tutorial.pdf",
+                    "https://caao.ca/wp-content/uploads/2026/01/CAAO-Tutorial-2025.pdf",
+                ],
+                "default_context": {
+                    "material_scope": "collection",
+                    "collection_id": "caao_official_tutorials",
+                    "collection_title": "CAAO official preparation tutorials",
+                    "collection_type": "training_collection",
+                    "stage_or_round": "collection",
+                    "document_type": "tasks",
+                    "logical_document_types": ["tasks"],
+                    "language": "en",
+                },
+            },
+        ),
+        SourceDefinition(
+            source_id="usaaao_training_resources",
+            label="USAAAO: introductory training camp resources",
+            olympiad_family="usaaao",
+            source_role="official",
+            source_priority=1,
+            strategy="static",
+            seed_urls=["https://usaaao.org/resources/summer-training-camp/"],
+            notes="Official public training slides, problem sets and solutions; external Drive/Docs links are retained without access-control workarounds.",
+            extras={
+                "default_context": {
+                    "record_seed_page": False,
+                    "material_scope": "collection",
+                    "collection_id": "usaaao_intro_training_camp",
+                    "collection_title": "USAAAO Introductory Training Camp resources",
+                    "collection_type": "training_collection",
+                    "stage_or_round": "collection",
+                    "language": "en",
+                }
+            },
+        ),
+        SourceDefinition(
+            source_id="singapore_astronomy_training_resources",
+            label="Singapore Astronomy Olympiad: additional official resources",
+            olympiad_family="singapore_astronomy",
+            source_role="official",
+            source_priority=1,
+            strategy="static",
+            seed_urls=["https://astronomy.sg/singapore-astronomy-olympiad/"],
+            notes="Official Additional SAO Resources public Drive folder; retained as discovery metadata when Drive download is policy-blocked.",
+            extras={
+                "default_context": {
+                    "record_seed_page": False,
+                    "material_scope": "collection",
+                    "collection_id": "singapore_astronomy_additional_resources",
+                    "collection_title": "Singapore Astronomy Olympiad additional resources",
+                    "collection_type": "training_collection",
+                    "stage_or_round": "collection",
+                    "language": "en",
+                }
+            },
+        ),
+    ]
+)
+
+
 def _seed_context_for_url(source: SourceDefinition, url: str, extra_context: dict | None = None) -> dict:
     context = dict(source.extras.get("default_context", {}))
     context.update(source.extras.get("seed_contexts", {}).get(url, {}))
@@ -574,7 +815,7 @@ def _seed_context_for_url(source: SourceDefinition, url: str, extra_context: dic
 
 
 def iter_seed_requests(source: SourceDefinition) -> list[SeedRequest]:
-    if source.strategy == "preserved":
+    if source.strategy in {"preserved", "direct_files"}:
         return []
 
     if source.strategy == "static":
