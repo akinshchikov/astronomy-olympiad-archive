@@ -173,12 +173,29 @@ class SourceExpansionTests(TestCase):
         self.assertNotIn(nav, rows)
         self.assertEqual(rows[pdf]["record_kind"], "collection")
         self.assertIsNone(rows[pdf]["year"])
+        self.assertEqual(rows[pdf]["stage_or_round"], "collection")
         self.assertTrue(
             all(
                 row.get("record_kind") == "collection"
                 for row in rows.values()
             )
         )
+        self.assertTrue(
+            all(
+                row.get("year") is None
+                for row in rows.values()
+            )
+        )
+
+    def test_direct_collection_fallbacks_are_self_describing(self):
+        for source_id in ("poland_astronomy_training_materials", "slovakia_astronomy_materials"):
+            source = next(source for source in SOURCE_DEFINITIONS if source.source_id == source_id)
+            for url in source.extras.get("direct_file_urls", []):
+                context = discover_sources.configured_link_context(source_id, url)
+                with self.subTest(source_id=source_id, url=url):
+                    self.assertEqual(context.get("record_kind"), "collection")
+                    self.assertEqual(context.get("stage_or_round"), "collection")
+                    self.assertTrue(context.get("collection_id"))
 
     def test_collection_metadata_never_creates_synthetic_event_year(self):
         seed = {
