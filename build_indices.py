@@ -288,6 +288,136 @@ def write_vsosh_2026_discovery_coverage(handle, discovered_rows: list[dict]) -> 
     handle.write("- Status is based on discovered public sources; downloading is tracked separately below.\n\n")
 
 
+def row_context_value(row: dict, key: str, default=None):
+    value = row.get(key)
+    if value not in {None, ""}:
+        return value
+    context = row.get("seed_context") or {}
+    if isinstance(context, dict):
+        value = context.get(key)
+        if value not in {None, ""}:
+            return value
+    return default
+
+
+def is_collection_row(row: dict) -> bool:
+    return row_context_value(row, "material_scope", "competition") == "collection"
+
+
+def collection_index_rows(discovered_rows: list[dict], entries: list[dict]) -> list[dict]:
+    groups: dict[str, dict] = {}
+
+    def ensure(row: dict) -> dict | None:
+        if not is_collection_row(row):
+            return None
+        collection_id = str(row_context_value(row, "collection_id", "") or "")
+        if not collection_id:
+            return None
+        if collection_id not in groups:
+            groups[collection_id] = {
+                "collection_id": collection_id,
+                "olympiad_family": row.get("olympiad_family", ""),
+                "title": str(row_context_value(row, "collection_title", collection_id)),
+                "collection_type": str(row_context_value(row, "collection_type", "collection")),
+                "publication_years": set(),
+                "covered_years": set(),
+                "source_ids": set(),
+                "source_urls": set(),
+                "access_modes": set(),
+                "candidate_ids": set(),
+                "sha256s": set(),
+                "logical_types": set(),
+                "languages": set(),
+            }
+        return groups[collection_id]
+
+    for row in discovered_rows:
+        payload = ensure(row)
+        if payload is None:
+            continue
+        publication_year = row_context_value(row, "publication_year", row.get("year"))
+        if publication_year not in {None, ""}:
+            payload["publication_years"].add(str(publication_year))
+        covered_years = row_context_value(row, "covered_years", "")
+        if covered_years:
+            payload["covered_years"].add(str(covered_years))
+        payload["source_ids"].add(str(row.get("source_id", "")))
+        payload["source_urls"].add(str(row.get("source_url", "")))
+        payload["access_modes"].add(str(row.get("access_mode", "download")))
+        payload["candidate_ids"].add(str(row.get("candidate_id", "")))
+        payload["logical_types"].update(logical_document_types(row))
+        if row.get("language"):
+            payload["languages"].add(str(row["language"]))
+
+    for row in entries:
+        payload = ensure(row)
+        if payload is None:
+            continue
+        publication_year = row_context_value(row, "publication_year", row.get("year"))
+        if publication_year not in {None, ""}:
+            payload["publication_years"].add(str(publication_year))
+        covered_years = row_context_value(row, "covered_years", "")
+        if covered_years:
+            payload["covered_years"].add(str(covered_years))
+        payload["source_ids"].add(str(row.get("source_id", "")))
+        payload["source_urls"].add(str(row.get("source_url", "")))
+        if row.get("sha256"):
+            payload["sha256s"].add(str(row["sha256"]))
+        payload["logical_types"].update(logical_document_types(row))
+        if row.get("language"):
+            payload["languages"].add(str(row["language"]))
+
+    result = []
+    for payload in groups.values():
+        result.append(
+            {
+                "collection_id": payload["collection_id"],
+                "olympiad_family": payload["olympiad_family"],
+                "title": payload["title"],
+                "collection_type": payload["collection_type"],
+                "publication_years": ",".join(sorted(payload["publication_years"])),
+                "covered_years": ",".join(sorted(payload["covered_years"])),
+                "source_ids": "|".join(sorted(value for value in payload["source_ids"] if value)),
+                "source_urls": "|".join(sorted(value for value in payload["source_urls"] if value)),
+                "access_modes": ",".join(sorted(value for value in payload["access_modes"] if value)),
+                "num_discovered_documents": len({value for value in payload["candidate_ids"] if value}),
+                "num_files": len(payload["sha256s"]),
+                "has_tasks": "tasks" in payload["logical_types"],
+                "has_solutions": "solutions" in payload["logical_types"],
+                "languages": ",".join(sorted(payload["languages"])),
+            }
+        )
+    return sorted(result, key=lambda row: (row["olympiad_family"], row["collection_id"]))
+
+
+def write_collections_table(handle, rows: list[dict]) -> None:
+    handle.write("## Public olympiad collections and training sets\n\n")
+    if not rows:
+        handle.write("- None catalogued.\n\n")
+        return
+    handle.write(
+        "| Collection | Family | Type | Publication year(s) | Covered years | "
+        "Discovered docs | Indexed files | Tasks | Solutions | Access |\n"
+    )
+    handle.write("| --- | --- | --- | --- | --- | ---: | ---: | --- | --- | --- |\n")
+    for row in rows:
+        values = [
+            row["title"],
+            row["olympiad_family"],
+            row["collection_type"],
+            row["publication_years"] or "unknown",
+            row["covered_years"] or "not specified",
+            row["num_discovered_documents"],
+            row["num_files"],
+            row["has_tasks"],
+            row["has_solutions"],
+            row["access_modes"] or "unknown",
+        ]
+        escaped = [str(value).replace("|", "\\|").replace("\n", " ") for value in values]
+        handle.write("| " + " | ".join(escaped) + " |\n")
+    handle.write("\n")
+
+
 def build(root: Path, families: set[str] | None) -> int:
     logger = configure_logger("build_indices", root / "data" / "logs" / "normalization.log")
     entries = load_jsonl(root / "data" / "manifests" / "normalized_entries.jsonl")
