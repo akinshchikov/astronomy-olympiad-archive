@@ -598,6 +598,9 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
             ],
             "link_contexts": {
                 "https://www.planetarium.edu.pl/pliki/stale_zadania_obserwacyjne.pdf": {
+                    "record_kind": "collection",
+                    "stage_or_round": "collection",
+                    "language": "pl",
                     "collection_id": "poland-oa-permanent-observation-tasks",
                     "collection_title": "Stałe zadania obserwacyjne Olimpiady Astronomicznej",
                     "collection_type": "training_collection",
@@ -606,6 +609,9 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
                     "related_families": ["poland_astronomy"],
                 },
                 "https://www.planetarium.edu.pl/pliki/cwiczeniaobserwacyjne.pdf": {
+                    "record_kind": "collection",
+                    "stage_or_round": "collection",
+                    "language": "pl",
                     "collection_id": "poland-oa-observation-exercises",
                     "collection_title": "Ćwiczenia obserwacyjne",
                     "collection_type": "training_collection",
@@ -614,6 +620,9 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
                     "related_families": ["poland_astronomy"],
                 },
                 "https://www.planetarium.edu.pl/pliki/zpdooa_astronomia_sferyczna.pdf": {
+                    "record_kind": "collection",
+                    "stage_or_round": "collection",
+                    "language": "pl",
                     "collection_id": "poland-oa-spherical-astronomy-preparation",
                     "collection_title": "Zadania przygotowawcze – Astronomia Sferyczna",
                     "collection_type": "training_collection",
@@ -622,6 +631,9 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
                     "related_families": ["poland_astronomy"],
                 },
                 "https://www.planetarium.edu.pl/pliki/literatura.pdf": {
+                    "record_kind": "collection",
+                    "stage_or_round": "collection",
+                    "language": "pl",
                     "collection_id": "poland-oa-literature",
                     "collection_title": "Literatura dla zawodników Olimpiady Astronomicznej",
                     "collection_type": "reference_material",
@@ -669,7 +681,6 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
                 "https://www.astronomickaolympiada.sk/wp-content/uploads/2025/04/Dodovky_poznamky-1.pdf",
                 "https://www.astronomickaolympiada.sk/wp-content/uploads/2023/01/A-Problem-book-in-Astronomy-and-Astrophysics.pdf",
                 "http://physics.ujep.cz/~zmoravec/astronomie/siroky/siroky.pdf",
-                "https://assets.openstax.org/oscms-prodcms/media/documents/Astronomy-2e-WEB_6qnoaIc.pdf",
             ],
             "link_contexts": {
                 "https://www.astronomickaolympiada.sk/zbierka/": {
@@ -686,6 +697,9 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
                     "related_families": ["slovakia_astronomy"],
                 },
                 "https://www.astronomickaolympiada.sk/wp-content/uploads/2024/04/zbierka.pdf": {
+                    "record_kind": "collection",
+                    "stage_or_round": "collection",
+                    "language": "sk",
                     "collection_id": "slovakia-ao-2007-2023",
                     "collection_title": "Zbierka úloh AO 2007–2023",
                     "collection_type": "competition_compilation",
@@ -696,6 +710,9 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
                     "related_families": ["slovakia_astronomy"],
                 },
                 "https://www.astronomickaolympiada.sk/wp-content/uploads/2024/01/Zoznam-konstant-AO.pdf": {
+                    "record_kind": "collection",
+                    "stage_or_round": "collection",
+                    "language": "sk",
                     "collection_id": "slovakia-ao-constants",
                     "collection_title": "Zoznam konštánt AO",
                     "collection_type": "reference_material",
@@ -705,6 +722,9 @@ SOURCE_DEFINITIONS: list[SourceDefinition] = [
                     "related_families": ["slovakia_astronomy"],
                 },
                 "https://www.astronomickaolympiada.sk/wp-content/uploads/2025/01/AO_Brozurka_2025.pdf": {
+                    "record_kind": "collection",
+                    "stage_or_round": "collection",
+                    "language": "sk",
                     "collection_id": "slovakia-ao-materials-brochure-2025",
                     "collection_title": "Hlavné materiály AO 2025",
                     "collection_type": "reference_material",
