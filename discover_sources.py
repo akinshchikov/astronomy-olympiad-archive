@@ -77,6 +77,8 @@ BOUNDED_ARCHIVE_SOURCE_IDS = {
     "nepal_astronomy_naso_official", "nzoaa_official", "israel_space_agency_official",
     "bangladesh_bao_official", "china_cnao_beijing_planetarium_official", "iran_astronomy_irysc_mirror",
     "malaysia_astronomy_myao_official", "macao_astronomy_sepam_official",
+    "poland_astronomy_training_materials",
+    "slovakia_astronomy_official_archive", "slovakia_astronomy_materials",
 }
 RESULT_OR_PROMOTION_TOKENS = re.compile(r"result|winner|award|press|news|gallery|photo|video|registration|course|mock|preparation|training|paid", re.I)
 
@@ -900,6 +902,23 @@ def passes_source_specific_link_filter(seed: dict, link_text: str, href: str) ->
         return decoded_url_path(href).lower().endswith("/getpublinkdownload") and bool(pcloud_filename(href))
     if source_id == BULGARIA_SOURCE_ID and source_domain(href) == "astro-olymp.org":
         return decoded_url_path(href).lower().startswith("/wp-content/uploads/") and infer_extension(href) == "pdf"
+    if source_id == "mao_public_collections":
+        return (
+            source_domain(href) in {"astroolymp.ru", "www.astroolymp.ru"}
+            and bool(re.fullmatch(r"/books/moscow_[123]\.pdf", decoded_url_path(href).lower()))
+        )
+    if source_id == "poland_astronomy_training_materials":
+        return (
+            source_domain(href) in {"planetarium.edu.pl", "www.planetarium.edu.pl"}
+            and decoded_url_path(href).lower().startswith("/pliki/")
+            and infer_extension(href) == "pdf"
+        )
+    if source_id in {"slovakia_astronomy_official_archive", "slovakia_astronomy_materials"}:
+        return (
+            source_domain(href) in {"astronomickaolympiada.sk", "www.astronomickaolympiada.sk"}
+            and decoded_url_path(href).lower().startswith("/wp-content/uploads/")
+            and infer_extension(href) in DIRECT_FILE_EXTENSIONS
+        )
     if source_id in IOAA_CORE_SOURCE_IDS:
         return "gecaa" not in combined and "junior-ioaa" not in combined and "junior ioaa" not in combined
     if source_id == IOAA_JUNIOR_SOURCE_ID:
@@ -1205,6 +1224,36 @@ def apply_source_specific_link_overrides(
         if "answer" in name or "solution" in name:
             return "solutions", ["solutions"], "national", None, language
         return "tasks", ["tasks"], "national", None, language
+    if source_id == "slovakia_astronomy_official_archive":
+        text = normalize_whitespace(f"{link_text} {decoded_filename(href)} {href}").lower()
+        if re.search(r"(?:^|[-_])dk(?:[-_]|$)", text):
+            stage_or_round = "home"
+        elif re.search(r"(?:^|[-_])rk(?:[-_]|$)", text):
+            stage_or_round = "regional"
+        elif re.search(r"(?:^|[-_])ck(?:[-_]|$)|(?:^|[-_])fi(?:[-_]|$)", text):
+            stage_or_round = "final"
+        if re.search(r"rieseni|riešen|vzorak", text):
+            document_type, extra_types = "solutions", ["solutions"]
+        elif re.search(r"zadan|teoret|datova|dátov|prakt", text):
+            document_type, extra_types = "tasks", ["tasks"]
+        category = (
+            "primary"
+            if re.search(r"(?:^|[-_])zs(?:[-_]|$)", text)
+            else "secondary"
+            if re.search(r"(?:^|[-_])ss(?:[-_]|$)", text)
+            else None
+        )
+        track = (
+            "data_analysis"
+            if re.search(r"datov|(?:^|[-_])da(?:[-_]|$)", text)
+            else "practical"
+            if re.search(r"prakt", text)
+            else "theoretical"
+            if re.search(r"teoret", text)
+            else None
+        )
+        round_detail = "-".join(filter(None, (category, track))) or round_detail
+        return document_type, extra_types or [document_type], stage_or_round, round_detail, "sk"
     if source_id == "croatia_astronomy_azoo_official":
         context = normalize_whitespace(f"{link_text} {page_title} {href}").lower()
         attachment_label = normalize_whitespace(f"{link_text} {decoded_filename(href)}").lower()
